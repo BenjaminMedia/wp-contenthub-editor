@@ -1,0 +1,37 @@
+{
+  "name": "bonnier/contenthub-editor",
+  "description": "Integrates Bonnier ContentHub into WordPress",
+  "type": "wordpress-plugin",
+  "keywords": ["wordpress", "plugin"],
+  "homepage": "https://github.com/BenjaminMedia/wp-contenthub-editor",
+  "repositories":[
+    {
+      "type": "composer",
+      "url": "http://wpackagist.org"
+    }
+  ],
+  "authors": [
+    {
+      "name": "Bonnier Publications",
+      "email": "interactive@bonnier.dk",
+      "homepage": "http://bonnierpublications.com"
+    },
+    {
+      "name": "Alf Henderson",
+      "email": "alf.henderson@bonnier.dk",
+      "homepage": ""
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/BenjaminMedia/wp-contenthub-editor/issues",
+    "source": "https://github.com/BenjaminMedia/wp-contenthub-editor"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bonnier\\WP\\ContentHub\\Editor\\": "src"
+    }
+  },
+  "require": {
+    "php": ">=5.6"
+  }
+}
