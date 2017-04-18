@@ -36,6 +36,6 @@ class Composite
     }
 
     private static function register_acf_fields() {
-        //require_once (__DIR__ .'/ACF/Composite/CompositeFields.php');
+        require_once (__DIR__ .'/ACF/Composite/CompositeFields.php');
     }
 }
