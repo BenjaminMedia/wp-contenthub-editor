@@ -16,9 +16,12 @@ if ( defined('WP_CLI') && WP_CLI ) {
  */
 class CmdManager
 {
+    const cmd_namespace = 'contenthub-editor';
+
     public static function register() {
         if ( defined('WP_CLI') && WP_CLI ) {
             Migrate::register();
+            AdvancedCustomFields::register();
         }
     }
 }
