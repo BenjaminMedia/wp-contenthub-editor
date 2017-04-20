@@ -23,7 +23,7 @@ class AdvancedCustomFields extends WP_CLI_Command
      *
      * ## EXAMPLES
      *
-     * wp contenthub-editor acf dump
+     * wp contenthub-editor acf_dump
      *
      */
     public function acf_dump() {
