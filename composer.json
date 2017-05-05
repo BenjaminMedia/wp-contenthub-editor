@@ -1,4 +1,7 @@
 {
+  "config": {
+    "secure-http": false
+  },
   "name": "bonnier/contenthub-editor",
   "description": "Integrates Bonnier ContentHub into WordPress",
   "type": "wordpress-plugin",
