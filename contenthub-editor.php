@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ContentHub Editor
- * Version: 0.0.1
+ * Version: 1.1.0
  * Plugin URI: https://github.com/BenjaminMedia/contenthub-editor
  * Description: This plugin integrates Bonnier Contenthub and adds a custom post type Composite
  * Author: Bonnier - Alf Henderson
