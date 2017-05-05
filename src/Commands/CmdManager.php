@@ -16,9 +16,13 @@ if ( defined('WP_CLI') && WP_CLI ) {
  */
 class CmdManager
 {
+    const CORE_CMD_NAMESPACE = 'contenthub editor';
+
     public static function register() {
         if ( defined('WP_CLI') && WP_CLI ) {
             Migrate::register();
+            AdvancedCustomFields::register();
+            Scaphold::register();
         }
     }
 }

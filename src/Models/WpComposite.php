@@ -3,15 +3,16 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 /**
- * Class Composite
+ * Class WpComposite
  *
  * @package \Bonnier\WP\ContentHub\Editor\Models
  */
-class Composite
+class WpComposite
 {
     const POST_TYPE = 'contenthub_composite';
     const POST_TYPE_NAME = 'Content';
     const POST_TYPE_NAME_SINGULAR = 'Composite';
+    const POST_META_CONTENTHUB_ID = 'contenthub_id';
 
     /**
      * Register the composite as a custom wp post type
@@ -33,6 +34,18 @@ class Composite
             );
         });
         static::register_acf_fields();
+    }
+
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function id_from_contenthub_id($id) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare("SELECT post_id FROM wp_postmeta WHERE meta_key=%s AND meta_value=%s", static::POST_META_CONTENTHUB_ID, $id)
+        );
     }
 
     private static function register_acf_fields() {

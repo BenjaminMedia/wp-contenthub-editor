@@ -12,7 +12,7 @@ use WP_CLI_Command;
  */
 class Migrate extends WP_CLI_Command
 {
-    const cmd_namespace = 'contenthub-editor';
+    const CMD_NAMESPACE = 'migrate';
 
     /**
      * Migrates Content Hub ACF fields to latest version
@@ -24,11 +24,11 @@ class Migrate extends WP_CLI_Command
      *
      * ## EXAMPLES
      *
-     * wp contenthub-editor migrate <action>
+     * wp contenthub editor migrate <action>
      *
      * @synopsis <action>
      */
-    public function migrate( $args, $assoc_args ) {
+    public function run( $args, $assoc_args ) {
         list( $action ) = $args;
 
         WP_CLI::success( "Successfully migrated" );
@@ -38,6 +38,6 @@ class Migrate extends WP_CLI_Command
     }
 
     public static function register() {
-        WP_CLI::add_command( static::cmd_namespace, __CLASS__ );
+        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
     }
 }
