@@ -36,7 +36,7 @@ spl_autoload_register(function ($className) {
     }
 });
 
-require_once( __DIR__ . '/includes/vendor/autoload.php');
+require_once( __DIR__ . '/vendor/autoload.php');
 
 class Plugin
 {
