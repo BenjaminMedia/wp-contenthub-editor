@@ -1,5 +1,5 @@
 {
-  "name": "bonnier/contenthub-editor",
+  "name": "benjaminmedia/contenthub-editor",
   "description": "Integrates Bonnier ContentHub into WordPress",
   "type": "wordpress-plugin",
   "keywords": ["wordpress", "plugin"],
