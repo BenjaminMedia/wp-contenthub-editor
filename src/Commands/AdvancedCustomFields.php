@@ -13,9 +13,10 @@ use WP_CLI_Command;
 class AdvancedCustomFields extends WP_CLI_Command
 {
     const EXPORT_DIR = WP_CONTENT_DIR . '/acf-exports/';
+    const CMD_NAMESPACE = 'acf';
 
     public static function register() {
-        WP_CLI::add_command( CmdManager::cmd_namespace, __CLASS__ );
+        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
     }
 
     /**
@@ -23,10 +24,10 @@ class AdvancedCustomFields extends WP_CLI_Command
      *
      * ## EXAMPLES
      *
-     * wp contenthub-editor acf_dump
+     * wp contenthub editor acf dump
      *
      */
-    public function acf_dump() {
+    public function dump() {
 
         $groups = acf_get_local_field_groups();
         $json = [];
