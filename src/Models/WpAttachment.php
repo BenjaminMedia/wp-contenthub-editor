@@ -72,15 +72,23 @@ class WpAttachment
 
     public static function upload_attachment($postId, $file) {
 
+        if(is_null($file)) {
+            return null;
+        }
+
         // If attachment already exists then update meta data and return the id
         if($existingId = static::id_from_contenthub_id($file->id)) {
             static::update_attachment($existingId, $file);
             return $existingId;
         }
 
+        // Make sure that url has a scheme
+        if(!isset(parse_url($file->url)['scheme'])) {
+            $file->url = 'http:' . $file->url;
+        }
+
         // Getting file stream
-        $fileUrl = 'http:' . $file->url;
-        if(!$fileStream = file_get_contents( $fileUrl )) {
+        if(!$fileStream = @file_get_contents( $file->url )) {
             return null;
         }
         $fileName = basename( $file->url );

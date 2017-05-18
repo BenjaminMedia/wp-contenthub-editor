@@ -48,6 +48,8 @@ class Plugin
 
     const CLASS_DIR = 'src';
 
+    const FLUSH_REWRITE_RULES_FLAG = 'contenthub-editor-permalinks-rewrite-flush-rules-flag';
+
     /**
      * @var object Instance of this class.
      */
@@ -125,5 +127,17 @@ function instance()
 {
     return Plugin::instance();
 }
+
+// Register a flag to flush the rewrite rules after the custom rules have been added
+register_activation_hook( __FILE__, function(){
+    update_option( Plugin::FLUSH_REWRITE_RULES_FLAG, true );
+});
+
+// Flush rewrite rules to generate new permalinks when plugin is deactivated
+register_deactivation_hook( __FILE__, 'flush_rewrite_rules');
+
+// If the plugin is currently being deactivated we do no want to register our
+if (isset($_GET['action'], $_GET['plugin']) && 'deactivate' === $_GET['action'] && plugin_basename(__FILE__) === $_GET['plugin'])
+    return;
 
 add_action('plugins_loaded', __NAMESPACE__ . '\instance', 0);

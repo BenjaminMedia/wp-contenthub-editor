@@ -63,6 +63,7 @@ class Scaphold extends WP_CLI_Command
                 advertorialLabel
                 status
                 magazine
+                externalId
                 translationSet {
                   id
                   masterLocale
@@ -110,6 +111,14 @@ class Scaphold extends WP_CLI_Command
                       domain
                     }
                   }
+                }
+                metaInformation {
+                  id
+                  canonicalUrl
+                  pageTitle
+                  description
+                  originalUrl
+                  socialMediaText
                 }
                 content(first: 10000, orderBy: {field: position, direction: ASC}) {
                   edges {
@@ -183,6 +192,54 @@ class Scaphold extends WP_CLI_Command
                           }
                         }
                       }
+                      product {
+                        id
+                        title
+                        description
+                        images {
+                          edges {
+                            node {
+                              id
+                              url
+                              locale
+                              trait
+                              caption
+                              altText
+                              copyright
+                            }
+                          }
+                        }
+                        file {
+                          id
+                          url
+                          caption
+                        }
+                        video {
+                          id
+                          thumbnailUrl
+                          caption
+                          service
+                          locale
+                          trait
+                          videoIdentifier
+                        }
+                        link {
+                          id
+                          title
+                          url
+                          target
+                        }
+                        accessRules {
+                          edges {
+                            node {
+                              id
+                              kind
+                              values
+                              domain
+                            }
+                          }
+                        }
+                      }
                       inventory {
                         id
                         title
@@ -202,7 +259,7 @@ class Scaphold extends WP_CLI_Command
                 }
               }
             }
-        ', ['id' => 'Q29tcG9zaXRlOjI5' ])->getComposite;
+        ', ['id' => 'Q29tcG9zaXRlOjEw' ])->getComposite;
         //', ['id' => 'Q29tcG9zaXRlOjEwNDc2Ng==' ])->getComposite;
 
         $existingId = WpComposite::id_from_contenthub_id($composite->id);
@@ -220,7 +277,10 @@ class Scaphold extends WP_CLI_Command
             'post_date' => $composite->publishedAt ?? $composite->createdAt,
             'post_modified' => $composite->modifiedAt,
             'meta_input' => [
-                WpComposite::POST_META_CONTENTHUB_ID => $composite->id
+                WpComposite::POST_META_CONTENTHUB_ID => $composite->id,
+                WpComposite::POST_META_TITLE => $composite->metaInformation->pageTitle,
+                WpComposite::POST_META_DESCRIPTION => $composite->metaInformation->description,
+                WpComposite::POST_CANONICAL_URL => $composite->metaInformation->canonicalUrl,
             ],
         ]);
 
@@ -252,33 +312,79 @@ class Scaphold extends WP_CLI_Command
 
         //dd($compositeContents);
 
-        $content = $compositeContents->map(function($compositeContent) use($postId){
-            if($compositeContent->type === 'text_item') {
+        $content = $compositeContents->map(function ($compositeContent) use ($postId) {
+            if ($compositeContent->type === 'text_item') {
                 return [
                     'body' => $compositeContent->content->body,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-            if($compositeContent->type === 'image') {
+            if ($compositeContent->type === 'image') {
                 return [
                     'lead_image' => $compositeContent->content->trait === 'Primary' ? true : false,
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-            if($compositeContent->type === 'video') {
-                return [
-                    'video' => $compositeContent->content->trait === 'Primary' ? true : false,
-                    'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
-                    'acf_fc_layout' => $compositeContent->type
-                ];
+            if ($compositeContent->type === 'product') {
+                $filteredProducts = collect($compositeContent->content)
+                    ->only(['video', 'file', 'link'])
+                    ->reject(function ($value) {
+                        return is_null($value);
+                    });
+                $product = $filteredProducts->map(function ($product, $type) use ($postId) {
+                    if ($type === 'file') {
+                        return [
+                            'file' => WpAttachment::upload_attachment($postId, $product)
+                        ];
+                    } // Todo: implement video and link product types
+                })->first();
+                $accessRules = collect($compositeContent->content->accessRules->edges)->pluck('node');
+                return collect([
+                    'acf_fc_layout' => $compositeContent->type,
+                    'title' => $compositeContent->content->title,
+                    'description' => $compositeContent->content->description,
+                    'product_type' => $filteredProducts->keys()->first(),
+                    'locked_content' => $accessRules->first(function ($rule) {
+                        return $rule->domain === 'All' && $rule->kind === 'Deny';
+                    }) ? true : false,
+                    'required_user_role' => $accessRules->first(function ($rule) {
+                        return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
+                    })->domain,
+                    'allow_purchase' => $accessRules->first(function ($rule) {
+                        return $rule->domain === 'Purchase' && $rule->kind === 'Allow';
+                    }) ? true : false,
+                    'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
+                        return [
+                            'file' => WpAttachment::upload_attachment($postId, $image->nfode),
+                        ];
+                    })
+                ])->merge($product);
             }
+        })->reject(function ($content) {
+            return is_null($content);
         });
 
         update_field('composite_content', $content->toArray(), $postId);
 
 
+        collect($composite->teasers->edges)->pluck('node')->each(function($teaser) use($postId){
+            if($teaser->kind === 'Internal') {
+                update_field('teaser_title', $teaser->title, $postId);
+                update_field('teaser_description', $teaser->title, $postId);
+                update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaser->image), $postId);
+            }
+            if($teaser->kind === 'Facebook') {
 
+                update_post_meta($postId, WpComposite::POST_FACEBOOK_TITLE, $teaser->title);
+                update_post_meta($postId, WpComposite::POST_FACEBOOK_DESCRIPTION, $teaser->description);
+                if($teaser->image) {
+                    $imageId = WpAttachment::upload_attachment($postId, $teaser->image);
+                    update_post_meta($postId, WpComposite::POST_FACEBOOK_IMAGE, wp_get_attachment_image_url($imageId));
+                }
+            }
+            // Todo: implement Twitter social teaser
+        });
 
         //die(var_dump());
 
