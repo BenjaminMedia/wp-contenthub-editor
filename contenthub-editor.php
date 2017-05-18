@@ -136,7 +136,7 @@ register_activation_hook( __FILE__, function(){
 // Flush rewrite rules to generate new permalinks when plugin is deactivated
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules');
 
-// If the plugin is currently being deactivated we do no want to register our
+// If the plugin is currently being deactivated we do no want to register our rewrite rules, so we abort.
 if (isset($_GET['action'], $_GET['plugin']) && 'deactivate' === $_GET['action'] && plugin_basename(__FILE__) === $_GET['plugin'])
     return;
 
