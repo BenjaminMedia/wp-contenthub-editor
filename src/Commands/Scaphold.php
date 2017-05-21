@@ -348,7 +348,14 @@ class Scaphold extends WP_CLI_Command
             // Todo: implement Twitter social teaser
         });
 
-        //die(var_dump());
+        $originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null;
+
+        if($originalSlug) { // Ensure that post has the same url as it previously had
+            $currentSlug = parse_url(get_permalink($postId))['path'];
+            if($originalSlug !== $currentSlug) {
+                update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, $originalSlug);
+            }
+        }
 
         //WP_CLI::success( "Successfully Dumped JSON to: " . $file );
         //WP_CLI::ERROR("Failed dumping file, please check that " . WP_CONTENT_DIR . " is write able");
