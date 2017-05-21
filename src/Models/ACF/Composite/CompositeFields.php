@@ -1084,4 +1084,81 @@ https://your-organisation.23video.com/manage/video/12312945',
         'description' => '',
     ));
 
+    acf_add_local_field_group(array (
+        'key' => 'group_5921f0a76f313',
+        'title' => 'Locked Content',
+        'fields' => array (
+            array (
+                'key' => 'field_5921f0c676974',
+                'label' => 'Locked Content',
+                'name' => 'locked_content',
+                'type' => 'true_false',
+                'instructions' => '',
+                'required' => 0,
+                'conditional_logic' => 0,
+                'wrapper' => array (
+                    'width' => '',
+                    'class' => '',
+                    'id' => '',
+                ),
+                'message' => '',
+                'default_value' => 0,
+                'ui' => 0,
+                'ui_on_text' => '',
+                'ui_off_text' => '',
+            ),
+            array (
+                'key' => 'field_5921f0e576975',
+                'label' => 'Required User Role',
+                'name' => 'required_user_role',
+                'type' => 'select',
+                'instructions' => '',
+                'required' => 0,
+                'conditional_logic' => array (
+                    array (
+                        array (
+                            'field' => 'field_5921f0c676974',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                    ),
+                ),
+                'wrapper' => array (
+                    'width' => '',
+                    'class' => '',
+                    'id' => '',
+                ),
+                'choices' => array (
+                    'RegUser' => 'Registered User',
+                    'Subscriber' => 'Subscriber',
+                ),
+                'default_value' => array (
+                ),
+                'allow_null' => 0,
+                'multiple' => 0,
+                'ui' => 0,
+                'ajax' => 0,
+                'return_format' => 'value',
+                'placeholder' => '',
+            ),
+        ),
+        'location' => array (
+            array (
+                array (
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'contenthub_composite',
+                ),
+            ),
+        ),
+        'menu_order' => 4,
+        'position' => 'acf_after_title',
+        'style' => 'default',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
+        'hide_on_screen' => '',
+        'active' => 1,
+        'description' => '',
+    ));
+
 endif;
