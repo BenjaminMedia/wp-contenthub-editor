@@ -5,6 +5,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Scaphold\Client;
+use Illuminate\Support\Facades\Cache;
 use WP_CLI;
 use WP_CLI_Command;
 
@@ -176,26 +177,6 @@ class Scaphold extends WP_CLI_Command
                         locale
                         trait
                         videoIdentifier
-                      }
-                      file {
-                        id
-                        url
-                        caption
-                        accessRules {
-                          edges {
-                            node {
-                              id
-                              kind
-                              values
-                              domain
-                            }
-                          }
-                        }
-                      }
-                      product {
-                        id
-                        title
-                        description
                         images {
                           edges {
                             node {
@@ -209,25 +190,23 @@ class Scaphold extends WP_CLI_Command
                             }
                           }
                         }
-                        file {
-                          id
-                          url
-                          caption
-                        }
-                        video {
-                          id
-                          thumbnailUrl
-                          caption
-                          service
-                          locale
-                          trait
-                          videoIdentifier
-                        }
-                        link {
-                          id
-                          title
-                          url
-                          target
+                      }
+                      file {
+                        id
+                        url
+                        caption
+                        images {
+                          edges {
+                            node {
+                              id
+                              url
+                              locale
+                              trait
+                              caption
+                              altText
+                              copyright
+                            }
+                          }
                         }
                         accessRules {
                           edges {
@@ -259,7 +238,7 @@ class Scaphold extends WP_CLI_Command
                 }
               }
             }
-        ', ['id' => 'Q29tcG9zaXRlOjEw' ])->getComposite;
+        ', ['id' => 'Q29tcG9zaXRlOjE=' ])->getComposite;
         //', ['id' => 'Q29tcG9zaXRlOjEwNDc2Ng==' ])->getComposite;
 
         $existingId = WpComposite::id_from_contenthub_id($composite->id);
@@ -326,40 +305,23 @@ class Scaphold extends WP_CLI_Command
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-            if ($compositeContent->type === 'product') {
-                $filteredProducts = collect($compositeContent->content)
-                    ->only(['video', 'file', 'link'])
-                    ->reject(function ($value) {
-                        return is_null($value);
-                    });
-                $product = $filteredProducts->map(function ($product, $type) use ($postId) {
-                    if ($type === 'file') {
-                        return [
-                            'file' => WpAttachment::upload_attachment($postId, $product)
-                        ];
-                    } // Todo: implement video and link product types
-                })->first();
+            if ($compositeContent->type === 'file') {
                 $accessRules = collect($compositeContent->content->accessRules->edges)->pluck('node');
-                return collect([
-                    'acf_fc_layout' => $compositeContent->type,
-                    'title' => $compositeContent->content->title,
-                    'description' => $compositeContent->content->description,
-                    'product_type' => $filteredProducts->keys()->first(),
+                return [
+                    'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
+                    'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
+                        return [
+                            'file' => WpAttachment::upload_attachment($postId, $image->node),
+                        ];
+                    }),
                     'locked_content' => $accessRules->first(function ($rule) {
                         return $rule->domain === 'All' && $rule->kind === 'Deny';
                     }) ? true : false,
                     'required_user_role' => $accessRules->first(function ($rule) {
                         return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
                     })->domain,
-                    'allow_purchase' => $accessRules->first(function ($rule) {
-                        return $rule->domain === 'Purchase' && $rule->kind === 'Allow';
-                    }) ? true : false,
-                    'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
-                        return [
-                            'file' => WpAttachment::upload_attachment($postId, $image->nfode),
-                        ];
-                    })
-                ])->merge($product);
+                    'acf_fc_layout' => $compositeContent->type
+                ];
             }
         })->reject(function ($content) {
             return is_null($content);
