@@ -357,6 +357,22 @@ class Scaphold extends WP_CLI_Command
             }
         }
 
+        $accessRules = collect($composite->accessRules->edges)->pluck('node');
+        if(!$accessRules->isEmpty()) {
+            update_field('locked_content',
+                $accessRules->first(function ($rule) {
+                    return $rule->domain === 'All' && $rule->kind === 'Deny';
+                }) ? true : false,
+                $postId
+            );
+            update_field('required_user_role',
+                $accessRules->first(function ($rule) {
+                    return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
+                })->domain,
+                $postId
+            );
+        }
+
         //WP_CLI::success( "Successfully Dumped JSON to: " . $file );
         //WP_CLI::ERROR("Failed dumping file, please check that " . WP_CONTENT_DIR . " is write able");
     }
