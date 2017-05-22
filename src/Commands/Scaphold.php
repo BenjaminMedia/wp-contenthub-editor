@@ -47,7 +47,6 @@ class Scaphold extends WP_CLI_Command
             }
         ')->allComposites->edges);
 
-        //dd($composites);
 
         $composite = Client::query('  
             query GetComposite($id: ID!) {
@@ -126,6 +125,7 @@ class Scaphold extends WP_CLI_Command
                     node {
                       id
                       position
+                      locked
                       image {
                         id
                         url
@@ -281,13 +281,12 @@ class Scaphold extends WP_CLI_Command
                 return is_null($property);
             });
         })->map(function($compositeContent){
-            $contentType = $compositeContent->except(['id', 'position'])->keys()->first();
-            return (object) $compositeContent->only(['id', 'position'])->merge([
+            $contentType = $compositeContent->except(['id', 'position', 'locked'])->keys()->first();
+            return (object) $compositeContent->only(['id', 'position', 'locked'])->merge([
                 'type' => snake_case($contentType),
                 'content' => $compositeContent->get($contentType)
             ])->toArray();
         });
-
 
         //dd($compositeContents);
 
@@ -295,6 +294,7 @@ class Scaphold extends WP_CLI_Command
             if ($compositeContent->type === 'text_item') {
                 return [
                     'body' => $compositeContent->content->body,
+                    'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
@@ -302,11 +302,11 @@ class Scaphold extends WP_CLI_Command
                 return [
                     'lead_image' => $compositeContent->content->trait === 'Primary' ? true : false,
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
+                    'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
             if ($compositeContent->type === 'file') {
-                $accessRules = collect($compositeContent->content->accessRules->edges)->pluck('node');
                 return [
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
                     'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
@@ -314,12 +314,7 @@ class Scaphold extends WP_CLI_Command
                             'file' => WpAttachment::upload_attachment($postId, $image->node),
                         ];
                     }),
-                    'locked_content' => $accessRules->first(function ($rule) {
-                        return $rule->domain === 'All' && $rule->kind === 'Deny';
-                    }) ? true : false,
-                    'required_user_role' => $accessRules->first(function ($rule) {
-                        return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
-                    })->domain,
+                    'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
@@ -348,12 +343,11 @@ class Scaphold extends WP_CLI_Command
             // Todo: implement Twitter social teaser
         });
 
-        $originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null;
-
-        if($originalSlug) { // Ensure that post has the same url as it previously had
+        if($originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null) {
+            // Ensure that post has the same url as it previously had
             $currentSlug = parse_url(get_permalink($postId))['path'];
             if($originalSlug !== $currentSlug) {
-                update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, $originalSlug);
+                update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, ltrim($originalSlug, '/'));
             }
         }
 
