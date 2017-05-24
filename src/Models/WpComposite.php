@@ -17,6 +17,7 @@ class WpComposite
     const POST_TYPE_NAME_SINGULAR = 'Composite';
     const POST_SLUG = '%category%';
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
+    const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
     const POST_META_TITLE = '_yoast_wpseo_title';
     const POST_META_DESCRIPTION = '_yoast_wpseo_metadesc';
     const POST_CANONICAL_URL = '_yoast_wpseo_canonical';

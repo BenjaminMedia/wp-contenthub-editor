@@ -5,6 +5,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Scaphold\Client;
+use Illuminate\Support\Facades\Cache;
 use WP_CLI;
 use WP_CLI_Command;
 
@@ -46,7 +47,6 @@ class Scaphold extends WP_CLI_Command
             }
         ')->allComposites->edges);
 
-        //dd($composites);
 
         $composite = Client::query('  
             query GetComposite($id: ID!) {
@@ -125,6 +125,7 @@ class Scaphold extends WP_CLI_Command
                     node {
                       id
                       position
+                      locked
                       image {
                         id
                         url
@@ -176,26 +177,6 @@ class Scaphold extends WP_CLI_Command
                         locale
                         trait
                         videoIdentifier
-                      }
-                      file {
-                        id
-                        url
-                        caption
-                        accessRules {
-                          edges {
-                            node {
-                              id
-                              kind
-                              values
-                              domain
-                            }
-                          }
-                        }
-                      }
-                      product {
-                        id
-                        title
-                        description
                         images {
                           edges {
                             node {
@@ -209,25 +190,23 @@ class Scaphold extends WP_CLI_Command
                             }
                           }
                         }
-                        file {
-                          id
-                          url
-                          caption
-                        }
-                        video {
-                          id
-                          thumbnailUrl
-                          caption
-                          service
-                          locale
-                          trait
-                          videoIdentifier
-                        }
-                        link {
-                          id
-                          title
-                          url
-                          target
+                      }
+                      file {
+                        id
+                        url
+                        caption
+                        images {
+                          edges {
+                            node {
+                              id
+                              url
+                              locale
+                              trait
+                              caption
+                              altText
+                              copyright
+                            }
+                          }
                         }
                         accessRules {
                           edges {
@@ -259,7 +238,7 @@ class Scaphold extends WP_CLI_Command
                 }
               }
             }
-        ', ['id' => 'Q29tcG9zaXRlOjEw' ])->getComposite;
+        ', ['id' => 'Q29tcG9zaXRlOjE=' ])->getComposite;
         //', ['id' => 'Q29tcG9zaXRlOjEwNDc2Ng==' ])->getComposite;
 
         $existingId = WpComposite::id_from_contenthub_id($composite->id);
@@ -302,13 +281,12 @@ class Scaphold extends WP_CLI_Command
                 return is_null($property);
             });
         })->map(function($compositeContent){
-            $contentType = $compositeContent->except(['id', 'position'])->keys()->first();
-            return (object) $compositeContent->only(['id', 'position'])->merge([
+            $contentType = $compositeContent->except(['id', 'position', 'locked'])->keys()->first();
+            return (object) $compositeContent->only(['id', 'position', 'locked'])->merge([
                 'type' => snake_case($contentType),
                 'content' => $compositeContent->get($contentType)
             ])->toArray();
         });
-
 
         //dd($compositeContents);
 
@@ -316,6 +294,7 @@ class Scaphold extends WP_CLI_Command
             if ($compositeContent->type === 'text_item') {
                 return [
                     'body' => $compositeContent->content->body,
+                    'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
@@ -323,43 +302,21 @@ class Scaphold extends WP_CLI_Command
                 return [
                     'lead_image' => $compositeContent->content->trait === 'Primary' ? true : false,
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
+                    'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-            if ($compositeContent->type === 'product') {
-                $filteredProducts = collect($compositeContent->content)
-                    ->only(['video', 'file', 'link'])
-                    ->reject(function ($value) {
-                        return is_null($value);
-                    });
-                $product = $filteredProducts->map(function ($product, $type) use ($postId) {
-                    if ($type === 'file') {
-                        return [
-                            'file' => WpAttachment::upload_attachment($postId, $product)
-                        ];
-                    } // Todo: implement video and link product types
-                })->first();
-                $accessRules = collect($compositeContent->content->accessRules->edges)->pluck('node');
-                return collect([
-                    'acf_fc_layout' => $compositeContent->type,
-                    'title' => $compositeContent->content->title,
-                    'description' => $compositeContent->content->description,
-                    'product_type' => $filteredProducts->keys()->first(),
-                    'locked_content' => $accessRules->first(function ($rule) {
-                        return $rule->domain === 'All' && $rule->kind === 'Deny';
-                    }) ? true : false,
-                    'required_user_role' => $accessRules->first(function ($rule) {
-                        return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
-                    })->domain,
-                    'allow_purchase' => $accessRules->first(function ($rule) {
-                        return $rule->domain === 'Purchase' && $rule->kind === 'Allow';
-                    }) ? true : false,
+            if ($compositeContent->type === 'file') {
+                return [
+                    'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
                     'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
                         return [
-                            'file' => WpAttachment::upload_attachment($postId, $image->nfode),
+                            'file' => WpAttachment::upload_attachment($postId, $image->node),
                         ];
-                    })
-                ])->merge($product);
+                    }),
+                    'locked_content' => $compositeContent->locked,
+                    'acf_fc_layout' => $compositeContent->type
+                ];
             }
         })->reject(function ($content) {
             return is_null($content);
@@ -386,7 +343,29 @@ class Scaphold extends WP_CLI_Command
             // Todo: implement Twitter social teaser
         });
 
-        //die(var_dump());
+        if($originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null) {
+            // Ensure that post has the same url as it previously had
+            $currentSlug = parse_url(get_permalink($postId))['path'];
+            if($originalSlug !== $currentSlug) {
+                update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, ltrim($originalSlug, '/'));
+            }
+        }
+
+        $accessRules = collect($composite->accessRules->edges)->pluck('node');
+        if(!$accessRules->isEmpty()) {
+            update_field('locked_content',
+                $accessRules->first(function ($rule) {
+                    return $rule->domain === 'All' && $rule->kind === 'Deny';
+                }) ? true : false,
+                $postId
+            );
+            update_field('required_user_role',
+                $accessRules->first(function ($rule) {
+                    return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
+                })->domain,
+                $postId
+            );
+        }
 
         //WP_CLI::success( "Successfully Dumped JSON to: " . $file );
         //WP_CLI::ERROR("Failed dumping file, please check that " . WP_CONTENT_DIR . " is write able");
