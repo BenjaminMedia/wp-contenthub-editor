@@ -24,6 +24,7 @@ class CmdManager
             AdvancedCustomFields::register();
             Scaphold::register();
             Tags::register();
+            Categories::register();
         }
     }
 }
