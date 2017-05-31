@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Settings;
 
+use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
 use PLL_Language;
 
 class SettingsPage
@@ -12,11 +13,13 @@ class SettingsPage
     const SETTINGS_PAGE = 'bp_contenthub_editor_settings_page';
     const NOTICE_PREFIX = 'Bonnier ContentHub Editor:';
     const SETTINGS_TOOLBAR_NAME = 'ContentHub Editor';
+    const SETTING_SITE = 'site';
 
     private $settingsFields = [
-        'site_manager_host' => [
-            'type' => 'text',
-            'name' => 'Site manager host',
+        self::SETTING_SITE => [
+            'type' => 'select',
+            'name' => 'Site',
+            'options_callback' => [__CLASS__, 'site_manager_get_sites']
         ],
     ];
 
@@ -174,17 +177,26 @@ class SettingsPage
         if (isset($this->settingsValues[$settingKey]) && !empty($this->settingsValues[$settingKey])) {
             return $this->settingsValues[$settingKey];
         }
-        return false;
+        return null;
     }
 
-    public function get_api_endpoint($locale = null)
+    public function get_site_id($locale = null)
     {
-        return $this->get_setting_value('api_endpoint', $locale) ?: self::API_ENDPOINT_FALLBACK;
+        return $this->get_setting_value(static::SETTING_SITE, $locale);
     }
 
-    public function get_api_user($locale = null)
+    public function get_site($locale = null)
     {
-        return $this->get_setting_value('api_key', $locale) ?: '';
+        return SiteRepository::find_by_id($this->get_site_id($locale));
+    }
+
+    private static function site_manager_get_sites($locale) {
+        return collect(SiteRepository::get_all())->map(function($site){
+           return [
+               'label' => $site->domain,
+               'value' => $site->id
+           ];
+        });
     }
 
     private function enable_language_fields()
@@ -240,7 +252,7 @@ class SettingsPage
     private function get_select_field_options($field)
     {
         if (isset($field['options_callback'])) {
-            $options = $this->{$field['options_callback']}($field['locale']);
+            $options = call_user_func($field['options_callback'], $field['locale']);
             if ($options) {
                 return $options;
             }
@@ -269,8 +281,8 @@ class SettingsPage
             $fieldOutput = "<select name='$fieldName'>";
             $options = $this->get_select_field_options($field);
             foreach ($options as $option) {
-                $selected = ($option['system_key'] === $fieldValue) ? 'selected' : '';
-                $fieldOutput .= "<option value='" . $option['system_key'] . "' $selected >" . $option['system_key'] . "</option>";
+                $selected = ($option['value'] == $fieldValue) ? 'selected' : '';
+                $fieldOutput .= "<option value='" . $option['value'] . "' $selected >" . $option['label'] . "</option>";
             }
             $fieldOutput .= "</select>";
         }

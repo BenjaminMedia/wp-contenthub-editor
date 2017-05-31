@@ -23,6 +23,7 @@ class CmdManager
             Migrate::register();
             AdvancedCustomFields::register();
             Scaphold::register();
+            Tags::register();
         }
     }
 }
