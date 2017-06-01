@@ -2,6 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Categories;
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Tags;
+
 if ( defined('WP_CLI') && WP_CLI ) {
     // fix errors when running wp cli
     if(!isset($_SERVER['HTTP_HOST'])) {
