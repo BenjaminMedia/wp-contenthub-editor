@@ -11,6 +11,7 @@
 namespace Bonnier\WP\ContentHub\Editor;
 
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
+use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
@@ -92,7 +93,7 @@ class Plugin
         load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($this->basename) . '/languages');
 
         $this->settings = new SettingsPage();
-
+        new CollectionHelper; // Extends Collection with extra methods
         // Register custom post type
         WpComposite::register();
         WpAttachment::register();

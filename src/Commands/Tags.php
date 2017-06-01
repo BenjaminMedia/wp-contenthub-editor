@@ -55,11 +55,11 @@ class Tags extends WP_CLI_Command
 
     private function mapTags($site, $callable)
     {
-        $tagQuery = TagRepository::find_by_brand_id($site->data->brand->id);
+        $tagQuery = TagRepository::find_by_brand_id($site->brand->id);
 
         while (isset($tagQuery->meta->pagination->links->next)) {
             collect($tagQuery->data)->each($callable);
-            $tagQuery = TagRepository::find_by_brand_id($site->data->brand->id, $tagQuery->meta->pagination->current_page +1);
+            $tagQuery = TagRepository::find_by_brand_id($site->brand->id, $tagQuery->meta->pagination->current_page +1);
         }
     }
 

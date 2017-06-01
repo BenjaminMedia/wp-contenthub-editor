@@ -38,10 +38,14 @@ class CategoryRepository implements CategoryContract
             null;
     }
 
-    public static function find_by_brand_id($id)
+    public static function find_by_brand_id($id, $page = 1)
     {
         try {
-            $response = Client::getInstance()->get('/api/v1/categories/brand/'.$id);
+            $response = Client::getInstance()->get('/api/v1/categories/brand/' . $id, [
+                'query' => [
+                    'page' => $page
+                ]
+            ]);
         } catch (ClientException $e) {
             return null;
         }
