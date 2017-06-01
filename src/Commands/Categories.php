@@ -65,7 +65,7 @@ class Categories extends WP_CLI_Command
     private function importTermAndLinkTranslations($externalTerm) {
         $termIdsByLocale = collect($externalTerm->name)->map(function($name, $languageCode) use($externalTerm) {
             return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
-        })->rejectNullValues()->toAssoc()->toArray(); // Creates an associative array with language code as key and term id as value
+        })->toAssoc()->rejectNullValues()->toArray(); // Creates an associative array with language code as key and term id as value
         pll_save_term_translations($termIdsByLocale);
         return $termIdsByLocale;
     }
