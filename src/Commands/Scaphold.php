@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Scaphold\Client;
@@ -119,6 +120,14 @@ class Scaphold extends WP_CLI_Command
                   description
                   originalUrl
                   socialMediaText
+                }
+                categories {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
                 }
                 content(first: 10000, orderBy: {field: position, direction: ASC}) {
                   edges {
@@ -238,7 +247,7 @@ class Scaphold extends WP_CLI_Command
                 }
               }
             }
-        ', ['id' => 'Q29tcG9zaXRlOjE=' ])->getComposite;
+        ', ['id' => 'Q29tcG9zaXRlOjI=' ])->getComposite;
         //', ['id' => 'Q29tcG9zaXRlOjEwNDc2Ng==' ])->getComposite;
 
         $existingId = WpComposite::id_from_contenthub_id($composite->id);
@@ -263,6 +272,8 @@ class Scaphold extends WP_CLI_Command
             ],
         ]);
 
+        pll_set_post_language($postId, $composite->locale);
+
         update_field('kind', $composite->kind, $postId);
         update_field('description', $composite->description, $postId);
 
@@ -277,9 +288,7 @@ class Scaphold extends WP_CLI_Command
 
 
         $compositeContents = collect($composite->content->edges)->pluck('node')->map(function($compositeContent){
-            return collect($compositeContent)->reject(function($property){
-                return is_null($property);
-            });
+            return collect($compositeContent)->rejectNullValues();
         })->map(function($compositeContent){
             $contentType = $compositeContent->except(['id', 'position', 'locked'])->keys()->first();
             return (object) $compositeContent->only(['id', 'position', 'locked'])->merge([
@@ -318,9 +327,7 @@ class Scaphold extends WP_CLI_Command
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-        })->reject(function ($content) {
-            return is_null($content);
-        });
+        })->rejectNullValues();
 
         update_field('composite_content', $content->toArray(), $postId);
 
@@ -366,6 +373,20 @@ class Scaphold extends WP_CLI_Command
                 $postId
             );
         }
+
+        collect($composite->categories->edges)->pluck('node')->each(function($category) use($postId){
+            if($existingTermId = WpTerm::id_from_contenthub_id($category->id)) {
+                update_field('category', $existingTermId, $postId);
+            }
+        });
+
+        $tags = collect($compositeContents->map(function($compositeContent){
+            if($compositeContent->type === 'tag' && $existingTermId = WpTerm::id_from_contenthub_id($compositeContent->content->id)) {
+                return $existingTermId;
+            }
+            return null;
+        }))->rejectNullValues()->toArray();
+        update_field('tags', $tags, $postId);
 
         //WP_CLI::success( "Successfully Dumped JSON to: " . $file );
         //WP_CLI::ERROR("Failed dumping file, please check that " . WP_CONTENT_DIR . " is write able");

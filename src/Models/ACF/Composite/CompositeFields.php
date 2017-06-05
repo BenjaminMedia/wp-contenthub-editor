@@ -1,4 +1,19 @@
 <?php
+function get_magazine_issues() {
+    $issues = array_map(function($issue){
+        if($issue <= 9) {
+            return '0' . $issue;
+        }
+        return $issue;
+    }, range(1, 18));
+    return array_combine($issues, $issues);
+}
+
+function get_magazine_years() {
+    $years = array_reverse(range(1980, date("Y") + 1));
+    return array_combine($years, $years);
+}
+
 if( function_exists('acf_add_local_field_group') ):
 
     acf_add_local_field_group(array (
@@ -177,7 +192,7 @@ if( function_exists('acf_add_local_field_group') ):
                                 'key' => 'field_58aae55326609',
                                 'label' => 'Body',
                                 'name' => 'body',
-                                'type' => 'textarea',
+                                'type' => 'markdown-editor',
                                 'instructions' => '',
                                 'required' => 1,
                                 'conditional_logic' => 0,
@@ -1139,7 +1154,7 @@ https://your-organisation.23video.com/manage/video/12312945',
                 'key' => 'field_58f5febf3cb9c',
                 'label' => 'Magazine Year',
                 'name' => 'magazine_year',
-                'type' => 'number',
+                'type' => 'select',
                 'instructions' => 'The magazine year ie. 2017 if the article was published in 2017',
                 'required' => 0,
                 'conditional_logic' => 0,
@@ -1148,21 +1163,20 @@ https://your-organisation.23video.com/manage/video/12312945',
                     'class' => '',
                     'id' => '',
                 ),
-                'default_value' => 2017,
+                'choices' => get_magazine_years(),
+                'default_value' => array(),
+                'allow_null' => 1,
+                'multiple' => 0,
+                'ui' => 0,
+                'ajax' => 0,
+                'return_format' => 'value',
                 'placeholder' => '',
-                'prepend' => '',
-                'append' => '',
-                'min' => 1900,
-                'max' => 3000,
-                'step' => 1,
-                'readonly' => 0,
-                'disabled' => 0,
             ),
             array (
                 'key' => 'field_58e3878b2dc76',
                 'label' => 'Magazine Issue',
                 'name' => 'magazine_issue',
-                'type' => 'number',
+                'type' => 'select',
                 'instructions' => 'The magazine issue ie. 01 for the first issue of a given year',
                 'required' => 0,
                 'conditional_logic' => 0,
@@ -1171,15 +1185,29 @@ https://your-organisation.23video.com/manage/video/12312945',
                     'class' => '',
                     'id' => '',
                 ),
-                'default_value' => 1,
+                'choices' => get_magazine_issues(),
+                'default_value' => array(),
+                'allow_null' => 1,
+                'multiple' => 0,
+                'ui' => 0,
+                'ajax' => 0,
+                'return_format' => 'value',
                 'placeholder' => '',
-                'prepend' => '',
-                'append' => '',
-                'min' => '01',
-                'max' => 100,
-                'step' => 1,
-                'readonly' => 0,
-                'disabled' => 0,
+            ),
+            array (
+                'key' => 'field_593160952e164',
+                'label' => 'markdown',
+                'name' => 'markdown',
+                'type' => 'markdown-editor',
+                'instructions' => '',
+                'required' => 0,
+                'conditional_logic' => 0,
+                'wrapper' => array (
+                    'width' => '',
+                    'class' => '',
+                    'id' => '',
+                ),
+                'font_size' => 14,
             ),
         ),
         'location' => array (
