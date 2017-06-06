@@ -99,13 +99,12 @@ class MarkdownEditor extends acf_field {
 		*  Please note that you must also have a matching $defaults value for the field name (font_size)
 		*/
 		
-		/*acf_render_field_setting( $field, array(
-			'label'			=> __('Font Size','acf-markdown-editor'),
-			'instructions'	=> __('Customise the input font size','acf-markdown-editor'),
-			'type'			=> 'number',
-			'name'			=> 'font_size',
-			'prepend'		=> 'px',
-		));*/
+		acf_render_field_setting( $field, array(
+			'label'			=> __('Simple MDE Configuration','acf-markdown-editor'),
+			'instructions'	=> __('Write','acf-markdown-editor'),
+			'type'			=> 'textarea',
+			'name'			=> 'simple_mde_config'
+		));
 
 	}
 	
@@ -132,12 +131,13 @@ class MarkdownEditor extends acf_field {
         ?>
         <textarea rows="8" id="<?php echo $id ?>" name="<?php echo esc_attr($field['name']) ?>"></textarea>
         <script>
-              var simplemde = new SimpleMDE({
+              var simplemde = new SimpleMDE(Object.assign({
                 element: document.getElementById("<?php echo $id ?>"),
                 spellChecker: false
-              });
+              },{
+                <?php echo $field['simple_mde_config'] ?>
+              }));
               simplemde.value("<?php $this->format_field_value( $field['value'] ) ?>");
-            //}, 2000);
         </script>
 		<?php
 	}

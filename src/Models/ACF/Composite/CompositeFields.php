@@ -201,11 +201,23 @@ if( function_exists('acf_add_local_field_group') ):
                                     'class' => '',
                                     'id' => '',
                                 ),
-                                'default_value' => '',
-                                'placeholder' => '',
-                                'maxlength' => '',
-                                'rows' => '',
-                                'new_lines' => '',
+                                'simple_mde_config' => 'toolbar : [
+                                    \'bold\',
+                                    \'italic\',
+                                    \'heading-2\',
+                                    \'heading-3\',
+                                    \'|\',
+                                    \'unordered-list\',
+                                    \'ordered-list\',
+                                    \'link\',
+                                    \'|\',
+                                    \'preview\',
+                                    \'side-by-side\',
+                                    \'fullscreen\',
+                                    \'|\',
+                                    \'guide\'
+                                ]',
+                                'font_size' => 14,
                             ),
                             array (
                                 'key' => 'field_5922bd745cd9d',
@@ -1055,6 +1067,7 @@ https://your-organisation.23video.com/manage/video/12312945',
         'active' => 1,
         'description' => '',
     ));
+
 
     acf_add_local_field_group(array (
         'key' => 'group_58e38d7eca92e',
