@@ -1206,22 +1206,7 @@ https://your-organisation.23video.com/manage/video/12312945',
                 'ajax' => 0,
                 'return_format' => 'value',
                 'placeholder' => '',
-            ),
-            array (
-                'key' => 'field_593160952e164',
-                'label' => 'markdown',
-                'name' => 'markdown',
-                'type' => 'markdown-editor',
-                'instructions' => '',
-                'required' => 0,
-                'conditional_logic' => 0,
-                'wrapper' => array (
-                    'width' => '',
-                    'class' => '',
-                    'id' => '',
-                ),
-                'font_size' => 14,
-            ),
+            )
         ),
         'location' => array (
             array (
