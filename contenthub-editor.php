@@ -14,6 +14,7 @@ use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
+use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 
 // Do not access this file directly
@@ -95,6 +96,7 @@ class Plugin
         $this->settings = new SettingsPage();
         new CollectionHelper; // Extends Collection with extra methods
         // Register custom post type
+        WpTaxonomy::register();
         WpComposite::register();
         WpAttachment::register();
         CmdManager::register();
