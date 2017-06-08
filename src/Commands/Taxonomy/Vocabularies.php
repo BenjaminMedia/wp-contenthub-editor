@@ -2,9 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
+use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
-use Bonnier\WP\ContentHub\Editor\Plugin;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\VocabularyRepository;
 use WP_Cli;
 
@@ -13,7 +13,7 @@ use WP_Cli;
  *
  * @package \Bonnier\WP\ContentHub\Editor\Commands\Taxonomy
  */
-class Vocabularies extends WP_CLI
+class Vocabularies extends BaseCmd
 {
     const CMD_NAMESPACE = 'vocabularies';
 
@@ -38,12 +38,6 @@ class Vocabularies extends WP_CLI
         });
         WpTaxonomy::set_custom_taxonomies($vocabularies);
         WP_CLI::success( 'Done importing Vocabularies' );
-    }
-
-    protected function mapSites($callable) {
-        collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function($locale) use($callable){
-            return Plugin::instance()->settings->get_site($locale);
-        })->rejectNullValues()->each($callable);
     }
 
     protected function mapVocabularies($site, $callable)
