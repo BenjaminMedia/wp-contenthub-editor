@@ -57,6 +57,8 @@ class Composites extends BaseCmd
 
     private function import_composite($composite)
     {
+        WP_CLI::line('Beginning import of: ' . $composite->title  . ' id: ' . $composite->id);
+
         $postId = $this->create_post($composite);
         $compositeContents = $this->format_composite_contents($composite);
 
@@ -83,8 +85,7 @@ class Composites extends BaseCmd
                 'Published' => 'publish',
                 'Draft' => 'draft',
                 'Ready' => 'pending'
-            ])
-                ->get($composite->status, 'draft'),
+            ])->get($composite->status, 'draft'),
             'post_type' => WpComposite::POST_TYPE,
             'post_date' => $composite->publishedAt ?? $composite->createdAt,
             'post_modified' => $composite->modifiedAt,
