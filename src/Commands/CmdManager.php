@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Categories;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Tags;
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Vocabularies;
 
 if ( defined('WP_CLI') && WP_CLI ) {
     // fix errors when running wp cli
@@ -28,6 +29,7 @@ class CmdManager
             Scaphold::register();
             Tags::register();
             Categories::register();
+            Vocabularies::register();
         }
     }
 }

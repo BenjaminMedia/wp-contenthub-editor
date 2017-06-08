@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\WP\ContentHub\Editor\Http\Redirects;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFields;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 
 /**
@@ -49,9 +50,8 @@ class WpComposite
                     ],
                 ]
             );
+            static::register_acf_fields();
         });
-
-        static::register_acf_fields();
     }
 
     /**
@@ -68,6 +68,7 @@ class WpComposite
 
     private static function register_acf_fields() {
         require_once (__DIR__ .'/ACF/Composite/CompositeFields.php');
+        TaxonomyFields::add_fields(WpTaxonomy::get_custom_taxonomies());
     }
 
     private static function register_permalink() {

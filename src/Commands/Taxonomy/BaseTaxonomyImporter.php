@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
+use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 use WP_CLI_Command;
 
@@ -50,16 +51,17 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         return $termIdsByLocale;
     }
 
-    protected function importTerm($name, $languageCode, $externalCategory) {
-        $contentHubId = $externalCategory->content_hub_ids->{$languageCode};
-        $parentTermId = $this->getParentTermId($languageCode, $externalCategory->parent);
-        $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different lanaguages
+    protected function importTerm($name, $languageCode, $externalTerm) {
+        $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
+        $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent);
+        $taxonomy = $externalTerm->vocabulary ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
+        $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
         if($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             // Term exists so we update it
-            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $this->taxonomy, $parentTermId);
+            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId);
         }
         // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $this->taxonomy, $parentTermId);
+        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId);
     }
 
     protected function getParentTermId($languageCode, $externalCategory) {
