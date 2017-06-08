@@ -15,7 +15,7 @@ class WpTaxonomy
 
     public static function register() {
         add_action('init', function(){
-            static::get_custom_taxononmies()->each(function($customTaxonomy){
+            static::get_custom_taxonomies()->each(function($customTaxonomy){
                 register_taxonomy($customTaxonomy->machine_name, WpComposite::POST_TYPE, [
                     'label'             => $customTaxonomy->name,
                     'show_ui'           => false,
@@ -26,16 +26,16 @@ class WpTaxonomy
     }
 
     public static function add($externalTaxonomy) {
-        $customTaxonomies = static::get_custom_taxononmies();
+        $customTaxonomies = static::get_custom_taxonomies();
         $customTaxonomies[$externalTaxonomy->content_hub_id] = $externalTaxonomy;
         static::set_custom_taxonomies($customTaxonomies);
     }
 
     public static function get_taxonomy($contentHubId) {
-        return static::get_custom_taxononmies()->get($contentHubId)->machine_name ?? null;
+        return static::get_custom_taxonomies()->get($contentHubId)->machine_name ?? null;
     }
 
-    public static function get_custom_taxononmies() {
+    public static function get_custom_taxonomies() {
         return collect(get_option(static::CUSTOM_TAXONOMIES_OPTION, []));
     }
 

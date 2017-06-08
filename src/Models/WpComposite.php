@@ -68,7 +68,7 @@ class WpComposite
 
     private static function register_acf_fields() {
         require_once (__DIR__ .'/ACF/Composite/CompositeFields.php');
-        TaxonomyFields::add_fields(WpTaxonomy::get_custom_taxononmies());
+        TaxonomyFields::add_fields(WpTaxonomy::get_custom_taxonomies());
     }
 
     private static function register_permalink() {

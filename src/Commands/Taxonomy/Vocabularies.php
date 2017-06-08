@@ -55,14 +55,10 @@ class Vocabularies extends WP_CLI
             collect($vocabularies->data)->each($callable);
             if($vocabularies->meta->pagination->links->next) {
                 $nextPage = $vocabularies->meta->pagination->current_page +1;
-                $query = VocabularyRepository::find_by_app_id($site->app->id, $nextPage);
+                $vocabularies = VocabularyRepository::find_by_app_id($site->app->id, $nextPage);
                 continue;
             }
             $vocabularies = null;
         }
-    }
-
-    protected function importVocabulary($externalVocabulary){
-        WpTaxonomy::add($externalVocabulary);
     }
 }
