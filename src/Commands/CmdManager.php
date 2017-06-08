@@ -26,7 +26,7 @@ class CmdManager
         if ( defined('WP_CLI') && WP_CLI ) {
             Migrate::register();
             AdvancedCustomFields::register();
-            Scaphold::register();
+            Composites::register();
             Tags::register();
             Categories::register();
             Vocabularies::register();
