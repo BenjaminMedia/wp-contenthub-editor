@@ -3,7 +3,12 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\WP\ContentHub\Editor\Http\Redirects;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFields;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 
 /**
@@ -67,8 +72,11 @@ class WpComposite
     }
 
     private static function register_acf_fields() {
-        require_once (__DIR__ .'/ACF/Composite/CompositeFields.php');
-        TaxonomyFields::add_fields(WpTaxonomy::get_custom_taxonomies());
+        CompositeFieldGroup::register();
+        MagazineFieldGroup::register();
+        MetaFieldGroup::register();
+        TeaserFieldGroup::register();
+        TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
 
     private static function register_permalink() {

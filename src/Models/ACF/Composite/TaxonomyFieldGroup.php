@@ -5,41 +5,43 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Illuminate\Support\Collection;
 
 /**
- * Class TaxonomyFields
+ * Class TaxonomyFieldGroup
  *
  * @package \Bonnier\WP\ContentHub\Editor\Models\ACF\Composite
  */
-class TaxonomyFields
+class TaxonomyFieldGroup
 {
-    public static function add_fields(Collection $customTaxonomies) {
+    public static function register(Collection $customTaxonomies) {
         static::create_acf_field_group($customTaxonomies->map(function($customTaxonomy){
             return static::get_acf_taxonomy_field($customTaxonomy);
         })->toArray());
     }
 
     private static function create_acf_field_group($formattedFields) {
-        acf_add_local_field_group([
-            'key' => 'group_5937df68c8ff8',
-            'title' => 'Taxonomy',
-            'fields' => $formattedFields,
-            'location' => [
-                [
+        if( function_exists('acf_add_local_field_group') ) {
+            acf_add_local_field_group([
+                'key' => 'group_5937df68c8ff8',
+                'title' => 'Taxonomy',
+                'fields' => $formattedFields,
+                'location' => [
                     [
-                        'param' => 'post_type',
-                        'operator' => '==',
-                        'value' => WpComposite::POST_TYPE,
+                        [
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => WpComposite::POST_TYPE,
+                        ],
                     ],
                 ],
-            ],
-            'menu_order' => 1,
-            'position' => 'acf_after_title',
-            'style' => 'default',
-            'label_placement' => 'top',
-            'instruction_placement' => 'label',
-            'hide_on_screen' => '',
-            'active' => 1,
-            'description' => '',
-        ]);
+                'menu_order' => 1,
+                'position' => 'acf_after_title',
+                'style' => 'default',
+                'label_placement' => 'top',
+                'instruction_placement' => 'label',
+                'hide_on_screen' => '',
+                'active' => 1,
+                'description' => '',
+            ]);
+        }
     }
 
     private static function get_acf_taxonomy_field($customTaxonomy) {
