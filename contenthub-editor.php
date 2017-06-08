@@ -10,6 +10,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor;
 
+use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
@@ -95,6 +96,7 @@ class Plugin
 
         $this->settings = new SettingsPage();
         new CollectionHelper; // Extends Collection with extra methods
+        new MarkdownEditor;
         // Register custom post type
         WpTaxonomy::register();
         WpComposite::register();

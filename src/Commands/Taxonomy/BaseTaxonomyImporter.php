@@ -6,6 +6,7 @@ use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 use WP_CLI_Command;
+use WP_CLI;
 
 /**
  * Class BaseTaxonomyImporter
@@ -37,9 +38,15 @@ class BaseTaxonomyImporter extends WP_CLI_Command
     {
         $termQuery = call_user_func($this->getTermCallback, $site->brand->id);
 
-        while (isset($termQuery->meta->pagination->links->next)) {
+        while (!is_null($termQuery)) {
+            WP_CLI::line( "Begning import of page: " . $termQuery->meta->pagination->current_page );
             collect($termQuery->data)->each($callable);
-            $termQuery = call_user_func($this->getTermCallback, $site->brand->id, $termQuery->meta->pagination->current_page +1);
+            if($termQuery->meta->pagination->links->next) {
+                $nextPage = $termQuery->meta->pagination->current_page +1;
+                $termQuery = call_user_func($this->getTermCallback, $site->brand->id, $nextPage);
+                continue;
+            }
+            $termQuery = null;
         }
     }
 
