@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
+use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
@@ -81,6 +82,7 @@ class Composites extends BaseCmd
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $composite->title,
+            'post_name' => SlugHelper::create_slug($composite->title),
             'post_status' => collect([
                 'Published' => 'publish',
                 'Draft' => 'draft',
@@ -205,7 +207,7 @@ class Composites extends BaseCmd
         if ($originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null) {
             // Ensure that post has the same url as it previously had
             $currentSlug = parse_url(get_permalink($postId))['path'];
-            if ($originalSlug !== $currentSlug) {
+            if (rtrim($originalSlug, '/') !== rtrim($currentSlug, '/')) {
                 update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, ltrim($originalSlug, '/'));
             }
         }
@@ -238,6 +240,5 @@ class Composites extends BaseCmd
             }
         });
     }
-
 
 }
