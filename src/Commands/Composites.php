@@ -23,7 +23,7 @@ class Composites extends BaseCmd
     }
 
     /**
-     * Dumps ACF fields defined in code to a JSON importable file
+     * Imports composites from Scahpold
      *
      * ## EXAMPLES
      *
