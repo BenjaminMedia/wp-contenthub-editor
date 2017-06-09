@@ -13,7 +13,7 @@ class SlugHelper
 
         $string = strtolower($string);
 
-        collect([ // Special slug characters that need to be replaced in a certain way to retain previeously generated urls
+        collect([ // Special slug characters that need to be replaced in a certain way to retain previously generated urls
             'ö' => 'o',
             'ø' => 'oe',
             'å' => 'aa',
