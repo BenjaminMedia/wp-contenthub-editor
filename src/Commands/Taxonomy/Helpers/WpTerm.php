@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
+use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 
 /**
@@ -14,7 +15,7 @@ class WpTerm
     public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent' => $parentTermId,
-            'slug' => sanitize_title_with_dashes($name)
+            'slug' => SlugHelper::create_slug($name)
         ]);
         if(is_wp_error($createdTerm)) {
             WP_CLI::warning( "Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
@@ -31,7 +32,7 @@ class WpTerm
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name' => $name,
             'parent' => $parentTermId,
-            'slug' => sanitize_title_with_dashes($name)
+            'slug' => SlugHelper::create_slug($name)
         ]);
         if(is_wp_error($updatedTerm)) {
             WP_CLI::warning( "Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
