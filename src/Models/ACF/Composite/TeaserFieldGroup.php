@@ -78,13 +78,15 @@ class TeaserFieldGroup
                             'class' => '',
                             'id' => '',
                         ],
-                        'simple_mde_config' => 'toolbar : [
-                        \'bold\',
-                        \'italic\',
-                        \'|\',
-                        \'preview\',
-                        \'guide\'
-                    ]',
+                        'simple_mde_config' => json_encode([
+                            'toolbar' => [
+                                'bold',
+                                'italic',
+                                '|',
+                                'preview',
+                                'guide'
+                            ]
+                        ]),
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
