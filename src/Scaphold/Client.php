@@ -9,11 +9,10 @@ class Client extends \GuzzleHttp\Client
 {
 
     protected static $instance = null;
+    protected static $token = null;
 
     /**
      * Client constructor.
-     *
-     * @param array $scapholdEndpoint
      */
     public function __construct()
     {
@@ -33,8 +32,33 @@ class Client extends \GuzzleHttp\Client
     {
         if(is_null(self::$instance)) {
             self::$instance = new static();
+            self::$instance->login(getenv('SCAPHOLD_USERNAME') ?? null, getenv('SCAPHOLD_PASSWORD') ?? null);
         }
         return self::$instance;
+    }
+
+    public function login($username = null, $password = null)
+    {
+        if (static::$token) {
+            return $this; /* already authenticated */
+        }
+
+        if ($username === null && $password === null) {
+            return $this; /* assume authentication is unwanted */
+        }
+
+        $query = 'mutation LoginUserQuery ($input: LoginUserInput!) { loginUser(input: $input) { token } }';
+        $variables  = [
+            'input' => [
+                'username' => $username,
+                'password' => $password
+            ]
+        ];
+
+        $response = $this->query($query, $variables);
+        static::$token = $response->loginUser->token ?? null;
+
+        return $this;
     }
 
     public static function query($query, $variables = null) {
@@ -57,7 +81,8 @@ class Client extends \GuzzleHttp\Client
     private static function requestScaphold(Array $params, $tries = 0) {
         try {
             $response = static::getInstance()->post(null, [
-                'json' => $params
+                'json' => $params,
+                'headers' => static::$token ? [ 'Authorization' => 'Bearer ' . static::$token ] : null,
             ]);
             $responseBody = $response->getBody()->getContents();
             // Scaphold sometimes return empty body with response code 200, we try to catch this and re attempt the request
