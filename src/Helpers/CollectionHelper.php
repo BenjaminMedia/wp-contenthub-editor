@@ -16,6 +16,16 @@ class CollectionHelper extends Collection
      */
     public function __construct()
     {
+        Collection::macro('toAssocCombine', function () {
+            return $this->reduce(function ($assoc, $taxonomyValue){
+                collect($taxonomyValue)->each(function($value, $taxonomy) use (&$assoc){
+                    if(!$assoc[$taxonomy] instanceof Collection)
+                        $assoc[$taxonomy] = new static;
+                    $assoc[$taxonomy]->push($value);
+                });
+                return $assoc;
+            }, new static);
+        });
         Collection::macro('toAssoc', function () {
             return $this->reduce(function ($assoc, $keyValuePair) {
                 list($key, $value) = $keyValuePair;
