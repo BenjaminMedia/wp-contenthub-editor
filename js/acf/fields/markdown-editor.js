@@ -19,7 +19,7 @@
     jQuery(el).find('.acf-field-simple-mde').each(function()
     {
       if(jQuery(this).is(":visible")) { // Only render visible elements
-        createSimpleMde(this, this.dataset.simpleMdeConfig);
+        createSimpleMde(this, jQuery(this).data('simple-mde-config'));
       }
     })
 

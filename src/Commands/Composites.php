@@ -6,7 +6,9 @@ use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
+use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
+use Illuminate\Support\Collection;
 use WP_CLI;
 
 /**
@@ -66,8 +68,8 @@ class Composites extends BaseCmd
         $this->handle_translation($postId, $composite);
         $this->set_meta($postId, $composite);
         $this->save_composite_contents($postId, $compositeContents);
-        $this->save_tags($compositeContents);
-        $this->save_teasers($composite);
+        $this->save_tags($postId, $compositeContents);
+        $this->save_teasers($postId, $composite);
         $this->set_slug($postId, $composite);
         $this->handle_locked_content($postId, $composite);
         $this->save_categories($postId, $composite);
@@ -170,18 +172,22 @@ class Composites extends BaseCmd
         update_field('composite_content', $content->toArray(), $postId);
     }
 
-    private function save_tags($compositeContents)
+    private function save_tags($postId, $compositeContents)
     {
-        $tags = collect($compositeContents->map(function ($compositeContent) {
+        collect($compositeContents->map(function ($compositeContent) {
             if ($compositeContent->type === 'tag' && $existingTermId = WpTerm::id_from_contenthub_id($compositeContent->content->id)) {
-                return $existingTermId;
+                if(isset($compositeContent->content->vocabulary->id) && $existingTaxonomy = WpTaxonomy::get_taxonomy($compositeContent->content->vocabulary->id)) {
+                    return [$existingTaxonomy => $existingTermId];
+                }
+                return ['tags' => $existingTermId];
             }
             return null;
-        }))->rejectNullValues()->toArray();
-        update_field('tags', $tags, $postId);
+        }))->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use($postId){
+            update_field($taxonomy, $tagIds->toArray(), $postId);
+        });
     }
 
-    private function save_teasers($composite)
+    private function save_teasers($postId, $composite)
     {
         collect($composite->teasers->edges)->pluck('node')->each(function ($teaser) use ($postId) {
             if ($teaser->kind === 'Internal') {

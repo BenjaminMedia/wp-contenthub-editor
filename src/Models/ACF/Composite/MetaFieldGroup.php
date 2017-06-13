@@ -22,8 +22,8 @@ class MetaFieldGroup
                 'fields' => [
                     [
                         'key' => 'field_58fde84d034e4',
-                        'label' => 'Comercial',
-                        'name' => 'comercial',
+                        'label' => 'Commercial',
+                        'name' => 'commercial',
                         'type' => 'true_false',
                         'instructions' => '',
                         'required' => 0,
@@ -41,8 +41,8 @@ class MetaFieldGroup
                     ],
                     [
                         'key' => 'field_58fde876034e5',
-                        'label' => 'Comercial Type',
-                        'name' => 'comercial_type',
+                        'label' => 'Commercial Type',
+                        'name' => 'commercial_type',
                         'type' => 'select',
                         'instructions' => '',
                         'required' => 0,
