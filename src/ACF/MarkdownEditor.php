@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\ACF;
 
 use acf_field;
+use Bonnier\WP\ContentHub\Editor\Plugin;
 
 class MarkdownEditor extends acf_field {
 	
@@ -126,22 +127,15 @@ class MarkdownEditor extends acf_field {
 	*/
 	
 	public function render_field( $field ) {
-
-        $id = uniqid(); // generate a unique id for the text area
         ?>
-        <textarea rows="8" id="<?php echo $id ?>" name="<?php echo esc_attr($field['name']) ?>"></textarea>
-        <script>
-              var simplemde = new SimpleMDE(Object.assign({
-                element: document.getElementById("<?php echo $id ?>"),
-                spellChecker: false
-              },{
-                <?php echo $field['simple_mde_config'] ?>
-              }));
-              simplemde.value("<?php $this->format_field_value( $field['value'] ) ?>");
-        </script>
+        <textarea rows="8"
+                  class="acf-field-simple-mde"
+                  data-simple-mde-config='<?php echo $field['simple_mde_config'] ?>'
+                  name="<?php echo esc_attr($field['name']) ?>"
+        ><?php echo $field['value'] ?></textarea>
 		<?php
 	}
-	
+
 		
 	/*
 	*  input_admin_enqueue_scripts()
@@ -160,8 +154,10 @@ class MarkdownEditor extends acf_field {
 	public function input_admin_enqueue_scripts() {
 
 		// register & include JS
-		wp_register_script( 'acf-input-markdown-editor', "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js", ['acf-input'] );
-		wp_enqueue_script('acf-input-markdown-editor');
+		wp_register_script( 'acf-input-simple-mde', "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js", ['acf-input'] );
+        wp_enqueue_script('acf-input-simple-mde');
+
+        wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'] );
 		
 		
 		// register & include CSS
@@ -170,14 +166,6 @@ class MarkdownEditor extends acf_field {
 		
 	}
 
-	private function format_field_value($value) {
-        echo esc_attr( // Escape dangerous values
-                trim( // Trim spaces surrounding the string
-                        preg_replace('/\s\s+/', '\n', $value) // Replace spaces with newline char to avoid breaking JS
-                )
-        );
-    }
-	
 	
 	/*
 	*  input_admin_head()
@@ -249,9 +237,9 @@ class MarkdownEditor extends acf_field {
 	/*
 		
 	function input_admin_footer() {
-	
-		
-		
+
+
+
 	}
 	
 	*/
