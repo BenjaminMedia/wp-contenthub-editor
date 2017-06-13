@@ -105,8 +105,17 @@ class Composites extends BaseCmd
 
     private function handle_translation($postId, $composite)
     {
-        // Todo: link translations together by calling pll_save_post_translations()
-        pll_set_post_language($postId, $composite->locale);
+        pll_set_post_language($postId, $composite->locale); // Set post language
+        if(isset($composite->translationSet->composites->edges)) {
+            pll_save_post_translations( // Link translations together
+                collect($composite->translationSet->composites->edges)->pluck('node')->map(function($compositeTranslation){
+                    if($localId = WpComposite::id_from_contenthub_id($compositeTranslation->id)) { // Get local post id
+                        return [$compositeTranslation->locale, $localId];
+                    }
+                    return null;
+                })->rejectNullValues()->toAssoc()->toArray() // returns something like ['da' => 232, 'sv' => 231]
+            );
+        }
     }
 
     private function set_meta($postId, $composite)
