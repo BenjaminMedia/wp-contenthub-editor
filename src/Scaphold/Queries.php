@@ -70,6 +70,14 @@ class Queries
             translationSet {
               id
               masterLocale
+              composites {
+                edges {
+                  node {
+                    id
+                    locale
+                  }
+                }
+              }
             }
             recommended {
               edges {
