@@ -46,7 +46,7 @@ class TaxonomyFieldGroup
 
     private static function get_acf_taxonomy_field($customTaxonomy) {
         return [
-            'key' => 'field_'.substr(md5($customTaxonomy->machine_name), 0, 13),
+            'key' => 'field_'.md5($customTaxonomy->machine_name),
             'label' => $customTaxonomy->name,
             'name' => $customTaxonomy->machine_name,
             'type' => 'taxonomy',
