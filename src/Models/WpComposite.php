@@ -8,6 +8,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 
 /**
@@ -75,6 +76,7 @@ class WpComposite
         MagazineFieldGroup::register();
         MetaFieldGroup::register();
         TeaserFieldGroup::register();
+        TranslationStateFieldGroup::register();
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
 
