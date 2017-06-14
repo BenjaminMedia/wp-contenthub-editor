@@ -18,7 +18,7 @@ class WpTaxonomy
             static::get_custom_taxonomies()->each(function($customTaxonomy){
                 register_taxonomy($customTaxonomy->machine_name, WpComposite::POST_TYPE, [
                     'label'             => $customTaxonomy->name,
-                    'show_ui'           => true,
+                    'show_ui'           => false,
                     'show_admin_column' => false,
                 ]);
             });

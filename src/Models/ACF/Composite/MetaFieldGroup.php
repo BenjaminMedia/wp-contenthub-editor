@@ -10,8 +10,16 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class MetaFieldGroup
 {
+    const COMMERCIAL_TYPES = [
+        'Advertorial' => 'Advertorial',
+        'AffiliatePartner' => 'AffiliatePartner',
+        'CommercialContent' => 'CommercialContent',
+        'Offer' => 'Offer',
+    ];
+
     public static function register() {
         static::create_acf_field_group();
+        static::register_pll_translations();
     }
 
     private static function create_acf_field_group() {
@@ -60,12 +68,7 @@ class MetaFieldGroup
                             'class' => '',
                             'id' => '',
                         ],
-                        'choices' => [
-                            'Advertorial' => 'Advertorial',
-                            'AffiliatePartner' => 'AffiliatePartner',
-                            'CommercialContent' => 'CommercialContent',
-                            'Offer' => 'Offer',
-                        ],
+                        'choices' => static::COMMERCIAL_TYPES,
                         'default_value' => [
                         ],
                         'allow_null' => 1,
@@ -96,6 +99,15 @@ class MetaFieldGroup
                 'active' => 1,
                 'description' => '',
             ]);
+        }
+    }
+
+    private static function register_pll_translations()
+    {
+        if(function_exists('pll_register_string')) {
+            collect(static::COMMERCIAL_TYPES)->each(function($commercialType){
+                pll_register_string($commercialType, $commercialType, 'content-hub-editor');
+            });
         }
     }
 }
