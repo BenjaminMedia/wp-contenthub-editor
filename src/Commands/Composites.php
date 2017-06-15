@@ -201,7 +201,7 @@ class Composites extends BaseCmd
         collect($composite->teasers->edges)->pluck('node')->each(function ($teaser) use ($postId) {
             if ($teaser->kind === 'Internal') {
                 update_field('teaser_title', $teaser->title, $postId);
-                update_field('teaser_description', $teaser->title, $postId);
+                update_field('teaser_description', $teaser->description, $postId);
                 update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaser->image), $postId);
             }
             if ($teaser->kind === 'Facebook') {
