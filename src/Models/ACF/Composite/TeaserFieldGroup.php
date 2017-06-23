@@ -24,7 +24,7 @@ class TeaserFieldGroup
                         'key' => 'field_58e38d86194e2',
                         'label' => 'Title',
                         'name' => 'teaser_title',
-                        'type' => 'markdown-editor',
+                        'type' => 'text',
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
@@ -33,17 +33,6 @@ class TeaserFieldGroup
                             'class' => '',
                             'id' => '',
                         ],
-                        'simple_mde_config' => json_encode([
-                            'max-height' => '100px',
-                            'height' => '100px',
-                            'toolbar' => [
-                                'bold',
-                                'italic',
-                                '|',
-                                'preview',
-                                'guide'
-                            ]
-                        ]),
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',

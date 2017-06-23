@@ -31,8 +31,8 @@ class Vocabularies extends BaseCmd
      */
     public function import() {
         $vocabularies = collect();
-        $this->mapSites(function($site) use($vocabularies) {
-            $this->mapVocabularies($site, function ($vocabulary) use($vocabularies) {
+        $this->map_sites(function($site) use($vocabularies) {
+            $this->map_vocabularies($site, function ($vocabulary) use($vocabularies) {
                 $vocabularies[$vocabulary->content_hub_id] = $vocabulary;
             });
         });
@@ -40,7 +40,7 @@ class Vocabularies extends BaseCmd
         WP_CLI::success( 'Done importing Vocabularies' );
     }
 
-    protected function mapVocabularies($site, $callable)
+    protected function map_vocabularies($site, $callable)
     {
         $vocabularies = VocabularyRepository::find_by_app_id($site->app->id);
 
