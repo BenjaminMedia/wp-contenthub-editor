@@ -26,15 +26,26 @@ class Composites extends BaseCmd
     }
 
     /**
-     * Imports composites from Scahpold
+     * Imports composites from Scaphold
+     *
+     * ## OPTIONS
+     *
+     *
+     * [--id=<id>]
+     * : The id of a single composite to import.
      *
      * ## EXAMPLES
-     *
      * wp contenthub editor composites import
      *
+     * @param $args
+     * @param $assocArgs
      */
-    public function import()
+    public function import($args, $assocArgs)
     {
+        if($id = $assocArgs['id'] ?? null) {
+            $this->import_composite(CompositeRepository::find_by_id($id));
+            return;
+        }
         $this->map_sites(function ($site) {
             $this->map_composites_by_brand_id($site->brand->content_hub_id, function ($composite) {
                 $this->import_composite($composite);
@@ -172,6 +183,13 @@ class Composites extends BaseCmd
                             'file' => WpAttachment::upload_attachment($postId, $image->node),
                         ];
                     }),
+                    'locked_content' => $compositeContent->locked,
+                    'acf_fc_layout' => $compositeContent->type
+                ];
+            }
+            if ($compositeContent->type === 'inserted_code') {
+                return [
+                    'code' => $compositeContent->content->code,
                     'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
                 ];

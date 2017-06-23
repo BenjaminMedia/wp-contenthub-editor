@@ -12,10 +12,37 @@ class WpAttachment
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_COPYRIGHT = 'attachment_copyright';
 
-    public static function register() {
+    public static function register()
+    {
         // Add custom copyright field to image attachments
         add_filter( 'attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2 );
         add_filter( 'attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2 );
+
+        // Make attachments private and change attachment url to a signed url
+        add_filter( 'wp_get_attachment_url', [__CLASS__, 'wp_get_attachment_url'], 100, 2 );
+        add_filter( 'wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
+    }
+
+    public static function wp_update_attachment_metadata($data, $postId)
+    {
+        $postMeta = get_post_meta($postId);
+
+        // Check that attachment meta contains s3 info so we can set the visibility of the object
+        if(isset($postMeta['amazonS3_info'][0]) && $s3Info = unserialize($postMeta['amazonS3_info'][0])){
+            static::set_s3_object_visibility($s3Info['bucket'], $s3Info['key'], 'private');
+        }
+
+        return $data;
+    }
+
+    public static function wp_get_attachment_url($url, $post_id)
+    {
+        if(is_admin()) {
+            // Create signed url that expires after 3600 seconds (1 hour)
+            return as3cf_get_secure_attachment_url($post_id, 3600);
+        }
+
+        return $url;
     }
 
     /**
@@ -104,7 +131,7 @@ class WpAttachment
         $attachment = [
             'post_mime_type' => $fileMeta['type'],
             'post_parent' => $postId,
-            'post_title' => $file->caption,
+            'post_title' => '',
             'post_content' => '',
             'post_excerpt' => $file->caption ?? '',
             'post_status' => 'inherit',
@@ -141,5 +168,18 @@ class WpAttachment
         [
             'ID' => $attachmentId
         ]);
+    }
+
+    private static function set_s3_object_visibility($bucket, $key, $acl)
+    {
+        global $as3cf;
+
+        $s3Client = $as3cf->get_s3client();
+
+        $s3Client->putObjectAcl(array(
+            'ACL' => $acl,
+            'Bucket' => $bucket,
+            'Key' => $key
+        ));
     }
 }
