@@ -47,7 +47,7 @@ class Vocabularies extends BaseCmd
         while ($vocabularies) {
             WP_CLI::line( "Begning import of page: " . $vocabularies->meta->pagination->current_page );
             collect($vocabularies->data)->each($callable);
-            if($vocabularies->meta->pagination->links->next) {
+            if(isset($vocabularies->meta->pagination->links->next)) {
                 $nextPage = $vocabularies->meta->pagination->current_page +1;
                 $vocabularies = VocabularyRepository::find_by_app_id($site->app->id, $nextPage);
                 continue;

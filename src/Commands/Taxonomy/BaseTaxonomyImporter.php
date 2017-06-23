@@ -41,7 +41,7 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         while (!is_null($termQuery)) {
             WP_CLI::line( "Begning import of page: " . $termQuery->meta->pagination->current_page );
             collect($termQuery->data)->each($callable);
-            if($termQuery->meta->pagination->links->next) {
+            if(isset($termQuery->meta->pagination->links->next)) {
                 $nextPage = $termQuery->meta->pagination->current_page +1;
                 $termQuery = call_user_func($this->getTermCallback, $site->brand->id, $nextPage);
                 continue;
@@ -60,7 +60,7 @@ class BaseTaxonomyImporter extends WP_CLI_Command
 
     protected function importTerm($name, $languageCode, $externalTerm) {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent);
+        $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = $externalTerm->vocabulary ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
         $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
         if($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {

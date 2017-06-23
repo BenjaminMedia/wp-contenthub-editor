@@ -23,6 +23,9 @@ class CmdManager
     const CORE_CMD_NAMESPACE = 'contenthub editor';
 
     public static function register() {
+        if(!defined('PLL_ADMIN'))  {
+            define('PLL_ADMIN', true); // Tell Polylang to be in admin mode so that various term filters are loaded
+        }
         if ( defined('WP_CLI') && WP_CLI ) {
             Migrate::register();
             AdvancedCustomFields::register();
