@@ -80,6 +80,28 @@ class MetaFieldGroup
                         'readonly' => 0,
                         'return_format' => 'value',
                     ],
+                    [
+
+                        'key' => 'field_58fde876034e6',
+                        'label' => 'Internal Comment',
+                        'name' => 'internal_comment',
+                        'type' => 'textarea',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'default_value' => '',
+                        'placeholder' => '',
+                        'maxlength' => '',
+                        'rows' => '',
+                        'new_lines' => '',
+                        'readonly' => 0,
+                        'disabled' => 0,
+                    ]
                 ],
                 'location' => [
                     [
