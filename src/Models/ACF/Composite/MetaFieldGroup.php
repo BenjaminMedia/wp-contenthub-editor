@@ -97,7 +97,7 @@ class MetaFieldGroup
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
-                        'rows' => '',
+                        'rows' => '3',
                         'new_lines' => '',
                         'readonly' => 0,
                         'disabled' => 0,
