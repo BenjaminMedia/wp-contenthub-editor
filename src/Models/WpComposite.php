@@ -92,7 +92,7 @@ class WpComposite
                 add_rewrite_rule(
                     '(.*)\/([^\/]+)\/?',
                     'index.php?category_name=$matches[1]&name=$matches[2]',
-                    'top'
+                    'bottom'
                 );
                 static::flush_rewrite_rules_if_needed();
             }
