@@ -97,6 +97,19 @@ class WpComposite
                 static::flush_rewrite_rules_if_needed();
             }
         }, 1, 2);
+        
+        //check if a page matches
+        add_action( 'parse_request', function ( $request ) {
+            // if the rule was matched, the query var will be set
+            if( isset( $request->query_vars['category_name'] ) ){
+                // check if a page exists, reset query vars to load that page if it does
+                if( get_page_by_path( $request->query_vars['category_name'] ) ){
+                    $request->query_vars['pagename'] = $request->query_vars['category_name'];
+                    unset( $request->query_vars['category_name'] );
+                }
+            }
+            return $request;
+        },1 );
 
         /**
          * Have WordPress match postname to any of our public post types (post, page, contenthub_composite)
