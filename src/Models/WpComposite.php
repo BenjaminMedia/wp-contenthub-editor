@@ -54,6 +54,9 @@ class WpComposite
                         'title',
                         'author'
                     ],
+                    'taxonomies' => [
+                        'category'
+                    ],
                 ]
             );
             static::register_acf_fields();
