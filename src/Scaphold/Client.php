@@ -37,7 +37,7 @@ class Client extends \GuzzleHttp\Client
         return self::$instance;
     }
 
-    public function login($username = null, $password = null)
+    public function login($username = false, $password = false)
     {
         if (static::$token) {
             return $this; /* already authenticated */
@@ -96,7 +96,7 @@ class Client extends \GuzzleHttp\Client
         } catch (Exception $e) {
             sleep(1);
             if ($tries > 20) {
-                throw new ErrorException("Request Attempts to scaphold exceeded 20, skipping node");
+                throw new ErrorException("Request Attempts to scaphold exceeded 20, skipping node (Exception: ".$e->getMessage());
             }
             return static::requestScaphold($params, $tries = $tries + 1);
         }
