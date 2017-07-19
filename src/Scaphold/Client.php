@@ -32,18 +32,18 @@ class Client extends \GuzzleHttp\Client
     {
         if(is_null(self::$instance)) {
             self::$instance = new static();
-            self::$instance->login(getenv('SCAPHOLD_USERNAME') ?? null, getenv('SCAPHOLD_PASSWORD') ?? null);
+            self::$instance->login(getenv('SCAPHOLD_USERNAME'), getenv('SCAPHOLD_PASSWORD'));
         }
         return self::$instance;
     }
 
-    public function login($username = null, $password = null)
+    public function login($username = false, $password = false)
     {
         if (static::$token) {
             return $this; /* already authenticated */
         }
 
-        if ($username === null && $password === null) {
+        if ($username === false && $password === false) {
             return $this; /* assume authentication is unwanted */
         }
 
@@ -96,7 +96,7 @@ class Client extends \GuzzleHttp\Client
         } catch (Exception $e) {
             sleep(1);
             if ($tries > 20) {
-                throw new ErrorException("Request Attempts to scaphold exceeded 20, skipping node");
+                throw new ErrorException("Request Attempts to scaphold exceeded 20, skipping node (Exception: ".$e->getMessage());
             }
             return static::requestScaphold($params, $tries = $tries + 1);
         }
