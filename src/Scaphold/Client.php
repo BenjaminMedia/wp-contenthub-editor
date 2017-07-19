@@ -32,7 +32,7 @@ class Client extends \GuzzleHttp\Client
     {
         if(is_null(self::$instance)) {
             self::$instance = new static();
-            self::$instance->login(getenv('SCAPHOLD_USERNAME') ?? null, getenv('SCAPHOLD_PASSWORD') ?? null);
+            self::$instance->login(getenv('SCAPHOLD_USERNAME'), getenv('SCAPHOLD_PASSWORD'));
         }
         return self::$instance;
     }
@@ -43,7 +43,7 @@ class Client extends \GuzzleHttp\Client
             return $this; /* already authenticated */
         }
 
-        if ($username === null && $password === null) {
+        if ($username === false && $password === false) {
             return $this; /* assume authentication is unwanted */
         }
 
