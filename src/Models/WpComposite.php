@@ -152,7 +152,9 @@ class WpComposite
                         $category = get_term($category->parent);
                     }
                 }
-                return str_replace( static::POST_SLUG, $slugs->reverse()->implode('/'), $postLink );
+                $tempUrlWithoutSlug = str_replace( static::POST_SLUG, $slugs->reverse()->implode('/'), $postLink );
+
+                return str_replace("%contenthub_composite%", $post->post_name, $tempUrlWithoutSlug);
             }
 
             return $postLink;
