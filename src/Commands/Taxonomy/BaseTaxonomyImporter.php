@@ -39,7 +39,7 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         $termQuery = call_user_func($this->getTermCallback, $site->brand->id);
 
         while (!is_null($termQuery)) {
-            WP_CLI::line( "Begning import of page: " . $termQuery->meta->pagination->current_page );
+            WP_CLI::line( "Beginning import of page: " . $termQuery->meta->pagination->current_page );
             collect($termQuery->data)->each($callable);
             if(isset($termQuery->meta->pagination->links->next)) {
                 $nextPage = $termQuery->meta->pagination->current_page +1;
@@ -63,12 +63,17 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = $externalTerm->vocabulary ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
         $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
+
+        $description = $externalTerm->description->{$languageCode};
+        $imageUrl = $externalTerm->image_url;
+        $seoText = $externalTerm->seo_text;
+
         if($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             // Term exists so we update it
-            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId);
+            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $imageUrl, $seoText);
         }
         // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId);
+        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $imageUrl, $seoText);
     }
 
     protected function getParentTermId($languageCode, $externalCategory) {
