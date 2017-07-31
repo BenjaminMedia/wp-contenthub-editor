@@ -12,11 +12,19 @@ use WP_CLI;
  */
 class WpTerm
 {
-    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null) {
+    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $imageUrl, $seoText) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name)
+            'slug' => SlugHelper::create_slug($name),
+            'description' => $description
         ]);
+
+        //category image
+        update_term_meta($createdTerm['term_id'], 'image', $imageUrl);
+
+        //seo text
+        update_term_meta($createdTerm['term_id'], 'seo_text', $seoText);
+
         if(is_wp_error($createdTerm)) {
             WP_CLI::warning( "Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
                 . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
@@ -28,12 +36,20 @@ class WpTerm
         return $createdTerm['term_id'];
     }
 
-    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null) {
+    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $imageUrl, $seoText) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name' => $name,
             'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name)
+            'slug' => SlugHelper::create_slug($name),
+            'description' => $description
         ]);
+
+        //category image
+        update_term_meta($existingTermId, 'image', $imageUrl);
+
+        //seo text
+        update_term_meta($existingTermId, 'seo_text', $seoText);
+
         if(is_wp_error($updatedTerm)) {
             WP_CLI::warning( "Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
                 . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
