@@ -12,9 +12,9 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 class TranslationStateFieldGroup
 {
     const TRANSLATION_STATES = [
-        'Ready' => 'Ready For Translation',
-        'Progress' => 'In Progress',
-        'Translated' => 'Translated',
+        'ready' => 'Ready For Translation',
+        'progress' => 'In Progress',
+        'translated' => 'Translated',
     ];
 
     public static function register() {
@@ -49,6 +49,23 @@ class TranslationStateFieldGroup
                         'ajax' => 0,
                         'return_format' => 'value',
                         'placeholder' => '',
+                    ),
+                    array (
+                        'key' => 'field_59885bce3d421',
+                        'label' => 'Translation deadline',
+                        'name' => 'translation_deadline',
+                        'type' => 'date_picker',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => array (
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ),
+                        'display_format' => 'F j, Y',
+                        'return_format' => 'Y-m-d',
+                        'first_day' => 1,
                     ),
                 ),
                 'location' => array (
