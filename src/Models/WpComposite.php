@@ -154,7 +154,7 @@ class WpComposite
                 }
                 $tempUrlWithoutSlug = str_replace( static::POST_SLUG, $slugs->reverse()->implode('/'), $postLink );
 
-                return str_replace("%contenthub_composite%", $post->post_name, $tempUrlWithoutSlug);
+                return rtrim(str_replace('%'.static::POST_TYPE.'%', $post->post_name, $tempUrlWithoutSlug), '/');
             }
 
             return $postLink;
