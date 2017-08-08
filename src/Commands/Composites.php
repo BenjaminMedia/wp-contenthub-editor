@@ -42,6 +42,11 @@ class Composites extends BaseCmd
      */
     public function import($args, $assocArgs)
     {
+        // Disable generation of image sizes on import to speed up the precess
+        add_filter('intermediate_image_sizes_advanced', function ($sizes) {
+            return [];
+        });
+
         if($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
             return;
