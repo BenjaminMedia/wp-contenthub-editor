@@ -145,8 +145,10 @@ class Composites extends BaseCmd
             update_field('magazine_issue', $magazineYearIssue[1], $postId);
         }
 
-        update_field('commercial', !is_null($composite->advertorial_type), $postId);
-        update_field('commercial_type', $composite->advertorial_type, $postId);
+
+        update_field('commercial', isset($composite->advertorial_type), $postId);
+        update_field('commercial_type', $composite->advertorial_type ?? null, $postId);
+
 
         update_field('internal_comment', $composite->metaInformation->internalComment ?? null, $postId);
     }
