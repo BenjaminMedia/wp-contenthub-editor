@@ -103,6 +103,7 @@ class WpAttachment
             return null;
         }
 
+
         // If attachment already exists then update meta data and return the id
         if($existingId = static::id_from_contenthub_id($file->id)) {
             static::update_attachment($existingId, $file);
@@ -151,6 +152,10 @@ class WpAttachment
         $attachmentData = wp_generate_attachment_metadata( $attachmentId, $uploadedFile['file'] );
         if(!wp_update_attachment_metadata( $attachmentId,  $attachmentData )) {
             return null;
+        }
+
+        if(function_exists('pll_set_post_language')){
+            pll_set_post_language($attachmentId, pll_get_post_language($postId));
         }
 
         return $attachmentId;
