@@ -962,7 +962,9 @@ class CompositeFieldGroup
                 'style' => 'seamless',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
-                'hide_on_screen' => '',
+                'hide_on_screen' => [
+                    0 => 'categories'
+                ],
                 'active' => 1,
                 'description' => '',
             ));
