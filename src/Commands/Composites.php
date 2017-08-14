@@ -150,7 +150,7 @@ class Composites extends BaseCmd
         update_field('commercial_type', $composite->advertorial_type ?? null, $postId);
 
 
-        update_field('internal_comment', $composite->metaInformation->internalComment ?? null, $postId);
+        //update_field('internal_comment', $composite->metaInformation->internalComment ?? null, $postId);
     }
 
     private function format_composite_contents($composite)

@@ -130,7 +130,6 @@ class Queries
               description
               originalUrl
               socialMediaText
-              internalComment
             }
             categories {
               edges {
