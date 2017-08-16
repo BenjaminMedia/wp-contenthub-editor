@@ -33,4 +33,20 @@ class Tags extends BaseTaxonomyImporter
 
         WP_CLI::success( 'Done importing tags' );
     }
+
+    /**
+     * Cleans failed tags imports
+     *
+     * ## OPTIONS
+     * [--remove-empty]
+     * : Whether or not to remove empty terms
+     *
+     * ## EXAMPLES
+     *
+     * wp contenthub editor tags clean
+     *
+     */
+    public function clean($args, $assocArgs) {
+        $this->clean_terms('post_tag', isset($assocArgs['remove-empty']));
+    }
 }
