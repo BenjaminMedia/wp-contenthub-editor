@@ -33,4 +33,21 @@ class Categories extends BaseTaxonomyImporter
 
         WP_CLI::success( 'Done importing Categories' );
     }
+
+    /**
+     * Cleans failed category imports
+     *
+     * ## OPTIONS
+     * [--remove-empty]
+     * : Whether or not to remove empty terms
+     *
+     * ## EXAMPLES
+     *
+     * wp contenthub editor categories clean
+     *
+     */
+    public function clean($args, $assocArgs) {
+        $this->clean_terms('category', isset($assocArgs['remove-empty']));
+    }
+
 }

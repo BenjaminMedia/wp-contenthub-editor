@@ -84,4 +84,26 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         $this->importTermAndLinkTranslations($externalCategory)[$languageCode] ?? null;
     }
 
+    public function clean_terms($taxononmy, $removeEmpty = false)
+    {
+        collect(get_terms([
+            'taxonomy'   => $taxononmy,
+            'hide_empty' => false,
+            'number'     => 0
+        ]))->filter(function (\WP_Term $term) use ($removeEmpty) {
+            if (! get_term_meta($term->term_id, 'content_hub_id', true) || $term->count === 0 && $removeEmpty) {
+                return true;
+            }
+            return false;
+        })->pipe(function ($terms) {
+            WP_CLI::line('A total of: ' . $terms->count() . ' will be removed');
+            return $terms;
+        })->each(function (\WP_Term $term) use ($taxononmy) {
+            wp_delete_term($term->term_id, $taxononmy);
+            WP_CLI::line('Removed term: ' . $term->term_id);
+        });
+
+        WP_CLI::success('Done cleaning ' . $taxononmy);
+    }
+
 }
