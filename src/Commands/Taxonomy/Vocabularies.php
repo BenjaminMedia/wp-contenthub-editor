@@ -42,14 +42,14 @@ class Vocabularies extends BaseCmd
 
     protected function map_vocabularies($site, $callable)
     {
-        $vocabularies = VocabularyRepository::find_by_app_id($site->app->id);
+        $vocabularies = VocabularyRepository::find_by_brand_id($site->brand->id);
 
         while ($vocabularies) {
             WP_CLI::line( "Begning import of page: " . $vocabularies->meta->pagination->current_page );
             collect($vocabularies->data)->each($callable);
             if(isset($vocabularies->meta->pagination->links->next)) {
                 $nextPage = $vocabularies->meta->pagination->current_page +1;
-                $vocabularies = VocabularyRepository::find_by_app_id($site->app->id, $nextPage);
+                $vocabularies = VocabularyRepository::find_by_brand_id($site->brand->id, $nextPage);
                 continue;
             }
             $vocabularies = null;

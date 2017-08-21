@@ -42,10 +42,10 @@ class VocabularyRepository implements VocabularyContract
             null;
     }
 
-    public static function find_by_app_id($id, $page = 1)
+    public static function find_by_brand_id($id, $page = 1)
     {
         try {
-            $response = Client::getInstance()->get('/api/v1/vocabularies/app/'.$id, [
+            $response = Client::getInstance()->get('/api/v1/vocabularies/brand/'.$id, [
                 'query' => [
                     'page' => $page
                 ]
