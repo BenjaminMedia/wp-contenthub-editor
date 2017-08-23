@@ -34,6 +34,7 @@ class Vocabularies extends BaseCmd
         $this->map_sites(function($site) use($vocabularies) {
             $this->map_vocabularies($site, function ($vocabulary) use($vocabularies) {
                 $vocabularies[$vocabulary->content_hub_id] = $vocabulary;
+                WP_CLI::line( 'Importing: ' . $vocabulary->name );
             });
         });
         WpTaxonomy::set_custom_taxonomies($vocabularies);

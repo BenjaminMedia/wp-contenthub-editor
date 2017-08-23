@@ -59,13 +59,13 @@ class TaxonomyFieldGroup
                 'id' => '',
             ),
             'taxonomy' => $customTaxonomy->machine_name,
-            'field_type' => 'select',
+            'field_type' => isset($customTaxonomy->multi_select) && $customTaxonomy->multi_select ? 'multi_select' : 'select',
             'allow_null' => 1,
             'add_term' => 0,
             'save_terms' => 1,
             'load_terms' => 0,
             'return_format' => 'object',
-            'multiple' => 0,
+            'multiple' =>isset($customTaxonomy->multi_select) && $customTaxonomy->multi_select ? 1 : 0,
         ];
     }
 }
