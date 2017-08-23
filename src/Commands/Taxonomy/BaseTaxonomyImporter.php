@@ -65,15 +65,15 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
 
         $description = $externalTerm->description->{$languageCode};
-        $imageUrl = $externalTerm->image_url;
-        $seoText = $externalTerm->seo_text;
+        $internal = $externalTerm->internal ?? false;
+
 
         if($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             // Term exists so we update it
-            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $imageUrl, $seoText);
+            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
         }
         // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $imageUrl, $seoText);
+        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
     }
 
     protected function getParentTermId($languageCode, $externalCategory) {
