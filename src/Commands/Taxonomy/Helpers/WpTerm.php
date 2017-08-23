@@ -12,18 +12,12 @@ use WP_CLI;
  */
 class WpTerm
 {
-    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $imageUrl, $seoText) {
+    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent' => $parentTermId,
             'slug' => SlugHelper::create_slug($name),
             'description' => $description
         ]);
-
-        //category image
-        update_term_meta($createdTerm['term_id'], 'image', $imageUrl);
-
-        //seo text
-        update_term_meta($createdTerm['term_id'], 'seo_text', $seoText);
 
         if(is_wp_error($createdTerm)) {
             WP_CLI::warning( "Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
@@ -32,23 +26,18 @@ class WpTerm
         }
         pll_set_term_language($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
+        update_term_meta($createdTerm['term_id'], 'internal', $internal);
         WP_CLI::success( "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId" );
         return $createdTerm['term_id'];
     }
 
-    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $imageUrl, $seoText) {
+    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name' => $name,
             'parent' => $parentTermId,
             'slug' => SlugHelper::create_slug($name),
             'description' => $description
         ]);
-
-        //category image
-        update_term_meta($existingTermId, 'image', $imageUrl);
-
-        //seo text
-        update_term_meta($existingTermId, 'seo_text', $seoText);
 
         if(is_wp_error($updatedTerm)) {
             WP_CLI::warning( "Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
@@ -57,6 +46,7 @@ class WpTerm
         }
         pll_set_term_language($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
+        update_term_meta($existingTermId, 'internal', $internal);
         WP_CLI::success( "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId" );
         return $existingTermId;
     }
