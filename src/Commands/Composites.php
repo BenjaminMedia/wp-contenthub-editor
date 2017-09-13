@@ -10,6 +10,7 @@ use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Illuminate\Support\Collection;
 use WP_CLI;
+use WP_Post;
 
 /**
  * Class AdvancedCustomFields
@@ -56,6 +57,45 @@ class Composites extends BaseCmd
                 $this->import_composite($composite);
             });
         });
+    }
+
+    /**
+     * Removes imported composites that no longer exist on content hub
+     *
+     * ## OPTIONS
+     *
+     *
+     * [--id=<id>]
+     * : The id of a single composite to import.
+     *
+     * ## EXAMPLES
+     * wp contenthub editor composites clean_orphaned
+     *
+     * @param $args
+     * @param $assocArgs
+     */
+    public function clean_orphaned($args, $assocArgs)
+    {
+        WP_CLI::line('Beginning clean of orphaned composites');
+
+        $queryArgs = [
+            'post_type' => 'contenthub_composite',
+            'posts_per_page' => 100,
+            'paged' => 0
+        ];
+
+        $posts = query_posts($queryArgs);
+
+        while ($posts) {
+            collect($posts)->each(function (WP_Post $post) {
+                $this->remove_if_orphaned($post);
+            });
+
+            $queryArgs['paged']++;
+            $posts = query_posts($queryArgs);
+        }
+
+        WP_CLI::success('Done');
     }
 
     private function map_composites_by_brand_id($id, callable $callable)
@@ -281,6 +321,28 @@ class Composites extends BaseCmd
                 update_field('category', $existingTermId, $postId);
             }
         });
+    }
+
+    private function remove_if_orphaned(WP_Post $post)
+    {
+        $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
+        if($compositeId && !CompositeRepository::find_by_id($compositeId)) {
+            // Delete attachments on composite
+            collect(get_field('composite_content', $post->ID) ?? [])->each(function($content){
+                if($content['acf_fc_layout'] === 'file') {
+                    wp_delete_attachment($content['file']['ID'], true);
+                    collect($content['images'])->each(function($image){
+                        wp_delete_attachment($image['file']['ID'], true);
+                    });
+                }
+                if($content['acf_fc_layout'] === 'image') {
+                    wp_delete_attachment($content['file']['ID'], true);
+                }
+            });
+            // Delete composite
+            wp_delete_post($post->ID, true);
+            WP_CLI::line(sprintf('Removed post: %s, with id:%s and composite id:%s', $post->post_title, $post->ID, $compositeId));
+        }
     }
 
 }
