@@ -107,6 +107,24 @@ class WpComposite
                     $request->query_vars['pagename'] = $request->query_vars['category_name'];
                     unset( $request->query_vars['category_name'] );
                 }
+                /*
+                 * The above page check would have been applied and unset the category name, therefore we need to check again to avoid unwanted
+                 * undefined index errors.
+                 * The bellow 'hack' will be applied to category pages to make sure we can't access sub-category URL directly without the parent-category
+                 * E.g:
+                 * - http://gds.dev/terrasse/ (terrasse is the parent). Url works
+                 * - http://gds.dev/terrasse/fliseterrasse/ (fliseterrasse sub-category). Url works
+                 * - http://gds.dev/fliseterrasse/ (This should not work and throw 404 page)
+                 */
+                if ( isset($request->query_vars['category_name']) ) {
+                    $parentCategory = get_category_by_slug($request->query_vars['category_name']);
+                    if (isset($parentCategory->parent) && $parentCategory->parent > 0) {
+                        add_action('wp',   function() {
+                            global $wp_query;
+                            $wp_query->is_404 = true;
+                        });
+                    }
+                }
             }
             return $request;
         },1 );
