@@ -107,6 +107,7 @@ class WpComposite
                     $request->query_vars['pagename'] = $request->query_vars['category_name'];
                     unset( $request->query_vars['category_name'] );
                 }
+
                 /*
                  * The above page check would have been applied and unset the category name, therefore we need to check again to avoid unwanted
                  * undefined index errors.
@@ -124,6 +125,12 @@ class WpComposite
                             $wp_query->is_404 = true;
                         });
                     }
+                }
+
+                // if the Contenthub Editor rewrite rule has caught a robots.txt request, then serve robots.txt
+                if ( isset($request->query_vars['category_name']) && $request->query_vars['category_name'] == "robots.txt") {
+                    unset( $request->query_vars['category_name'] );
+                    $request->query_vars['robots'] = 1;
                 }
             }
             return $request;
