@@ -10,6 +10,9 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
+use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
+use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
+use WP_Post;
 
 /**
  * Class WpComposite
@@ -61,6 +64,8 @@ class WpComposite
             );
             static::register_acf_fields();
         });
+
+        add_action( 'save_post', [__CLASS__, 'on_save'], 10, 2 );
     }
 
     /**
@@ -185,6 +190,26 @@ class WpComposite
             return $postLink;
 
         }, 1, 3 );
+    }
+
+    public static function on_save($postId, WP_Post $post) {
+        if($post->post_type === static::POST_TYPE) {
+
+            $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
+            $action = !$contentHubId ? 'create' : 'update';
+
+            $input = array_merge([
+                'title' => $post->post_title,
+                'kind' => get_field('kind', $postId),
+                'status' => collect([
+                    'publish' => 'Published',
+                    'draft' => 'Draft',
+                    'pending' => 'Ready'
+                ])->get($post->post_status, 'draft'),
+            ], $action === 'update' ? ['id' => $contentHubId] : []);
+
+            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+        }
     }
 
     private static function flush_rewrite_rules_if_needed() {

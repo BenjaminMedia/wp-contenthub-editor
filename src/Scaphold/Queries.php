@@ -258,4 +258,28 @@ class Queries
           }
         }
     ';
+
+    const CREATE_COMPOSITE = '
+        mutation CreateComposite($input: CreateCompositeInput!) {
+          createComposite(input: $input) {
+            changedEdge {
+              node {
+                id
+              }
+            }
+          }
+        }
+    ';
+
+    const UPDATE_COMPOSITE = '
+        mutation UpdateComposite($input: UpdateCompositeInput!) {
+          updateComposite(input: $input) {
+            changedEdge {
+              node {
+                id
+              }
+            }
+          }
+        }
+    ';
 }
