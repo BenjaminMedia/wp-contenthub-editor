@@ -36,4 +36,18 @@ class CompositeRepository implements CompositeContract
             'limit' => $limit
         ])->allComposites;
     }
+
+    public static function create($input)
+    {
+        return Client::query(Queries::CREATE_COMPOSITE, [
+            'input' => $input
+        ])->createComposite->changedEdge->node->id ?? null;
+    }
+
+    public static function update($input)
+    {
+        return Client::query(Queries::UPDATE_COMPOSITE, [
+                'input' => $input
+        ])->updateComposite->changedEdge->node->id ?? null;
+    }
 }
