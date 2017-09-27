@@ -18,8 +18,7 @@ class WpAttachment
         add_filter( 'attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2 );
         add_filter( 'attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2 );
 
-        // Make attachments private and change attachment url to a signed url
-        add_filter( 'wp_get_attachment_url', [__CLASS__, 'wp_get_attachment_url'], 100, 2 );
+        // Make attachments private
         add_filter( 'wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
     }
 
