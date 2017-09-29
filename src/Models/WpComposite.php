@@ -193,10 +193,7 @@ class WpComposite
     }
 
     public static function on_save($postId, WP_Post $post) {
-        if (wp_is_post_revision($post->ID) || wp_is_post_autosave($post->ID)) {
-            return;
-        }
-        if($post->post_type === static::POST_TYPE) {
+        if(is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft') {
 
             $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
             $action = !$contentHubId ? 'create' : 'update';
