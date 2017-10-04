@@ -182,9 +182,8 @@ class WpComposite
                         $category = get_term($category->parent);
                     }
                 }
-                $tempUrlWithoutSlug = str_replace( static::POST_SLUG, $slugs->reverse()->implode('/'), $postLink );
-
-                return rtrim(str_replace('%'.static::POST_TYPE.'%', $post->post_name, $tempUrlWithoutSlug), '/');
+                
+                return pll_home_url(pll_get_post_language($post->ID)) . $slugs->reverse()->implode('/') . '/' . sanitize_title_with_dashes($post->post_title);
             }
 
             return $postLink;
