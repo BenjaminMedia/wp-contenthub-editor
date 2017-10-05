@@ -341,8 +341,13 @@ class MarkdownEditor extends acf_field {
 	}
 	
 	*/
-	
-	
+
+    function update_value( $value, $post_id, $field ) {
+        // acf saves calls stripslashes_deep() on save which removes all slashes from content
+        // to allow slashes we call wp_slash() on value before it is saved to the database
+        return wp_slash($value);
+    }
+
 	/*
 	*  format_value()
 	*
