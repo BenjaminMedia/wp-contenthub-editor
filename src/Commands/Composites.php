@@ -52,7 +52,7 @@ class Composites extends BaseCmd
         // Disable on save hook to prevent call to content hub on import
         remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
         // Disable on save hook in wp bonnier cache, to avoid triggering cxense crawl on import
-        remove_action( 'save_post', [Post::class, 'update_post'], 10, 2 );
+        remove_action( 'save_post', [Post::class, 'update_post'], 10, 1 );
 
         if($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
