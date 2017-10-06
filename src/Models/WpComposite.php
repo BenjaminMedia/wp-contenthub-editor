@@ -13,6 +13,7 @@ use Bonnier\WP\ContentHub\Editor\Plugin;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
 use WP_Post;
+use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 
 /**
  * Class WpComposite
@@ -107,6 +108,7 @@ class WpComposite
         add_action( 'parse_request', function ( $request ) {
             // if the rule was matched, the query var will be set
             if( isset( $request->query_vars['category_name'] ) ){
+
                 // check if a page exists, reset query vars to load that page if it does
                 if( get_page_by_path( $request->query_vars['category_name'] ) ){
                     $request->query_vars['pagename'] = $request->query_vars['category_name'];
@@ -163,7 +165,9 @@ class WpComposite
          * Prepend categories to the post permalink
          */
         add_filter( 'post_type_link', function($postLink, $post) {
-            if ( is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft') {
+
+            if ( is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status === 'publish') {
+
 
                 $terms = wp_get_object_terms( $post->ID, 'category' );
 
@@ -182,8 +186,12 @@ class WpComposite
                         $category = get_term($category->parent);
                     }
                 }
-                
-                return pll_home_url(pll_get_post_language($post->ID)) . $slugs->reverse()->implode('/') . '/' . sanitize_title_with_dashes($post->post_title);
+
+                $tempUrlWithoutSlug = str_replace( static::POST_SLUG, $slugs->reverse()->implode('/'), $postLink );
+
+
+                return rtrim(str_replace('%'.static::POST_TYPE.'%', $post->post_name, $tempUrlWithoutSlug), '/');
+
             }
 
             return $postLink;
@@ -204,7 +212,7 @@ class WpComposite
                     'publish' => 'Published',
                     'draft' => 'Draft',
                     'pending' => 'Ready'
-                ])->get($post->post_status, 'draft'),
+                ])->get($post->post_status, 'Draft'),
             ], $action === 'update' ? ['id' => $contentHubId] : []);
 
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
