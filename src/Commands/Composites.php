@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
+use Bonnier\WP\Cache\Models\Post;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
@@ -47,6 +48,11 @@ class Composites extends BaseCmd
         add_filter('intermediate_image_sizes_advanced', function ($sizes) {
             return [];
         });
+
+        // Disable on save hook to prevent call to content hub on import
+        remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
+        // Disable on save hook in wp bonnier cache, to avoid triggering cxense crawl on import
+        remove_action( 'save_post', [Post::class, 'update_post'], 10, 1 );
 
         if($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
