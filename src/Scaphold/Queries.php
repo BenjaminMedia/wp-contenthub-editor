@@ -51,6 +51,27 @@ class Queries
         }
     ';
 
+    const GET_COMPOSITES_BY_BRAND_AND_SOURCE = '  
+        query GetComposites($brandId: ID!, $source: String!, $cursor: String!, $limit: Int!) {
+          viewer {
+            allComposites(where: {brand: {id: {eq: $brandId}}, source: {code: {eq: $source}}}, first: $limit, after: $cursor) {
+              aggregations {
+                count
+              }
+              pageInfo {
+                hasNextPage
+              }
+              edges {
+                cursor
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+    ';
+
     const GET_COMPOSITE = '
         query GetComposite($id: ID!) {
           getComposite(id: $id) {

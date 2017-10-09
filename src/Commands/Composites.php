@@ -2,13 +2,14 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
-use Bonnier\WP\Cache\Models\Post;
+use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
+use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -36,6 +37,9 @@ class Composites extends BaseCmd
      * [--id=<id>]
      * : The id of a single composite to import.
      *
+     * [--source=<source_code>]
+     * : The the source code to fetch content from
+     *
      * ## EXAMPLES
      * wp contenthub editor composites import
      *
@@ -49,19 +53,24 @@ class Composites extends BaseCmd
             return [];
         });
 
-        // Disable on save hook to prevent call to content hub on import
+        // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
         remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
-        // Disable on save hook in wp bonnier cache, to avoid triggering cxense crawl on import
-        remove_action( 'save_post', [Post::class, 'update_post'], 10, 1 );
-
+        remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
+        remove_action( 'save_post', [CxensePost::class, 'update_post'], 10, 1 );
+        
         if($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
             return;
         }
-        $this->map_sites(function ($site) {
-            $this->map_composites_by_brand_id($site->brand->content_hub_id, function ($composite) {
+        $brandId = $this->get_site()->brand->content_hub_id;
+        if($source = $assocArgs['source'] ?? null) {
+            $this->map_composites_by_brand_id_and_source($brandId, $source, function ($composite) {
                 $this->import_composite($composite);
             });
+            return;
+        }
+        $this->map_composites_by_brand_id($brandId, function ($composite) {
+            $this->import_composite($composite);
         });
     }
 
@@ -115,6 +124,22 @@ class Composites extends BaseCmd
             });
             if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage)
                 $compositeQuery = CompositeRepository::find_by_brand_id($id, $categories->last()->cursor);
+            else
+                $compositeQuery = null;
+        }
+    }
+
+    private function map_composites_by_brand_id_and_source($id, $source, callable $callable)
+    {
+        $compositeQuery = CompositeRepository::find_by_brand_id_and_source($id, $source);
+
+        while ($compositeQuery) {
+            $categories = collect($compositeQuery->edges);
+            $categories->pluck('node')->each(function ($compositeInfo) use ($callable) {
+                $callable(CompositeRepository::find_by_id($compositeInfo->id));
+            });
+            if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage)
+                $compositeQuery = CompositeRepository::map_composites_by_brand_id_and_source($id, $categories->last()->cursor);
             else
                 $compositeQuery = null;
         }
