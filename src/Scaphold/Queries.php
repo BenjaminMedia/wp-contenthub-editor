@@ -9,6 +9,80 @@ namespace Bonnier\WP\ContentHub\Editor\Scaphold;
  */
 class Queries
 {
+    const GET_CATEGORIES = '  
+        query GetCategories($cursor: String!, $limit: Int!) {
+            viewer {
+            allCategories(first: $limit, after: $cursor) {
+              aggregations {
+                count
+              }
+              pageInfo {
+                hasNextPage
+              }
+              edges {
+                cursor
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+    ';
+
+    const GET_CATEGORIES_BY_BRAND = '  
+        query GetCategories($brandId: ID!, $cursor: String!, $limit: Int!) {
+          viewer {
+            allCategories(where: {brand: {id: {eq: $brandId}}}, first: $limit, after: $cursor) {
+              aggregations {
+                count
+              }
+              pageInfo {
+                hasNextPage
+              }
+              edges {
+                cursor
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+    ';
+
+    const GET_CATEGORY = '  
+        query GetCategory($id: ID!) {
+          getCategory(id: $id) {
+             id
+             name
+             locale
+          }
+        }
+    ';
+
+    const GET_CATEGORY_BY_BRAND_AND_NAME = '  
+        query GetCategoryByNameAndBrand($brandId: ID!, $name: String!, $cursor: String!, $limit: Int!) {
+          viewer {
+            allCategories(where: {brand: {id: {eq: $brandId}}, name: {like: $name}}, first: $limit, after: $cursor) {
+              aggregations {
+                count
+              }
+              pageInfo {
+                hasNextPage
+              }
+              edges {
+                cursor
+                node {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        }
+    ';
+
     const GET_COMPOSITES = '  
         query GetComposites($cursor: String!, $limit: Int!) {
             viewer {

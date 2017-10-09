@@ -219,6 +219,25 @@ class WpComposite
         }
     }
 
+    public static function map_all($callback) {
+        $args = [
+            'post_type' => static::POST_TYPE,
+            'posts_per_page' => 100,
+            'paged' => 0
+        ];
+
+        $posts = query_posts($args);
+
+        while ($posts) {
+            collect($posts)->each(function (WP_Post $post) use($callback){
+                $callback($post);
+            });
+
+            $args['paged']++;
+            $posts = query_posts($args);
+        }
+    }
+
     private static function flush_rewrite_rules_if_needed() {
         if ( get_option( Plugin::FLUSH_REWRITE_RULES_FLAG ) ) {
             flush_rewrite_rules();
