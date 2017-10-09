@@ -13,8 +13,16 @@ use WP_CLI_Command;
 class BaseCmd extends WP_CLI_Command
 {
     protected function map_sites($callable) {
-        collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function($locale) use($callable){
+        $this->get_sites()->each($callable);
+    }
+
+    protected function get_sites() {
+        return collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function($locale){
             return Plugin::instance()->settings->get_site($locale);
-        })->rejectNullValues()->each($callable);
+        })->rejectNullValues();
+    }
+
+    protected function get_site() {
+        return $this->get_sites()->first();
     }
 }

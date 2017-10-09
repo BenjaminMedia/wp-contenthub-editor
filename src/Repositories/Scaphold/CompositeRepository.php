@@ -37,6 +37,16 @@ class CompositeRepository implements CompositeContract
         ])->allComposites;
     }
 
+    public static function find_by_brand_id_and_source($id, $source, $cursor = '', $limit = 100)
+    {
+        return Client::query(Queries::GET_COMPOSITES_BY_BRAND_AND_SOURCE, [
+            'source' => $source,
+            'brandId' => $id,
+            'cursor' => $cursor,
+            'limit' => $limit
+        ])->allComposites;
+    }
+
     public static function create($input)
     {
         return Client::query(Queries::CREATE_COMPOSITE, [
