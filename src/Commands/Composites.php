@@ -139,7 +139,7 @@ class Composites extends BaseCmd
                 $callable(CompositeRepository::find_by_id($compositeInfo->id));
             });
             if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage)
-                $compositeQuery = CompositeRepository::map_composites_by_brand_id_and_source($id, $categories->last()->cursor);
+                $compositeQuery = CompositeRepository::map_composites_by_brand_id_and_source($id, $source, $categories->last()->cursor);
             else
                 $compositeQuery = null;
         }
