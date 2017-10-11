@@ -168,6 +168,9 @@ class Composites extends BaseCmd
     {
         $existingId = WpComposite::id_from_contenthub_id($composite->id);
 
+        // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
+        $_POST['term_lang_choice'] = $composite->locale;
+
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $composite->title,
