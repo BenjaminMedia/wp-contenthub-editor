@@ -114,11 +114,16 @@ class WpAttachment
             $file->url = 'http:' . $file->url;
         }
 
+        $rawFileName = basename( $file->url );
+        $fileName = sanitize_file_name($rawFileName); // Sanitize the new file name so WordPress will upload it
+
+        // Make sure to sanitize the file name so urls with spaces and other special chars will work
+        $file->url = str_replace($rawFileName, urlencode($rawFileName), $file->url);
+
         // Getting file stream
         if(!$fileStream = @file_get_contents( $file->url )) {
             return null;
         }
-        $fileName = basename( $file->url );
 
         // Uploading file
         $uploadedFile = wp_upload_bits( $fileName, null, $fileStream );
