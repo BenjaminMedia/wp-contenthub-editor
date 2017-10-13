@@ -62,9 +62,9 @@ class Queries
     ';
 
     const GET_CATEGORY_BY_BRAND_AND_NAME = '  
-        query GetCategoryByNameAndBrand($brandId: ID!, $name: String!, $cursor: String!, $limit: Int!) {
+        query GetCategoryByNameAndBrand($brandId: ID!, $name: String!, $locale: LocaleEnum!, $cursor: String!, $limit: Int!) {
           viewer {
-            allCategories(where: {brand: {id: {eq: $brandId}}, name: {like: $name}}, first: $limit, after: $cursor) {
+            allCategories(where: {brand: {id: {eq: $brandId}}, name: {like: $name}, locale: {eq: $locale}}, first: $limit, after: $cursor) {
               aggregations {
                 count
               }
