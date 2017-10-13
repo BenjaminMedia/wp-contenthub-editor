@@ -36,11 +36,12 @@ class CategoryRepository implements CategoryContract
         ])->allCategories;
     }
 
-    public static function find_by_brand_id_and_name($id, $name, $cursor = '', $limit = 100)
+    public static function find_by_brand_id_and_name($id, $name, $locale, $cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_CATEGORY_BY_BRAND_AND_NAME, [
             'name' => $name,
             'brandId' => $id,
+            'locale' => $locale,
             'cursor' => $cursor,
             'limit' => $limit
         ])->allCategories;
