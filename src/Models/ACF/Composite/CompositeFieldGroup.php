@@ -15,7 +15,8 @@ class CompositeFieldGroup
     }
 
     private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+        if( function_exists('acf_add_local_field_group') ):
+
             acf_add_local_field_group(array (
                 'key' => 'group_58abfd3931f2f',
                 'title' => 'Composite Fields',
@@ -445,6 +446,33 @@ class CompositeFieldGroup
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
                                     ),
+                                    array (
+                                        'key' => 'field_59e49490911cf',
+                                        'label' => 'Download Button Text (Optional)',
+                                        'name' => 'download_button_text',
+                                        'type' => 'text',
+                                        'instructions' => 'This will override the default button text.',
+                                        'required' => 0,
+                                        'conditional_logic' => array (
+                                            array (
+                                                array (
+                                                    'field' => 'field_590af0eee4a62',
+                                                    'operator' => '==',
+                                                    'value' => '1',
+                                                ),
+                                            ),
+                                        ),
+                                        'wrapper' => array (
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ),
+                                        'default_value' => '',
+                                        'placeholder' => '',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'maxlength' => '',
+                                    ),
                                 ),
                                 'min' => '',
                                 'max' => '',
@@ -651,7 +679,6 @@ class CompositeFieldGroup
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
                                     ),
-
                                 ),
                                 'min' => '',
                                 'max' => '',
@@ -962,12 +989,13 @@ class CompositeFieldGroup
                 'style' => 'seamless',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
-                'hide_on_screen' => [
-                    0 => 'categories'
-                ],
+                'hide_on_screen' => array (
+                    0 => 'categories',
+                ),
                 'active' => 1,
                 'description' => '',
             ));
-        }
+        endif;
+
     }
 }
