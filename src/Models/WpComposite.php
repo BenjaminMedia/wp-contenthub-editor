@@ -168,6 +168,13 @@ class WpComposite
 
             if ( is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status === 'publish') {
 
+                $customPermalink = get_post_meta($post->ID, 'custom_permalink');
+                if(!empty($customPermalink)) {
+                    // If there is a generated custom permalink, this takes priority over anything else
+                    return parse_url($postLink, PHP_URL_SCHEME).'://'.
+                        parse_url($postLink, PHP_URL_HOST).'/'.
+                        ltrim($customPermalink[0], '/');
+                }
 
                 $terms = wp_get_object_terms( $post->ID, 'category' );
 
