@@ -103,7 +103,7 @@ class WpComposite
                 static::flush_rewrite_rules_if_needed();
             }
         }, 1, 2);
-        
+
         //check if a page matches
         add_action( 'parse_request', function ( $request ) {
             // if the rule was matched, the query var will be set
@@ -157,6 +157,23 @@ class WpComposite
 
             $query->set( 'post_type', [ 'post', 'page', static::POST_TYPE ] );
 
+            $category_name = $query->query_vars['category_name'] ?? null;
+            $name = $query->query_vars['contenthub_composite'] ?? null;
+
+            if($category_name && $name) {
+                $customPermalink = $category_name.'/'.$name;
+                $posts = get_posts([
+                    'meta_key' => 'custom_permalink',
+                    'meta_value' => $customPermalink,
+                    'post_type' => static::POST_TYPE,
+                    'posts_per_page' => 1
+                ]);
+                if($posts && !empty($posts)) {
+                    // If the post has a custom permalink, let's force that url through!
+                    $query->query_vars['contenthub_composite'] = $posts[0]->post_name;
+                }
+            }
+
             return $query;
         });
 
@@ -167,6 +184,7 @@ class WpComposite
         add_filter( 'post_type_link', function($postLink, $post) {
 
             if ( is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status === 'publish') {
+
 
                 $customPermalink = get_post_meta($post->ID, 'custom_permalink');
                 if(!empty($customPermalink)) {
