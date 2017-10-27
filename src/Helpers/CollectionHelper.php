@@ -19,7 +19,7 @@ class CollectionHelper extends Collection
         Collection::macro('toAssocCombine', function () {
             return $this->reduce(function ($assoc, $taxonomyValue){
                 collect($taxonomyValue)->each(function($value, $taxonomy) use (&$assoc){
-                    if(!$assoc[$taxonomy] instanceof Collection) {
+                    if(!isset($assoc[$taxonomy]) || !$assoc[$taxonomy] instanceof Collection) {
                         $assoc[$taxonomy] = new static;
                     }
                     $assoc[$taxonomy]->push($value);

@@ -10,6 +10,7 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
+use Bonnier\WP\Redirect\Model\Post;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -57,7 +58,8 @@ class Composites extends BaseCmd
         remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
         remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
         remove_action( 'save_post', [CxensePost::class, 'update_post'], 10, 1 );
-        
+        remove_action('save_post', [Post::class, 'save'], 5, 2);
+
         if($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
             return;
