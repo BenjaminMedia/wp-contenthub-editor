@@ -122,6 +122,7 @@ class WpAttachment
 
         // Getting file stream
         if(!$fileStream = @file_get_contents( $file->url )) {
+            if(!$fileStream = @file_get_contents( urldecode($file->url) )) // try the url decoded
             return null;
         }
 
