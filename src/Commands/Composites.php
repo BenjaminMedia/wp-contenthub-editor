@@ -388,7 +388,7 @@ class Composites extends BaseCmd
         }
         global $locale; // No original url is available so we generate post name from the title instead
         $locale = $composite->locale; // We modify the global $locale so sanitize_title_with_dashes() works correctly
-        return sanitize_title_with_dashes($composite->title);
+        return sanitize_title($composite->title);
     }
 
 }
