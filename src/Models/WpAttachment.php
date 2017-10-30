@@ -96,6 +96,28 @@ class WpAttachment
         );
     }
 
+    /**
+     * @param $postId
+     *
+     * @return null|string
+     */
+    public static function contenthub_id($postId) {
+        return get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) ?: null;
+    }
+
+    /**
+     * @param $id
+     *
+     * Deleted the attachment with matching contenthub id
+     *
+     * @return null|string
+     */
+    public static function delete_by_contenthub_id($id) {
+        if($attachmentId = static::id_from_contenthub_id($id)) {
+            return wp_delete_post($attachmentId, true);
+        }
+    }
+
     public static function upload_attachment($postId, $file) {
 
         if(is_null($file)) {
