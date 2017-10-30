@@ -176,7 +176,7 @@ class Composites extends BaseCmd
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $composite->title,
-            'post_name' => SlugHelper::create_slug($composite->title),
+            'post_name' => $this->get_post_name($composite),
             'post_status' => collect([
                 'Published' => 'publish',
                 'Draft' => 'draft',
@@ -379,6 +379,16 @@ class Composites extends BaseCmd
             wp_delete_post($post->ID, true);
             WP_CLI::line(sprintf('Removed post: %s, with id:%s and composite id:%s', $post->post_title, $post->ID, $compositeId));
         }
+    }
+
+    private function get_post_name($composite)
+    {
+        if(preg_match('/[^\/]*$/', $composite->metaInformation->originalUrl, $matches) && !empty($matches)) {
+            return $matches[0]; // return the part of the slug after the last /
+        }
+        global $locale; // No original url is available so we generate post name from the title instead
+        $locale = $composite->locale; // We modify the global $locale so sanitize_title_with_dashes() works correctly
+        return sanitize_title_with_dashes($composite->title);
     }
 
 }
