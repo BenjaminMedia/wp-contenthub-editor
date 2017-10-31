@@ -156,6 +156,7 @@ class Composites extends BaseCmd
 
         $this->handle_translation($postId, $composite);
         $this->set_meta($postId, $composite);
+        $this->delete_orphaned_files($postId, $compositeContents);
         $this->save_composite_contents($postId, $compositeContents);
         $this->save_tags($postId, $compositeContents);
         $this->save_teasers($postId, $composite);
@@ -389,6 +390,50 @@ class Composites extends BaseCmd
         global $locale; // No original url is available so we generate post name from the title instead
         $locale = $composite->locale; // We modify the global $locale so sanitize_title_with_dashes() works correctly
         return sanitize_title($composite->title);
+    }
+
+    /**
+     * @param                                $postId
+     * @param \Illuminate\Support\Collection $compositeContents
+     *
+     * Deletes attachments that would have otherwise become orphaned after import
+     */
+    private function delete_orphaned_files($postId, Collection $compositeContents)
+    {
+        $currentFileIds = collect(get_field('composite_content', $postId))->map(function ($content) use ($postId) {
+            if ($content['acf_fc_layout'] === 'image') {
+                return WpAttachment::contenthub_id($content['file'] ?? null);
+            }
+            if ($content['acf_fc_layout'] === 'file') {
+                return [
+                    'file'   => WpAttachment::contenthub_id($content['file'] ?? null),
+                    'images' => collect($content['images'])->map(function ($image) {
+                        return WpAttachment::contenthub_id($image['file'] ?? null);
+                    })
+                ];
+            }
+        })->flatten()
+            ->push(WpAttachment::contenthub_id(get_field('teaser_image', $postId)))
+            ->rejectNullValues();
+
+        $newFileIds = $compositeContents->map(function ($compositeContent) {
+            if ($compositeContent->type === 'image') {
+                return $compositeContent->content->id;
+            }
+            if ($compositeContent->type === 'file') {
+                return [
+                    'file'   => $compositeContent->content->id,
+                    'images' => collect($compositeContent->content->images->edges)->map(function ($image) {
+                        return $image->node->id;
+                    })
+                ];
+            }
+        })->flatten()->rejectNullValues();
+
+        $currentFileIds->diff($newFileIds)->each(function ($orphanedFileId) { // Compare current file ids to new file ids
+            // We delete any of the current files that would be come orphaned
+            WpAttachment::delete_by_contenthub_id($orphanedFileId);
+        });
     }
 
 }
