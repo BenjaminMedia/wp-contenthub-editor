@@ -130,6 +130,7 @@ class WpComposite
                         add_action('wp',   function() {
                             global $wp_query;
                             $wp_query->is_404 = true;
+                            status_header(404);
                         });
                     }
                 }
