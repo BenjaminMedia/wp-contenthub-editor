@@ -690,12 +690,12 @@ class CompositeFieldGroup
                                 'display' => 'block',
                                 'sub_fields' => array (
                                     array (
-                                        'key' => 'field_590b179fc8769',
-                                        'label' => 'Title',
-                                        'name' => 'title',
+                                        'key' => 'field_590b17c4c876a',
+                                        'label' => 'URL',
+                                        'name' => 'url',
                                         'type' => 'text',
                                         'instructions' => '',
-                                        'required' => 0,
+                                        'required' => 1,
                                         'conditional_logic' => 0,
                                         'wrapper' => array (
                                             'width' => '',
@@ -709,12 +709,12 @@ class CompositeFieldGroup
                                         'maxlength' => '',
                                     ),
                                     array (
-                                        'key' => 'field_590b17c4c876a',
-                                        'label' => 'URL',
-                                        'name' => 'url',
+                                        'key' => 'field_590b179fc8769',
+                                        'label' => 'Button text',
+                                        'name' => 'title',
                                         'type' => 'text',
                                         'instructions' => '',
-                                        'required' => 1,
+                                        'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => array (
                                             'width' => '',
