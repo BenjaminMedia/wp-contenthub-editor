@@ -2,7 +2,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-use Bonnier\WP\ContentHub\Editor\Http\Redirects;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
@@ -11,9 +10,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
-use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
 use WP_Post;
-use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 
 /**
  * Class WpComposite
@@ -26,6 +23,8 @@ class WpComposite
     const POST_TYPE_NAME = 'Content';
     const POST_TYPE_NAME_SINGULAR = 'Composite';
     const POST_SLUG = '%category%';
+    const POST_PERMALINK_STRUCTURE = '/%category%/%postname%';
+    const CATEGORY_BASE = '';
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
     const POST_META_TITLE = '_yoast_wpseo_title';
@@ -92,18 +91,14 @@ class WpComposite
 
     private static function register_permalink() {
 
-        // Add a rewrite rule to make post type unique
-        add_action('registered_post_type', function($postType, $args){
-            if($postType === static::POST_TYPE) {
-                add_rewrite_rule(
-                    '(.*)\/([^\/]+)\/?',
-                    'index.php?category_name=$matches[1]&name=$matches[2]',
-                    'bottom'
-                );
-                static::flush_rewrite_rules_if_needed();
-            }
-        }, 1, 2);
-        
+        add_filter('option_permalink_structure', function($currentSetting){
+            return static::POST_PERMALINK_STRUCTURE;
+        });
+
+        add_filter('option_category_base', function($currentSetting){
+            return static::CATEGORY_BASE;
+        });
+
         //check if a page matches
         add_action( 'parse_request', function ( $request ) {
             // if the rule was matched, the query var will be set
