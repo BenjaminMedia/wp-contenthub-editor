@@ -91,11 +91,11 @@ class WpComposite
 
     private static function register_permalink() {
 
-        add_filter('option_permalink_structure', function($currentSetting){
+        add_filter('pre_option_permalink_structure', function($currentSetting){
             return static::POST_PERMALINK_STRUCTURE;
         });
 
-        add_filter('option_category_base', function($currentSetting){
+        add_filter('pre_option_category_base', function($currentSetting){
             return static::CATEGORY_BASE;
         });
 
@@ -195,7 +195,7 @@ class WpComposite
     }
 
     public static function on_save($postId, WP_Post $post) {
-        if(is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft') {
+        if(is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft' && env('WP_ENV') !== 'testing') {
 
             $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
             $action = !$contentHubId ? 'create' : 'update';
