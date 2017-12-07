@@ -453,15 +453,6 @@ class CompositeFieldGroup
                                         'type' => 'text',
                                         'instructions' => 'This will override the default button text.',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
-                                                    'field' => 'field_590af0eee4a62',
-                                                    'operator' => '==',
-                                                    'value' => '1',
-                                                ),
-                                            ),
-                                        ),
                                         'wrapper' => array (
                                             'width' => '',
                                             'class' => '',
