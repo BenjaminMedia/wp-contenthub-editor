@@ -33,6 +33,7 @@ class WpComposite
     const POST_FACEBOOK_TITLE = '_yoast_wpseo_opengraph-title';
     const POST_FACEBOOK_DESCRIPTION = '_yoast_wpseo_opengraph-description';
     const POST_FACEBOOK_IMAGE = '_yoast_wpseo_opengraph-image';
+    const SLUG_CHANGE_HOOK = 'contenthub_composite_slug_change';
 
     /**
      * Register the composite as a custom wp post type
@@ -49,6 +50,8 @@ class WpComposite
                         'singular_name' => __(static::POST_TYPE_NAME_SINGULAR)
                     ],
                     'public' => true,
+                    'rest_base' => 'composites',
+                    'show_in_rest' => true, // enable rest api
                     'rewrite' => [
                         'slug' => static::POST_SLUG,
                     ],
@@ -66,6 +69,7 @@ class WpComposite
         });
 
         add_action( 'save_post', [__CLASS__, 'on_save'], 10, 2 );
+        add_action( 'save_post', [__CLASS__, 'on_save_slug_change'], 10, 2 );
     }
 
     /**
@@ -194,8 +198,9 @@ class WpComposite
         }, 1, 3 );
     }
 
-    public static function on_save($postId, WP_Post $post) {
-        if(is_object( $post ) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft' && env('WP_ENV') !== 'testing') {
+    public static function on_save($postId, WP_Post $post)
+    {
+        if(static::post_type_match_and_not_auto_draft($post) && env('WP_ENV') !== 'testing') {
 
             $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
             $action = !$contentHubId ? 'create' : 'update';
@@ -211,6 +216,24 @@ class WpComposite
             ], $action === 'update' ? ['id' => $contentHubId] : []);
 
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+        }
+    }
+
+    /**
+     * Triggers the slug change hook on post save
+     *
+     * @param          $postId
+     * @param \WP_Post $post
+     */
+    public static function on_save_slug_change($postId, WP_Post $post)
+    {
+        if (static::post_type_match_and_not_auto_draft($post)) {
+            if (acf_validate_save_post() && $oldLink = get_permalink()) {  // Validate acf input and get old link
+                acf_save_post($postId); // Update acf data to generate new permalink
+                if (($newLink = get_permalink($postId)) && $newLink !== $oldLink) { // Check if old link differ from new
+                    do_action(static::SLUG_CHANGE_HOOK, $postId, $oldLink, $newLink); // Trigger the hook
+                }
+            }
         }
     }
 
@@ -238,5 +261,10 @@ class WpComposite
             flush_rewrite_rules();
             delete_option( Plugin::FLUSH_REWRITE_RULES_FLAG );
         }
+    }
+
+    private static function post_type_match_and_not_auto_draft($post)
+    {
+        return is_object($post) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft';
     }
 }
