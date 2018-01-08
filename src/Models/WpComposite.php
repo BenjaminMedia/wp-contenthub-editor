@@ -69,7 +69,7 @@ class WpComposite
         });
 
         add_action( 'save_post', [__CLASS__, 'on_save'], 10, 2 );
-        add_action( 'save_post', [__CLASS__, 'on_save_slug_change'], 10, 2 );
+        add_action( 'save_post', [__CLASS__, 'on_save_slug_change'], 5, 2 );
     }
 
     /**
@@ -228,9 +228,11 @@ class WpComposite
     public static function on_save_slug_change($postId, WP_Post $post)
     {
         if (static::post_type_match_and_not_auto_draft($post)) {
-            if (acf_validate_save_post() && $oldLink = get_permalink()) {  // Validate acf input and get old link
-                acf_save_post($postId); // Update acf data to generate new permalink
-                if (($newLink = get_permalink($postId)) && $newLink !== $oldLink) { // Check if old link differ from new
+            $oldLink = get_permalink();
+            if ($oldLink && acf_validate_save_post()) {  // Validate acf input and get old link
+                acf_save_post($postId);
+                $newLink = get_permalink($postId);
+                if ($newLink && $newLink !== $oldLink) { // Check if old link differ from new
                     do_action(static::SLUG_CHANGE_HOOK, $postId, $oldLink, $newLink); // Trigger the hook
                 }
             }
