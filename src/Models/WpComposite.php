@@ -69,7 +69,7 @@ class WpComposite
         });
 
         add_action( 'save_post', [__CLASS__, 'on_save'], 10, 2 );
-        add_action( 'save_post', [__CLASS__, 'on_save_slug_change'], 10, 2 );
+        add_action( 'save_post', [__CLASS__, 'on_save_slug_change'], 5, 2 );
     }
 
     /**
