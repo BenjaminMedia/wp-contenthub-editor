@@ -306,17 +306,13 @@ class MarkdownEditor extends acf_field {
 	*  @return	$value
 	*/
 	
-	/*
-	
 	function load_value( $value, $post_id, $field ) {
 		
-		return $value;
+		return wp_unslash($value);
 		
 	}
 	
-	*/
-	
-	
+
 	/*
 	*  update_value()
 	*
