@@ -152,17 +152,29 @@ class MarkdownEditor extends acf_field {
 	*/
 
 	public function input_admin_enqueue_scripts() {
-
-		// register & include JS
-		wp_register_script( 'acf-input-simple-mde', "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js", ['acf-input'] );
+        
+        // register & include JS
+        wp_register_script( 'acf-input-simple-mde', Plugin::instance()->plugin_url . 'js/simplemde.min.js', ['acf-input'] );
         wp_enqueue_script('acf-input-simple-mde');
-
+        
         wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'] );
-		
-		
-		// register & include CSS
-		wp_register_style( 'acf-input-markdown-editor', "https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css", ['acf-input'] );
-		wp_enqueue_style('acf-input-markdown-editor');
+        $language = null;
+        if(isset($_GET['post'])) {
+            $language = pll_get_post_language($_GET['post']);
+        } else if(isset($_GET['new_lang'])) {
+            $language = $_GET['new_lang'];
+        }
+        if($language) {
+            wp_localize_script('acf-input-markdown-editor', 'dictionary', [
+                'dic' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.dic.txt',
+                'aff' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.aff.txt'
+            ]);
+        }
+        
+        
+        // register & include CSS
+        wp_register_style( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'css/simplemde.min.css', ['acf-input'] );
+        wp_enqueue_style('acf-input-markdown-editor');
 		
 	}
 
