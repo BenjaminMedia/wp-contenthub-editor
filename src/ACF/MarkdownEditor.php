@@ -154,10 +154,10 @@ class MarkdownEditor extends acf_field {
 	public function input_admin_enqueue_scripts() {
         
         // register & include JS
-        wp_register_script( 'acf-input-simple-mde', Plugin::instance()->plugin_url . 'js/simplemde.min.js', ['acf-input'] );
-        wp_enqueue_script('acf-input-simple-mde');
+        wp_register_script( 'acf-input-simple-mde', Plugin::instance()->plugin_url . 'js/simplemde.min.js', ['acf-input'], '1.2.5' );
+        wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.5');
         
-        wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'] );
+        wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'], '1.2.5' );
         $language = null;
         if(isset($_GET['post'])) {
             $language = pll_get_post_language($_GET['post']);
@@ -166,15 +166,14 @@ class MarkdownEditor extends acf_field {
         }
         if($language) {
             wp_localize_script('acf-input-markdown-editor', 'dictionary', [
-                'dic' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.dic.txt',
-                'aff' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.aff.txt'
+                'dic' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.dic.txt?ver=1.2.5',
+                'aff' => parse_url(Plugin::instance()->plugin_url, PHP_URL_PATH) . 'js/lang/' . $language . '.aff.txt?ver=1.2.5'
             ]);
         }
         
-        
         // register & include CSS
-        wp_register_style( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'css/simplemde.min.css', ['acf-input'] );
-        wp_enqueue_style('acf-input-markdown-editor');
+        wp_register_style( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'css/simplemde.min.css', ['acf-input'] , '1.2.5' );
+        wp_enqueue_style('acf-input-markdown-editor', '', [], '1.2.5');
 		
 	}
 
