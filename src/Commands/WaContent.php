@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
+use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
@@ -50,20 +51,10 @@ class WaContent extends BaseCmd
      */
     public function import($args, $assocArgs)
     {
-        // Disable generation of image sizes on import to speed up the precess
-        add_filter('intermediate_image_sizes_advanced', function ($sizes) {
-            return [];
-        });
-
-        // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
-        remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
-        remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
-        remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10, 3);
-        remove_action('save_post', [Post::class, 'save'], 5, 2);
-
-        $repository = new ContentRepository();
+        $this->disableHooks(); // Disable various hooks and filters during import
 
         if($id = $assocArgs['id'] ?? null) {
+            $repository = new ContentRepository();
             $this->import_composite($repository->find_by_id($id));
         }
     }
@@ -73,18 +64,17 @@ class WaContent extends BaseCmd
         WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->id);
 
         $postId = $this->create_post($waContent);
-        //$compositeContents = $this->format_composite_contents($waContent);
+        $compositeContents = $this->format_composite_contents($waContent);
 
         $this->handle_translation($postId, $waContent);
         $this->set_meta($postId, $waContent);
         $this->save_teasers($postId, $waContent);
-        //$this->delete_orphaned_files($postId, $compositeContents);
-        //$this->save_composite_contents($postId, $compositeContents);
-        //$this->save_tags($postId, $compositeContents);
+        $this->delete_orphaned_files($postId, $compositeContents);
+        $this->save_composite_contents($postId, $compositeContents);
 
-        //$this->set_slug($postId, $waContent);
-        //$this->handle_locked_content($postId, $waContent);
         //$this->save_categories($postId, $waContent);
+        //$this->save_tags($postId, $compositeContents);
+        //$this->handle_locked_content($postId, $waContent);
 
         WP_CLI::success('imported: ' . $waContent->widget_content->title  . ' id: ' . $waContent->id);
     }
@@ -142,13 +132,22 @@ class WaContent extends BaseCmd
     private function format_composite_contents($waContent)
     {
         return collect($waContent->body->widget_groups)->pluck('widgets')->flatten(1)->map(function ($waWidget) {
-            dd((array)$waWidget['properties']);
-            return array_merge([
-                'type' => collect([
-                    'Widgets::text' => 'text_item',
-                ])->get($waWidget, null),
-            ], (array)$waWidget['properties']);
-        })->toArray();
+            return collect([
+                'type' => collect([ // Map the type
+                    'Widgets::Text'         => 'text_item',
+                    'Widgets::Image'        => 'image',
+                    'Widgets::InsertedCode' => 'inserted_code',
+                    'Widgets::InfoBox' => 'info_box',
+                ])->get($waWidget->type, null),
+            ])->merge($waWidget->properties) // merge properties
+                ->merge($waWidget->image ?? null); // merge image
+        })->prepend($waContent->widget_content->lead_image ? // prepend lead image
+            collect([
+                'type'       => 'image',
+                'lead_image' => true
+            ])->merge($waContent->widget_content->lead_image)
+            : null
+        )->toObject();
     }
 
     private function save_composite_contents($postId, $compositeContents)
@@ -156,21 +155,21 @@ class WaContent extends BaseCmd
         $content = $compositeContents->map(function ($compositeContent) use ($postId) {
             if ($compositeContent->type === 'text_item') {
                 return [
-                    'body' => $compositeContent->content->body,
-                    'locked_content' => $compositeContent->locked,
+                    'body' => HtmlToMarkdown::parseHtml($compositeContent->text),
+                    'locked_content' => false,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
             if ($compositeContent->type === 'image') {
                 return [
-                    'lead_image' => $compositeContent->content->trait === 'Primary' ? true : false,
-                    'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
-                    'locked_content' => $compositeContent->locked,
+                    'lead_image' => $compositeContent->lead_image ?? false,
+                    'file' => WpAttachment::upload_attachment($postId, $compositeContent),
+                    'locked_content' => false,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
-            if ($compositeContent->type === 'file') {
-                return [
+            if ($compositeContent->type === 'file') { // Todo implement file if necessary
+                /*return [
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
                     'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
                         return [
@@ -179,12 +178,12 @@ class WaContent extends BaseCmd
                     }),
                     'locked_content' => $compositeContent->locked,
                     'acf_fc_layout' => $compositeContent->type
-                ];
+                ];*/
             }
             if ($compositeContent->type === 'inserted_code') {
                 return [
-                    'code' => $compositeContent->content->code,
-                    'locked_content' => $compositeContent->locked,
+                    'code' => $compositeContent->code,
+                    'locked_content' => false,
                     'acf_fc_layout' => $compositeContent->type
                 ];
             }
@@ -195,7 +194,7 @@ class WaContent extends BaseCmd
 
     private function save_tags($postId, $compositeContents)
     {
-        collect($compositeContents->map(function ($compositeContent) {
+        $compositeContents->map(function ($compositeContent) {
             if ($compositeContent->type === 'tag' && $existingTermId = WpTerm::id_from_contenthub_id($compositeContent->content->id)) {
                 if(isset($compositeContent->content->vocabulary->id) && $existingTaxonomy = WpTaxonomy::get_taxonomy($compositeContent->content->vocabulary->id)) {
                     return [$existingTaxonomy => $existingTermId];
@@ -203,7 +202,7 @@ class WaContent extends BaseCmd
                 return ['tags' => $existingTermId];
             }
             return null;
-        }))->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use($postId){
+        })->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use($postId){
             update_field($taxonomy, $tagIds->toArray(), $postId);
         });
     }
@@ -228,16 +227,6 @@ class WaContent extends BaseCmd
 
     }
 
-    private function set_slug($postId, $composite)
-    {
-        if ($originalSlug = parse_url($composite->metaInformation->originalUrl)['path'] ?? null) {
-            // Ensure that post has the same url as it previously had
-            $currentSlug = parse_url(get_permalink($postId))['path'];
-            if (rtrim($originalSlug, '/') !== rtrim($currentSlug, '/')) {
-                update_post_meta($postId, WpComposite::POST_META_CUSTOM_PERMALINK, ltrim($originalSlug, '/'));
-            }
-        }
-    }
 
     private function handle_locked_content($postId, $composite)
     {
@@ -325,22 +314,36 @@ class WaContent extends BaseCmd
 
         $newFileIds = $compositeContents->map(function ($compositeContent) {
             if ($compositeContent->type === 'image') {
-                return $compositeContent->content->id;
+                return $compositeContent->id;
             }
-            if ($compositeContent->type === 'file') {
+            /*if ($compositeContent->type === 'file') {
                 return [
-                    'file'   => $compositeContent->content->id,
+                    'file'   => $compositeContent->id,
                     'images' => collect($compositeContent->content->images->edges)->map(function ($image) {
                         return $image->node->id;
                     })
                 ];
-            }
+            }*/
         })->flatten()->rejectNullValues();
 
         $currentFileIds->diff($newFileIds)->each(function ($orphanedFileId) { // Compare current file ids to new file ids
             // We delete any of the current files that would be come orphaned
             WpAttachment::delete_by_contenthub_id($orphanedFileId);
         });
+    }
+
+    private function disableHooks()
+    {
+        // Disable generation of image sizes on import to speed up the precess
+        add_filter('intermediate_image_sizes_advanced', function ($sizes) {
+            return [];
+        });
+
+        // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
+        remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
+        remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
+        remove_action( 'transition_post_status', [CxensePost::class, 'post_status_changed'], 10, 3);
+        remove_action( 'save_post', [Post::class, 'save'], 5, 2);
     }
 
 }
