@@ -33,6 +33,7 @@ class CmdManager
             Tags::register();
             Categories::register();
             Vocabularies::register();
+            WaContent::register();
         }
     }
 }
