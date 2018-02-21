@@ -1020,25 +1020,6 @@ class CompositeFieldGroup
                             ),
                         ),
                     ),
-                    array (
-                        'key' => 'field_5a8d44d026528',
-                        'label' => 'Photo & Styling Byline',
-                        'name' => 'photo_styling_byline',
-                        'type' => 'text',
-                        'instructions' => 'Set the photo and styling byline here',
-                        'required' => 0,
-                        'conditional_logic' => 0,
-                        'wrapper' => array (
-                            'width' => '',
-                            'class' => '',
-                            'id' => '',
-                        ),
-                        'default_value' => '',
-                        'placeholder' => '',
-                        'prepend' => '',
-                        'append' => '',
-                        'maxlength' => '',
-                    ),
                 ),
                 'location' => array (
                     array (
