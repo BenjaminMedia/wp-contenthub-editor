@@ -71,8 +71,7 @@ class WaContent extends BaseCmd
         $this->save_teasers($postId, $waContent);
         $this->delete_orphaned_files($postId, $compositeContents);
         $this->save_composite_contents($postId, $compositeContents);
-
-        //$this->save_categories($postId, $waContent);
+        $this->save_categories($postId, $waContent);
         //$this->save_tags($postId, $compositeContents);
         //$this->handle_locked_content($postId, $waContent);
 
@@ -249,11 +248,10 @@ class WaContent extends BaseCmd
 
     private function save_categories($postId, $composite)
     {
-        collect($composite->categories->edges)->pluck('node')->each(function ($category) use ($postId) {
-            if ($existingTermId = WpTerm::id_from_contenthub_id($category->id)) {
-                update_field('category', $existingTermId, $postId);
-            }
-        });
+        $contentHubId = base64_encode(sprintf('categories-wa-%s', $composite->widget_content->category_id));
+        if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
+            update_field('category', $existingTermId, $postId);
+        }
     }
 
     private function remove_if_orphaned(WP_Post $post)

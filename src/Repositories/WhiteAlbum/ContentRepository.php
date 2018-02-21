@@ -10,6 +10,8 @@ namespace Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum;
 class ContentRepository
 {
     const ARTICLE_RESOURCE = '/api/v1/articles/';
+    const GALLERY_RESOURCE = '/api/v1/galleries/';
+    const CONTENT_RESOURCE = '/api/v1/widget_contents';
 
     protected $client;
 
@@ -28,12 +30,43 @@ class ContentRepository
         ]);
     }
 
-    public function find_by_id($id)
+    public function find_by_id($id, $resource = null)
     {
-        $response = @$this->client->get(static::ARTICLE_RESOURCE . $id);
+        if(!$resource) {
+            $resource = static::ARTICLE_RESOURCE;
+        }
+
+        $response = @$this->client->get($resource . $id);
         if($response->getStatusCode() !== 200) {
             return null;
         }
         return json_decode($response->getBody()->getContents());
+    }
+
+    public function get_all($page = 1, $perPage = 50) {
+        $response = @$this->client->get(static::CONTENT_RESOURCE, [
+            'query' => [
+                'page' => $page,
+                'per_page' => $perPage
+            ]
+        ]);
+        if($response->getStatusCode() !== 200) {
+            return null;
+        }
+    }
+
+    public function mapAll($callback) {
+        $page = 1;
+        while($contents = $this->get_all($page)) {
+            collect($contents)->each(function($content) use($callback) {
+                if($content->type === 'Article') {
+                    $callback($this->find_by_id($content->widget_contentable_id, static::ARTICLE_RESOURCE));
+                }
+                if($content->type === 'Gallery') {
+                    $callback($this->find_by_id($content->widget_contentable_id, static::GALLERY_RESOURCE));
+                }
+            });
+        }
+        $contents = $this->get_all($page++);
     }
 }
