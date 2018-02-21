@@ -101,7 +101,39 @@ class MetaFieldGroup
                         'new_lines' => '',
                         'readonly' => 0,
                         'disabled' => 0,
-                    ]
+                    ],
+                    [
+                        'key' => 'field_5a8d72d39ee48',
+                        'label' => 'Advertorial logo',
+                        'name' => 'advertorial_logo',
+                        'type' => 'image',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => [
+                            [
+                                [
+                                    'field' => 'field_58fde84d034e4',
+                                    'operator' => '==',
+                                    'value' => '1',
+                                ],
+                            ],
+                        ],
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'return_format' => 'id',
+                        'preview_size' => 'thumbnail',
+                        'library' => 'all',
+                        'min_width' => '',
+                        'min_height' => '',
+                        'min_size' => '',
+                        'max_width' => '',
+                        'max_height' => '',
+                        'max_size' => '',
+                        'mime_types' => '',
+                    ],
                 ],
                 'location' => [
                     [
