@@ -492,6 +492,25 @@ class CompositeFieldGroup
                                 'display' => 'block',
                                 'sub_fields' => array (
                                     array (
+                                        'key' => 'field_5a8d7ae021e44',
+                                        'label' => 'Lead Image',
+                                        'name' => 'lead_image',
+                                        'type' => 'true_false',
+                                        'instructions' => 'Generate a lead image for the teaser from the video.',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => array (
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ),
+                                        'message' => '',
+                                        'default_value' => 0,
+                                        'ui' => 0,
+                                        'ui_on_text' => '',
+                                        'ui_off_text' => '',
+                                    ),
+                                    array (
                                         'key' => 'field_5938fe71ed0bb',
                                         'label' => 'Embed Url',
                                         'name' => 'embed_url',
