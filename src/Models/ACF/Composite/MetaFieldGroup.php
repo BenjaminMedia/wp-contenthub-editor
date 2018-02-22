@@ -104,8 +104,8 @@ class MetaFieldGroup
                     ],
                     [
                         'key' => 'field_5a8d72d39ee48',
-                        'label' => 'Advertorial logo',
-                        'name' => 'advertorial_logo',
+                        'label' => 'Commercial logo',
+                        'name' => 'commercial_logo',
                         'type' => 'image',
                         'instructions' => '',
                         'required' => 0,
