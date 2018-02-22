@@ -7,7 +7,6 @@ use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
-use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
@@ -53,9 +52,13 @@ class WaContent extends BaseCmd
     {
         $this->disableHooks(); // Disable various hooks and filters during import
 
+        $repository = new ContentRepository();
         if($id = $assocArgs['id'] ?? null) {
-            $repository = new ContentRepository();
             $this->import_composite($repository->find_by_id($id));
+        } else {
+            $repository->map_all(function($waContent){
+                $this->import_composite($waContent);
+            });
         }
     }
 
@@ -72,8 +75,7 @@ class WaContent extends BaseCmd
         $this->delete_orphaned_files($postId, $compositeContents);
         $this->save_composite_contents($postId, $compositeContents);
         $this->save_categories($postId, $waContent);
-        //$this->save_tags($postId, $compositeContents);
-        //$this->handle_locked_content($postId, $waContent);
+        $this->save_tags($postId, $waContent);
 
         WP_CLI::success('imported: ' . $waContent->widget_content->title  . ' id: ' . $waContent->id);
     }
@@ -98,6 +100,7 @@ class WaContent extends BaseCmd
             'post_type' => WpComposite::POST_TYPE,
             'post_date' => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
+            'post_author' => $this->get_author($waContent),
             'meta_input' => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->id,
                 WpComposite::POST_META_TITLE => $metaTitle,
@@ -122,7 +125,6 @@ class WaContent extends BaseCmd
             update_field('magazine_year', $waContent->magazine_year, $postId);
             update_field('magazine_issue', $waContent->magazine_number, $postId);
         }
-
         // Todo: set advertorial
         //update_field('commercial', isset($composite->advertorial_type), $postId);
         //update_field('commercial_type', $composite->advertorial_type ?? null, $postId);
@@ -191,29 +193,21 @@ class WaContent extends BaseCmd
         update_field('composite_content', $content->toArray(), $postId);
     }
 
-    private function save_tags($postId, $compositeContents)
+    private function save_tags($postId, $waContent)
     {
-        $compositeContents->map(function ($compositeContent) {
-            if ($compositeContent->type === 'tag' && $existingTermId = WpTerm::id_from_contenthub_id($compositeContent->content->id)) {
-                if(isset($compositeContent->content->vocabulary->id) && $existingTaxonomy = WpTaxonomy::get_taxonomy($compositeContent->content->vocabulary->id)) {
-                    return [$existingTaxonomy => $existingTermId];
-                }
-                return ['tags' => $existingTermId];
-            }
-            return null;
-        })->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use($postId){
-            update_field($taxonomy, $tagIds->toArray(), $postId);
-        });
+        $tagIds = collect($waContent->widget_content->tags)->map(function ($waTag) {
+            $contentHubId = base64_encode(sprintf('tags-wa-%s', $waTag->id));
+            $existingTermId = WpTerm::id_from_contenthub_id($contentHubId);
+            return $existingTermId ?: null;
+        })->rejectNullValues();
+        update_field('tags', $tagIds->toArray(), $postId);
     }
 
     private function save_teasers($postId, $waContent)
     {
         update_field('teaser_title', $waContent->widget_content->teaser_title, $postId);
         update_field('teaser_description', $waContent->widget_content->teaser_description, $postId);
-
-        // Todo implement teaser image
-        //update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaser->image), $postId);
-
+        update_field('teaser_image', WpAttachment::upload_attachment($postId,  $waContent->widget_content->teaser_image), $postId);
 
         /* Todo: implement facebook teaser if needed
         update_post_meta($postId, WpComposite::POST_FACEBOOK_TITLE, $teaser->title);
@@ -224,26 +218,6 @@ class WaContent extends BaseCmd
         }
         */
 
-    }
-
-
-    private function handle_locked_content($postId, $composite)
-    {
-        $accessRules = collect($composite->accessRules->edges)->pluck('node');
-        if (!$accessRules->isEmpty()) {
-            update_field('locked_content',
-                $accessRules->first(function ($rule) {
-                    return $rule->domain === 'All' && $rule->kind === 'Deny';
-                }) ? true : false,
-                $postId
-            );
-            update_field('required_user_role',
-                $accessRules->first(function ($rule) {
-                    return in_array($rule->domain, ['Subscriber', 'RegUser']) && $rule->kind === 'Allow';
-                })->domain,
-                $postId
-            );
-        }
     }
 
     private function save_categories($postId, $composite)
@@ -274,16 +248,6 @@ class WaContent extends BaseCmd
             wp_delete_post($post->ID, true);
             WP_CLI::line(sprintf('Removed post: %s, with id:%s and composite id:%s', $post->post_title, $post->ID, $compositeId));
         }
-    }
-
-    private function get_post_name($composite)
-    {
-        if(preg_match('/[^\/]*$/', $composite->metaInformation->originalUrl, $matches) && !empty($matches)) {
-            return $matches[0]; // return the part of the slug after the last /
-        }
-        global $locale; // No original url is available so we generate post name from the title instead
-        $locale = $composite->locale; // We modify the global $locale so sanitize_title_with_dashes() works correctly
-        return sanitize_title($composite->title);
     }
 
     /**
@@ -344,4 +308,25 @@ class WaContent extends BaseCmd
         remove_action( 'save_post', [Post::class, 'save'], 5, 2);
     }
 
+    private function get_author($waContent)
+    {
+        global $wpdb;
+
+        $contentHubId = base64_encode(sprintf('wa-author-%s', md5(strtolower(trim($waContent->author)))));
+
+        $existingId = $wpdb->get_var(
+            $wpdb->prepare("SELECT user_id FROM wp_usermeta WHERE meta_key=%s AND meta_value=%s", 'contenthub_id', $contentHubId)
+        );
+
+        $userId = wp_insert_user([
+            'ID' => $existingId ?: null,
+            'user_login' => sanitize_user($waContent->author),
+            'display_name' => $waContent->author,
+            'user_pass' => md5(rand(1, 32)),
+        ]);
+
+        update_user_meta($userId, 'contenthub_id', $contentHubId);
+
+        return $userId;
+    }
 }

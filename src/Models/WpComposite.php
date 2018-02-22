@@ -9,7 +9,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
-use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use WP_Post;
 
 /**
