@@ -494,7 +494,7 @@ class CompositeFieldGroup
                                     array (
                                         'key' => 'field_5a8d7ae021e44',
                                         'label' => 'Lead Image',
-                                        'name' => 'lead_image',
+                                        'name' => 'video_lead_image',
                                         'type' => 'true_false',
                                         'instructions' => 'Generate a lead image for the teaser from the video.',
                                         'required' => 0,
