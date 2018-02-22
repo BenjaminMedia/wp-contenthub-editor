@@ -125,9 +125,14 @@ class WaContent extends BaseCmd
             update_field('magazine_year', $waContent->magazine_year, $postId);
             update_field('magazine_issue', $waContent->magazine_number, $postId);
         }
-        // Todo: set advertorial
-        //update_field('commercial', isset($composite->advertorial_type), $postId);
-        //update_field('commercial_type', $composite->advertorial_type ?? null, $postId);
+
+        if($waContent->widget_content->advertorial_label) {
+            update_field('commercial', true, $postId);
+            $type = join('', array_map(function($part){
+                return ucfirst($part);
+            }, explode(' ', $waContent->widget_content->advertorial_label)));
+            update_field('commercial_type', $type ?? null, $postId);
+        }
     }
 
     private function format_composite_contents($waContent)
