@@ -9,7 +9,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
-use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use WP_Post;
 
 /**
@@ -26,6 +25,7 @@ class WpComposite
     const POST_PERMALINK_STRUCTURE = '/%category%/%postname%';
     const CATEGORY_BASE = '';
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
+    const POST_META_WHITE_ALBUM_ID = 'white_album_id';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
     const POST_META_TITLE = '_yoast_wpseo_title';
     const POST_META_DESCRIPTION = '_yoast_wpseo_metadesc';
@@ -81,6 +81,18 @@ class WpComposite
         global $wpdb;
         return $wpdb->get_var(
             $wpdb->prepare("SELECT post_id FROM wp_postmeta WHERE meta_key=%s AND meta_value=%s", static::POST_META_CONTENTHUB_ID, $id)
+        );
+    }
+
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function id_from_white_album_id($id) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare("SELECT post_id FROM wp_postmeta WHERE meta_key=%s AND meta_value=%s", static::POST_META_WHITE_ALBUM_ID, $id)
         );
     }
 
@@ -215,7 +227,7 @@ class WpComposite
                 ])->get($post->post_status, 'Draft'),
             ], $action === 'update' ? ['id' => $contentHubId] : []);
 
-            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+            //update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
         }
     }
 
