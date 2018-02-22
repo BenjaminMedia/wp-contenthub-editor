@@ -9,6 +9,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
+use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use WP_Post;
 
 /**
@@ -227,7 +228,7 @@ class WpComposite
                 ])->get($post->post_status, 'Draft'),
             ], $action === 'update' ? ['id' => $contentHubId] : []);
 
-            //update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
         }
     }
 
