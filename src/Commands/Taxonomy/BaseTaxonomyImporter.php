@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
+use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Plugin;
@@ -13,7 +14,7 @@ use WP_CLI;
  *
  * @package \Bonnier\WP\ContentHub\Editor\Commands\Taxonomy
  */
-class BaseTaxonomyImporter extends WP_CLI_Command
+class BaseTaxonomyImporter extends BaseCmd
 {
     protected $taxonomy;
     protected $getTermCallback;
@@ -21,17 +22,9 @@ class BaseTaxonomyImporter extends WP_CLI_Command
     protected function triggerImport($taxononmy, $getTermCallback) {
         $this->taxonomy = $taxononmy;
         $this->getTermCallback = $getTermCallback;
-        $this->mapSites(function ($site){
-            $this->mapTerms($site, function($externalTag){
-                $this->importTermAndLinkTranslations($externalTag);
-            });
+        $this->mapTerms($this->get_site(), function($externalTag){
+            $this->importTermAndLinkTranslations($externalTag);
         });
-    }
-
-    protected function mapSites($callable) {
-        collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function($locale) use($callable){
-            return Plugin::instance()->settings->get_site($locale);
-        })->rejectNullValues()->each($callable);
     }
 
     protected function mapTerms($site, $callable)
@@ -61,10 +54,10 @@ class BaseTaxonomyImporter extends WP_CLI_Command
     protected function importTerm($name, $languageCode, $externalTerm) {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
-        $taxonomy = $externalTerm->vocabulary ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
+        $taxonomy = isset($externalTerm->vocabulary) ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
         $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
 
-        $description = $externalTerm->description->{$languageCode};
+        $description = $externalTerm->description->{$languageCode} ?? null;
         $internal = $externalTerm->internal ?? false;
 
 

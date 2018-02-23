@@ -39,5 +39,8 @@ class CollectionHelper extends Collection
                 return is_null($value);
             });
         });
+        Collection::macro('itemsToObject', function () {
+            return collect(json_decode($this->toJson()));
+        });
     }
 }
