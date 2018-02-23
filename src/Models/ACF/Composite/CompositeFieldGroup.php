@@ -202,7 +202,7 @@ class CompositeFieldGroup
                                             'class' => '',
                                             'id' => '',
                                         ),
-                                        'simple_mde_config' => '{"toolbar":["bold","italic","heading-2","heading-3","|","unordered-list","ordered-list","link","|","preview","guide"]}',
+                                        'simple_mde_config' => '{"toolbar":["bold","italic","quote","heading-2","heading-3","|","unordered-list","ordered-list","link","|","preview","guide"]}',
                                         'font_size' => 14,
                                     ),
                                     array (
