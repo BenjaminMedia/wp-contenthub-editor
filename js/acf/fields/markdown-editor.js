@@ -7,7 +7,53 @@
         if(typeof dictionary !== "undefined") {
             mdeOptions.dictionary = dictionary;
         }
-        new SimpleMDE(Object.assign(mdeOptions, options));
+        var toolbar = {
+            toolbar: [
+                "bold",
+                "italic",
+                "quote",
+                {
+                    name: "cite",
+                    action: function customFunction(editor){
+                        var cm = editor.codemirror;
+                        var output = '';
+                        var selectedText = cm.getSelection();
+                        var text = selectedText || '';
+                        
+                        output = '<cite>' + text + '</cite>';
+                        cm.replaceSelection(output);
+                    },
+                    className: "fa fa-star",
+                    title: "Citation",
+                },
+                "heading-2",
+                "heading-3",
+                "|",
+                "unordered-list",
+                "ordered-list",
+                "link",
+                "|",
+                "preview",
+                "guide"
+            ]
+        };
+        
+        if('infobox' === options) {
+            toolbar = {
+                toolbar: [
+                    "bold",
+                    "italic",
+                    "|",
+                    "unordered-list",
+                    "ordered-list",
+                    "link",
+                    "|",
+                    "preview",
+                    "guide"
+                ]
+            };
+        }
+        new SimpleMDE(Object.assign(mdeOptions, toolbar));
     };
     
     acf.add_action('append', function( el )
