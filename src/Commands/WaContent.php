@@ -153,7 +153,7 @@ class WaContent extends BaseCmd
                 'lead_image' => true
             ])->merge($waContent->widget_content->lead_image)
             : null
-        )->toObject();
+        )->itemsToObject();
     }
 
     private function save_composite_contents($postId, $compositeContents)
