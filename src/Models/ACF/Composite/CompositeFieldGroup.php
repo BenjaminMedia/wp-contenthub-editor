@@ -728,6 +728,25 @@ class CompositeFieldGroup
                                 'display' => 'block',
                                 'sub_fields' => array (
                                     array (
+                                        'key' => 'field_5a952a1a811d2',
+                                        'label' => 'Title',
+                                        'name' => 'title',
+                                        'type' => 'text',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => array (
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ),
+                                        'default_value' => '',
+                                        'placeholder' => '',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'maxlength' => '',
+                                    ),
+                                    array (
                                         'key' => 'field_5a4f4dfd17460',
                                         'label' => 'Images',
                                         'name' => 'images',
