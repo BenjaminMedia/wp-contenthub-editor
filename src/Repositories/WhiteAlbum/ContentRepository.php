@@ -63,9 +63,9 @@ class ContentRepository
                     $callback($contentFound);
                 }
             });
+            $page++;
+            $contents = collect($this->get_all($page));
         }
-        $page++;
-        $contents = collect($this->get_all($page));
     }
 
     private function get($url, $options) {
