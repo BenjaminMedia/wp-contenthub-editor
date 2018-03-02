@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\ACF;
 
 use acf_field;
+use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 
 class MarkdownEditor extends acf_field {
@@ -158,6 +159,14 @@ class MarkdownEditor extends acf_field {
         wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.5');
         
         wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'], '1.2.5' );
+
+        //ContentHub composite fields validation
+        $current_screen = get_current_screen();
+        if(isset($current_screen->id) &&  $current_screen->id === WpComposite::POST_TYPE)
+        {
+            wp_enqueue_script( 'acf-composite-validation', Plugin::instance()->plugin_url . 'js/acf/fields/composite-validation.js', ['acf-input'], '1.2.5' );
+        }
+
         $language = null;
         if(isset($_GET['post'])) {
             $language = pll_get_post_language($_GET['post']);
