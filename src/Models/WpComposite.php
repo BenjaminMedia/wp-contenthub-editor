@@ -104,44 +104,39 @@ class WpComposite
         });
 
         //check if a page matches
-        add_action( 'parse_request', function ( $request ) {
+        add_action('parse_request', function ($request) {
             // if the rule was matched, the query var will be set
-            if( isset( $request->query_vars['category_name'] ) ){
+            if ($categorySlug = $request->query_vars['category_name'] ?? null) {
 
                 // check if a page exists, reset query vars to load that page if it does
-                if( get_page_by_path( $request->query_vars['category_name'] ) ){
-                    $request->query_vars['pagename'] = $request->query_vars['category_name'];
-                    unset( $request->query_vars['category_name'] );
+                if (get_page_by_path($categorySlug)) {
+                    if (($pageSlug = $request->query_vars['name'] ?? null) && is_numeric($pageSlug)) {
+                        $request->query_vars['paged'] = $pageSlug; // Fixes pagination on pages
+                    }
+                    $request->query_vars['name'] = $categorySlug;
+                    unset($request->query_vars['category_name']);
+                    return $request;
                 }
 
                 /*
-                 * The above page check would have been applied and unset the category name, therefore we need to check again to avoid unwanted
-                 * undefined index errors.
-                 * The bellow 'hack' will be applied to category pages to make sure we can't access sub-category URL directly without the parent-category
+                 * Make sure we can't access sub-category URL directly without the parent-category
                  * E.g:
                  * - http://gds.dev/terrasse/ (terrasse is the parent). Url works
                  * - http://gds.dev/terrasse/fliseterrasse/ (fliseterrasse sub-category). Url works
                  * - http://gds.dev/fliseterrasse/ (This should not work and throw 404 page)
                  */
-                if ( isset($request->query_vars['category_name']) ) {
-                    $parentCategory = get_category_by_slug($request->query_vars['category_name']);
-                    if (isset($parentCategory->parent) && $parentCategory->parent > 0) {
-                        add_action('wp',   function() {
-                            global $wp_query;
-                            $wp_query->is_404 = true;
-                            status_header(404);
-                        });
-                    }
-                }
-
-                // if the Contenthub Editor rewrite rule has caught a robots.txt request, then serve robots.txt
-                if ( isset($request->query_vars['category_name']) && $request->query_vars['category_name'] == "robots.txt") {
-                    unset( $request->query_vars['category_name'] );
-                    $request->query_vars['robots'] = 1;
+                if (!get_category_by_path($categorySlug)) {
+                    add_action('pre_get_posts', function ($wp_query) {
+                        $wp_query->is_404 = true;
+                        status_header(404);
+                        return $wp_query;
+                    });
+                    return $request;
                 }
             }
             return $request;
-        },1 );
+        }, 1);
+
 
         /**
          * Have WordPress match postname to any of our public post types (post, page, contenthub_composite)
