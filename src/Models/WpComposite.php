@@ -119,15 +119,13 @@ class WpComposite
                 }
 
                 /*
-                 * The bellow 'hack' will be applied to category pages to make sure we can't access sub-category URL
-                 * directly without the parent-category
+                 * Make sure we can't access sub-category URL directly without the parent-category
                  * E.g:
                  * - http://gds.dev/terrasse/ (terrasse is the parent). Url works
                  * - http://gds.dev/terrasse/fliseterrasse/ (fliseterrasse sub-category). Url works
                  * - http://gds.dev/fliseterrasse/ (This should not work and throw 404 page)
                  */
-                $category = get_category_by_slug($categorySlug);
-                if (isset($category->parent) && $category->parent > 0) {
+                if (!get_category_by_path($categorySlug)) {
                     add_action('pre_get_posts', function ($wp_query) {
                         $wp_query->is_404 = true;
                         status_header(404);
@@ -138,6 +136,7 @@ class WpComposite
             }
             return $request;
         }, 1);
+
 
         /**
          * Have WordPress match postname to any of our public post types (post, page, contenthub_composite)
