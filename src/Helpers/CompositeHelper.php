@@ -12,10 +12,10 @@ class CompositeHelper
      */
     public function __construct()
     {
-        add_action('save_post', [$this ,'videoLeadImage']);
+        add_action('save_post', [$this ,'videoTeaserImage']);
     }
 
-    public function videoLeadImage($postId)
+    public function videoTeaserImage($postId)
     {
         if (wp_is_post_revision($postId) || !have_rows('composite_content', $postId)) {
             return;
@@ -25,27 +25,27 @@ class CompositeHelper
             //this function will increment have_rows after every loop
             $widget = the_row();
 
-            $leadImage = boolval(get_sub_field('lead_image'));
+            $videoTeaserImage = boolval(get_sub_field('teaser_image'));
 
-            if (!$leadImage || $widget['acf_fc_layout'] !== 'video') {
+            if (!$videoTeaserImage || $widget['acf_fc_layout'] !== 'video') {
                 continue;
             }
 
             $embed = get_sub_field('embed_url');
-            $leadImagefile = VideoHelper::getLeadImageFile($embed, 'https://bonnier-publications-danmark.23video.com');
+            $teaserImagefile = VideoHelper::getLeadImageFile($embed, 'https://bonnier-publications-danmark.23video.com');
 
-            if (!$leadImagefile->url || empty($embed)) {
+            if (!$teaserImagefile->url || empty($embed)) {
                 continue;
             }
 
             try {
-                $attachmentId = WpAttachment::upload_attachment($postId, $leadImagefile);
-                $postLeadImage = get_post_meta($postId, 'video_lead_image_origin_url');
+                $attachmentId = WpAttachment::upload_attachment($postId, $teaserImagefile);
+                $videoTeaserImageUrl = get_post_meta($postId, 'video_teaser_image_origin_url');
 
-                //Update when it's not saved yet or if lead image is changed.
-                if ($attachmentId && ((empty($postLeadImage)) || $postLeadImage[0] !== $leadImagefile->url)) {
-                    update_post_meta($postId, 'video_lead_image', $attachmentId);
-                    update_post_meta($postId, 'video_lead_image_origin_url', $leadImagefile->url);
+                //Update when it's not saved yet or if video teaser image is changed.
+                if ($attachmentId && ((empty($videoTeaserImageUrl)) || $videoTeaserImageUrl[0] !== $teaserImagefile->url)) {
+                    update_field('teaser_image', $attachmentId);
+                    update_post_meta($postId, 'video_teaser_image_origin_url', $teaserImagefile->url);
                 }
             } catch (\Exception $e) {
                 echo 'Error uploading video thumbnail! '.$e->getMessage();

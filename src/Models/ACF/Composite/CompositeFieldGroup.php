@@ -493,10 +493,10 @@ class CompositeFieldGroup
                                 'sub_fields' => array (
                                     array (
                                         'key' => 'field_5a8d7ae021e44',
-                                        'label' => 'Lead Image',
-                                        'name' => 'lead_image',
+                                        'label' => 'Teaser Image',
+                                        'name' => 'teaser_image',
                                         'type' => 'true_false',
-                                        'instructions' => 'Generate a lead image for the teaser from the video.',
+                                        'instructions' => 'This will generate an image from the video and set it as a <b>teaser image</b> for the article.',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => array (
