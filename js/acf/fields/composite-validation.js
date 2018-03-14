@@ -32,6 +32,25 @@ acf.add_filter('validation_complete', function( json, $form ){
                 return false;
             }
         });
+
+        var teaserImageCheckbox = $(".acf-field-58aae476809c6 .acf-flexible-content .values .acf-fields [data-name='teaser_image'] input:checkbox");
+        var teaserImage = $('.acf-field-58e38da2194e3 input').val();
+
+        if(teaserImage > 0 && teaserImageCheckbox.attr('checked') === 'checked')
+        {
+            var teaserImageError = {input: $(teaserImageCheckbox).attr('name'), message: "Please make sure you have only 1 teaser image!"};
+
+            if(typeof json.errors.length === 'undefined')
+            {
+                json.errors = [];
+            }
+
+            json.errors.push(teaserImageError);
+            //invalidate the form
+            json.valid = 0;
+
+        }
+
     });
 
     // return

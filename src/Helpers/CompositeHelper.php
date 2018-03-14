@@ -25,7 +25,7 @@ class CompositeHelper
         }
 
         $videoWithTeaser = collect(get_field('composite_content'))->first(function($content){
-            return $content['teaser_image'] && $content['acf_fc_layout'] === 'video' ;
+            return (isset($content['teaser_image']) && $content['teaser_image']) && $content['acf_fc_layout'] === 'video' ;
         });
 
         if($videoWithTeaser){
@@ -37,11 +37,15 @@ class CompositeHelper
             }
 
             try {
-                $attachmentId = WpAttachment::upload_attachment($postId, $teaserImagefile);
-                $videoTeaserImageUrl = get_post_meta($postId, 'video_teaser_image_origin_url');
+                if(!$attachmentId = WpAttachment::upload_attachment($postId, $teaserImagefile)){
+                    return;
+                }
 
-                //Update when it's not saved yet or if video teaser image is changed.
-                if ($attachmentId && ((empty($videoTeaserImageUrl)) || $videoTeaserImageUrl[0] !== $teaserImagefile->url)) {
+                $videoTeaserImageUrl = get_post_meta($postId, 'video_teaser_image_origin_url');
+                $currentTeaserImage = get_field('teaser_image');
+
+                //Update when it's not saved yet or if video teaser image is changed or the teaser image is not set
+                if((empty($videoTeaserImageUrl)) || $videoTeaserImageUrl[0] !== $teaserImagefile->url || !$currentTeaserImage) {
                     update_field('teaser_image', $attachmentId);
                     update_post_meta($postId, 'video_teaser_image_origin_url', $teaserImagefile->url);
                 }
