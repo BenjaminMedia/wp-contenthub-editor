@@ -15,13 +15,16 @@ class CompositeHelper
         add_action('save_post', [$this ,'videoTeaserImage']);
     }
 
+    /**
+     * @param $postId
+     */
     public function videoTeaserImage($postId)
     {
         if (wp_is_post_revision($postId) || !have_rows('composite_content', $postId)) {
             return;
         }
 
-        $videoWithTeaser =collect(get_field('composite_content'))->first(function($content){
+        $videoWithTeaser = collect(get_field('composite_content'))->first(function($content){
             return $content['teaser_image'] && $content['acf_fc_layout'] === 'video' ;
         });
 
