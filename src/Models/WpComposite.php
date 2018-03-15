@@ -108,12 +108,13 @@ class WpComposite
             // if the rule was matched, the query var will be set
             if ($categorySlug = $request->query_vars['category_name'] ?? null) {
 
+
                 // check if a page exists, reset query vars to load that page if it does
-                if (get_page_by_path($categorySlug)) {
+                if (($page = get_page_by_path($request->request)) || ($page = get_page_by_path($categorySlug))) {
                     if (($pageSlug = $request->query_vars['name'] ?? null) && is_numeric($pageSlug)) {
                         $request->query_vars['paged'] = $pageSlug; // Fixes pagination on pages
                     }
-                    $request->query_vars['name'] = $categorySlug;
+                    $request->query_vars['name'] = $page->post_name;
                     unset($request->query_vars['category_name']);
                     return $request;
                 }
