@@ -167,7 +167,7 @@ class MarkdownEditor extends acf_field {
             wp_enqueue_script( 'acf-composite-validation', Plugin::instance()->plugin_url . 'js/acf/fields/composite-validation.js', ['acf-input'], '1.2.5' );
         }
 
-        $language = null;
+        $language = 'da';
         if(isset($_GET['post'])) {
             $language = pll_get_post_language($_GET['post']);
         } else if(isset($_GET['new_lang'])) {
