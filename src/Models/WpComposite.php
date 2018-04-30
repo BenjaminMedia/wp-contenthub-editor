@@ -10,6 +10,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Plugin;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
+use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 use WP_Post;
 
 /**
@@ -196,22 +197,12 @@ class WpComposite
 
     public static function on_save($postId, WP_Post $post)
     {
-        if(static::post_type_match_and_not_auto_draft($post) && env('WP_ENV') !== 'testing') {
-
-            $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
-            $action = !$contentHubId ? 'create' : 'update';
-
-            $input = array_merge([
-                'title' => $post->post_title,
-                'kind' => get_field('kind', $postId),
-                'status' => collect([
-                    'publish' => 'Published',
-                    'draft' => 'Draft',
-                    'pending' => 'Ready'
-                ])->get($post->post_status, 'Draft'),
-            ], $action === 'update' ? ['id' => $contentHubId] : []);
-
-            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+        if(static::post_type_match_and_not_auto_draft($post) &&
+            !get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) &&
+            $site = Plugin::instance()->settings->get_site(pll_current_language('locale')))
+        {
+            $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
+            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
         }
     }
 
