@@ -38,7 +38,7 @@ class TeaserFieldGroup
                     ],
                     [
                         'key' => 'field_58e38d86194e2',
-                        'label' => 'Teaser title',
+                        'label' => 'Teaser Title',
                         'name' => 'teaser_title',
                         'type' => 'text',
                         'instructions' => '',
@@ -57,7 +57,7 @@ class TeaserFieldGroup
                     ],
                     [
                         'key' => 'field_58e38da2194e3',
-                        'label' => 'Teaser image',
+                        'label' => 'Teaser Image',
                         'name' => 'teaser_image',
                         'type' => 'image',
                         'instructions' => '',
@@ -81,7 +81,7 @@ class TeaserFieldGroup
                     ],
                     [
                         'key' => 'field_58e38dd0194e4',
-                        'label' => 'Teaser description',
+                        'label' => 'Teaser Description',
                         'name' => 'teaser_description',
                         'type' => 'textarea',
                         'instructions' => '',
