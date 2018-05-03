@@ -16,11 +16,11 @@ class TeaserFieldGroup
 
     private static function create_acf_field_group() {
         if( function_exists('acf_add_local_field_group') ) {
-            acf_add_local_field_group(array (
+            acf_add_local_field_group([
                 'key' => 'group_58e38d7eca92e',
                 'title' => 'Teasers',
-                'fields' => array (
-                    array (
+                'fields' => [
+                    [
                         'key' => 'field_5aeac69f22931',
                         'label' => 'Site Teaser (Eg. article teasers, search results, cxense etc.)',
                         'name' => '',
@@ -28,15 +28,15 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'placement' => 'top',
                         'endpoint' => 0,
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_58e38d86194e2',
                         'label' => 'Teaser title',
                         'name' => 'teaser_title',
@@ -44,18 +44,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
                         'maxlength' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_58e38da2194e3',
                         'label' => 'Teaser image',
                         'name' => 'teaser_image',
@@ -63,11 +63,11 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'return_format' => 'id',
                         'preview_size' => 'thumbnail',
                         'library' => 'all',
@@ -78,8 +78,8 @@ class TeaserFieldGroup
                         'max_height' => '',
                         'max_size' => '',
                         'mime_types' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_58e38dd0194e4',
                         'label' => 'Teaser description',
                         'name' => 'teaser_description',
@@ -87,18 +87,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
                         'rows' => '',
                         'new_lines' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac72bfaaf1',
                         'label' => 'SEO Teaser (Google)',
                         'name' => '',
@@ -106,15 +106,15 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'placement' => 'top',
                         'endpoint' => 0,
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac749faaf2',
                         'label' => 'Teaser Title',
                         'name' => 'seo_teaser_title',
@@ -122,18 +122,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
                         'maxlength' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac77c8d9cf',
                         'label' => 'Teaser Image',
                         'name' => 'seo_teaser_image',
@@ -141,11 +141,11 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'return_format' => 'id',
                         'preview_size' => 'thumbnail',
                         'library' => 'all',
@@ -156,8 +156,8 @@ class TeaserFieldGroup
                         'max_height' => '',
                         'max_size' => '',
                         'mime_types' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac79e8d9d0',
                         'label' => 'Teaser Description',
                         'name' => 'seo_teaser_description',
@@ -165,18 +165,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
                         'rows' => '',
                         'new_lines' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac7e96eb57',
                         'label' => 'Facebook Teaser',
                         'name' => '',
@@ -184,15 +184,15 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'placement' => 'top',
                         'endpoint' => 0,
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac8356eb58',
                         'label' => 'Teaser Title',
                         'name' => 'fb_teaser_title',
@@ -200,18 +200,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
                         'maxlength' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac8476eb59',
                         'label' => 'Teaser Image',
                         'name' => 'fb_teaser_image',
@@ -219,11 +219,11 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'return_format' => 'id',
                         'preview_size' => 'thumbnail',
                         'library' => 'all',
@@ -234,8 +234,8 @@ class TeaserFieldGroup
                         'max_height' => '',
                         'max_size' => '',
                         'mime_types' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac8546eb5a',
                         'label' => 'Teaser Description',
                         'name' => 'fb_teaser_description',
@@ -243,18 +243,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
                         'rows' => '',
                         'new_lines' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac86e39537',
                         'label' => 'Twitter Teaser',
                         'name' => '',
@@ -262,15 +262,15 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'placement' => 'top',
                         'endpoint' => 0,
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac87839538',
                         'label' => 'Teaser Title',
                         'name' => 'tw_teaser_title',
@@ -278,18 +278,18 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
                         'maxlength' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac88039539',
                         'label' => 'Teaser Image',
                         'name' => 'tw_teaser_image',
@@ -297,11 +297,11 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'return_format' => 'id',
                         'preview_size' => 'thumbnail',
                         'library' => 'all',
@@ -312,8 +312,8 @@ class TeaserFieldGroup
                         'max_height' => '',
                         'max_size' => '',
                         'mime_types' => '',
-                    ),
-                    array (
+                    ],
+                    [
                         'key' => 'field_5aeac88c3953a',
                         'label' => 'Teaser Description',
                         'name' => 'tw_teaser_description',
@@ -321,27 +321,27 @@ class TeaserFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
-                        ),
+                        ],
                         'default_value' => '',
                         'placeholder' => '',
                         'maxlength' => '',
                         'rows' => '',
                         'new_lines' => '',
-                    ),
-                ),
-                'location' => array (
-                    array (
-                        array (
+                    ],
+                ],
+                'location' => [
+                    [
+                        [
                             'param' => 'post_type',
                             'operator' => '==',
                             'value' => 'contenthub_composite',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'menu_order' => 2,
                 'position' => 'acf_after_title',
                 'style' => 'default',
@@ -350,7 +350,7 @@ class TeaserFieldGroup
                 'hide_on_screen' => '',
                 'active' => 1,
                 'description' => '',
-            ));
+            ]);
         }
     }
 }
