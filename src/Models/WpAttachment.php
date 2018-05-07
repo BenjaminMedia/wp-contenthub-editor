@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use function GuzzleHttp\Psr7\parse_query;
+
 /**
  * Class WpAttachment
  *
@@ -136,7 +138,9 @@ class WpAttachment
         }
 
         $rawFileName = basename( $file->url );
-        $fileName = sanitize_file_name($rawFileName); // Sanitize the new file name so WordPress will upload it
+        // Sanitize the new file name so WordPress will upload it
+        $fileName = static::sanizite_file_name($rawFileName, $file->url);
+
 
         // Make sure to sanitize the file name so urls with spaces and other special chars will work
         $file->url = str_replace($rawFileName, urlencode($rawFileName), $file->url);
@@ -144,7 +148,7 @@ class WpAttachment
         // Getting file stream
         if(!$fileStream = @file_get_contents( $file->url )) {
             if(!$fileStream = @file_get_contents( urldecode($file->url) )) // try the url decoded
-            return null;
+                return null;
         }
 
         // Uploading file
@@ -154,9 +158,8 @@ class WpAttachment
         }
 
         // Creating attachment
-        $fileMeta = wp_check_filetype( $fileName, null );
         $attachment = [
-            'post_mime_type' => $fileMeta['type'],
+            'post_mime_type' => mime_content_type($uploadedFile['file']),
             'post_parent' => $postId,
             'post_title' => $file->title ?? '',
             'post_content' => $file->description ?? '',
@@ -196,9 +199,9 @@ class WpAttachment
             'post_content' => '',
             'post_excerpt' => $file->caption ?? '',
         ],
-        [
-            'ID' => $attachmentId
-        ]);
+            [
+                'ID' => $attachmentId
+            ]);
     }
 
     private static function set_s3_object_visibility($bucket, $key, $acl)
@@ -212,5 +215,17 @@ class WpAttachment
             'Bucket' => $bucket,
             'Key' => $key
         ));
+    }
+
+    private static function sanizite_file_name($rawFileName, $url)
+    {
+        $sanitizedFileName = sanitize_file_name($rawFileName);
+        $query = parse_query(parse_url($url, PHP_URL_QUERY));
+        if(isset($query['fm']) && $fileNameWithoutExtension = pathinfo($sanitizedFileName, PATHINFO_FILENAME)) {
+            // Append correct file extension from imgix format query param
+            return sprintf('%s.%s', $fileNameWithoutExtension, $query['fm']);
+        }
+        // Fallback to default WP file sanitation
+        return $sanitizedFileName;
     }
 }
