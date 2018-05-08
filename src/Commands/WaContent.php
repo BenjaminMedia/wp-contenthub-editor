@@ -51,6 +51,7 @@ class WaContent extends BaseCmd
     public function import($args, $assocArgs)
     {
         $this->disableHooks(); // Disable various hooks and filters during import
+        wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
 
         $repository = new ContentRepository();
         if($id = $assocArgs['id'] ?? null) {
@@ -64,7 +65,9 @@ class WaContent extends BaseCmd
 
     private function import_composite($waContent)
     {
+
         WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->id);
+
 
         $postId = $this->create_post($waContent);
         $compositeContents = $this->format_composite_contents($waContent);
@@ -102,7 +105,7 @@ class WaContent extends BaseCmd
             'post_modified' => $waContent->widget_content->publish_at,
             'post_author' => $this->get_author($waContent),
             'meta_input' => [
-                WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->id,
+                WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
                 WpComposite::POST_META_TITLE => $metaTitle,
                 WpComposite::POST_META_DESCRIPTION => $metaDescription,
                 WpComposite::POST_CANONICAL_URL => $waContent->widget_content->canonical_link,
@@ -146,14 +149,24 @@ class WaContent extends BaseCmd
                     'Widgets::InfoBox' => 'info_box',
                 ])->get($waWidget->type, null),
             ])->merge($waWidget->properties) // merge properties
-                ->merge($waWidget->image ?? null); // merge image
+            ->merge($waWidget->image ?? null); // merge image
         })->prepend($waContent->widget_content->lead_image ? // prepend lead image
             collect([
                 'type'       => 'image',
                 'lead_image' => true
             ])->merge($waContent->widget_content->lead_image)
             : null
-        )->itemsToObject();
+        )->itemsToObject()->map(function($content){
+            if(
+                $content->type === 'image'
+                && ($extension = pathinfo($content->url, PATHINFO_EXTENSION))
+                && in_array($extension, ['psd'])
+            ) {
+                // If we find the image extension to be in the blacklist then we tell imgix to return as png format
+                $content->url .= '?fm=png';
+            }
+            return $content;
+        });
     }
 
     private function save_composite_contents($postId, $compositeContents)
@@ -167,6 +180,7 @@ class WaContent extends BaseCmd
                 ];
             }
             if ($compositeContent->type === 'image') {
+
                 return [
                     'lead_image' => $compositeContent->lead_image ?? false,
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent),
