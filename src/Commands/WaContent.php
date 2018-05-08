@@ -157,7 +157,12 @@ class WaContent extends BaseCmd
             ])->merge($waContent->widget_content->lead_image)
             : null
         )->itemsToObject()->map(function($content){
-            if($content->type === 'image' && str_contains($content->url, 'psd')) {
+            if(
+                $content->type === 'image'
+                && ($extension = pathinfo($content->url, PATHINFO_EXTENSION))
+                && in_array($extension, ['psd'])
+            ) {
+                // If we find the image extension to be in the blacklist then we tell imgix to return as png format
                 $content->url .= '?fm=png';
             }
             return $content;
