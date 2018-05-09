@@ -195,10 +195,10 @@ class WpAttachment
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         global $wpdb;
         $wpdb->update('wp_posts', [
-            'post_title' => $file->caption ?? '',
-            'post_content' => '',
-            'post_excerpt' => $file->caption ?? '',
-        ],
+                'post_title' => $file->caption ?? '',
+                'post_content' => '',
+                'post_excerpt' => $file->caption ?? '',
+            ],
             [
                 'ID' => $attachmentId
             ]);

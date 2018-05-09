@@ -38,7 +38,7 @@
             ]
         };
         
-        if('infobox' === options) {
+        if('simple' === options) {
             toolbar = {
                 toolbar: [
                     "bold",
@@ -59,7 +59,7 @@
     acf.add_action('append', function( el )
     {
         var textArea = jQuery(el).find('.acf-field-simple-mde');
-        if(typeof textArea[0] !== 'undefined')
+        if(typeof textArea[0] !== 'undefined' && textArea.is(':visible'))
             createSimpleMde(textArea[0], textArea.data('simple-mde-config'));
     });
     
