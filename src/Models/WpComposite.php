@@ -47,7 +47,13 @@ class WpComposite
      */
     public static function register() {
 
-        static::register_permalink();
+        add_filter('pre_option_permalink_structure', function($currentSetting){
+            return static::POST_PERMALINK_STRUCTURE;
+        });
+
+        add_filter('pre_option_category_base', function($currentSetting){
+            return static::CATEGORY_BASE;
+        });
 
         add_action('init', function() {
             register_post_type(static::POST_TYPE,
@@ -60,7 +66,7 @@ class WpComposite
                     'rest_base' => 'composites',
                     'show_in_rest' => true, // enable rest api
                     'rewrite' => [
-                        'slug' => static::POST_SLUG,
+                        'willow_custom_permalink' => static::POST_PERMALINK_STRUCTURE,
                     ],
                     'has_archive' => false,
                     'supports' => [
@@ -111,15 +117,12 @@ class WpComposite
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
 
+    /**
+     * @deprecated
+     * No longer in use. Checkout MU plugin, Willow custom Permalinks.
+     * This Will be deleted in future releases.
+     */
     private static function register_permalink() {
-
-        add_filter('pre_option_permalink_structure', function($currentSetting){
-            return static::POST_PERMALINK_STRUCTURE;
-        });
-
-        add_filter('pre_option_category_base', function($currentSetting){
-            return static::CATEGORY_BASE;
-        });
 
         //check if a page matches
         add_action('parse_request', function ($request) {
