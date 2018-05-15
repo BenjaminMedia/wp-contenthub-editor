@@ -33,7 +33,7 @@ acf.add_filter('validation_complete', function( json, $form ){
             }
         });
 
-        var teaserImageCheckbox = $(".acf-field-58aae476809c6 .acf-flexible-content .values .acf-fields [data-name='teaser_image'] input:checkbox");
+        var teaserImageCheckbox = $(".acf-field-58aae476809c6 .acf-flexible-content .values .acf-fields [data-name='video_teaser_image'] input:checkbox");
         var teaserImage = $('.acf-field-58e38da2194e3 input').val();
 
         if(teaserImage > 0 && teaserImageCheckbox.attr('checked') === 'checked')

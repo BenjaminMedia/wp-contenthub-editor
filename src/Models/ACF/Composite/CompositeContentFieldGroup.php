@@ -361,7 +361,7 @@ class CompositeContentFieldGroup
                                     [
                                         'key' => 'field_5a8d7ae021e44',
                                         'label' => 'Teaser Image',
-                                        'name' => 'teaser_image',
+                                        'name' => 'video_teaser_image',
                                         'type' => 'true_false',
                                         'instructions' => 'This will generate an image from the video and set it as a <b>teaser image</b> for the article.',
                                         'required' => 0,
