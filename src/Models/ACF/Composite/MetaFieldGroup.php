@@ -149,6 +149,50 @@ class MetaFieldGroup
                         'readonly' => 0,
                         'disabled' => 0,
                     ],
+                    [
+                        'key' => 'field_58f5febf3cb9c',
+                        'label' => 'Magazine Year',
+                        'name' => 'magazine_year',
+                        'type' => 'select',
+                        'instructions' => 'The magazine year ie. 2017 if the article was published in 2017',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'choices' => static::get_magazine_years(),
+                        'default_value' => [],
+                        'allow_null' => 1,
+                        'multiple' => 0,
+                        'ui' => 0,
+                        'ajax' => 0,
+                        'return_format' => 'value',
+                        'placeholder' => '',
+                    ],
+                    [
+                        'key' => 'field_58e3878b2dc76',
+                        'label' => 'Magazine Issue',
+                        'name' => 'magazine_issue',
+                        'type' => 'select',
+                        'instructions' => 'The magazine issue ie. 01 for the first issue of a given year',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'choices' => static::get_magazine_issues(),
+                        'default_value' => [],
+                        'allow_null' => 1,
+                        'multiple' => 0,
+                        'ui' => 0,
+                        'ajax' => 0,
+                        'return_format' => 'value',
+                        'placeholder' => '',
+                    ]
                 ],
                 'location' => [
                     [
@@ -160,7 +204,7 @@ class MetaFieldGroup
                     ],
                 ],
                 'menu_order' => 4,
-                'position' => 'acf_after_title',
+                'position' => 'side',
                 'style' => 'default',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
@@ -178,5 +222,21 @@ class MetaFieldGroup
                 pll_register_string($commercialType, $commercialType, 'content-hub-editor');
             });
         }
+    }
+
+    private static function get_magazine_issues()
+    {
+        $issues = array_map(function($issue){
+            if($issue <= 9) {
+                return '0' . $issue;
+            }
+            return $issue;
+        }, range(1, 18));
+        return array_combine($issues, $issues);
+    }
+
+    private static function get_magazine_years() {
+        $years = array_reverse(range(1980, date("Y") + 1));
+        return array_combine($years, $years);
     }
 }

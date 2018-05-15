@@ -97,11 +97,6 @@ class WaContent extends BaseCmd
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
 
-        $metaTitle = $waContent->widget_content->meta_title !== $waContent->widget_content->title ?
-            $waContent->widget_content->meta_title : null;
-        $metaDescription = $waContent->widget_content->meta_description !== $waContent->widget_content->description ?
-            $waContent->widget_content->meta_description : null;
-
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $waContent->widget_content->title,
@@ -113,8 +108,6 @@ class WaContent extends BaseCmd
             'post_author' => $this->get_author($waContent),
             'meta_input' => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
-                WpComposite::POST_META_TITLE => $metaTitle,
-                WpComposite::POST_META_DESCRIPTION => $metaDescription,
                 WpComposite::POST_CANONICAL_URL => $waContent->widget_content->canonical_link,
             ],
         ]);
@@ -179,7 +172,6 @@ class WaContent extends BaseCmd
                 ]
             ]);
         }
-
     }
 
     private function save_composite_contents($postId, $compositeContents)
@@ -259,24 +251,26 @@ class WaContent extends BaseCmd
         $teaserDescription = $waContent->widget_content->teaser_description ?: $waContent->widget_content->description;
         $teaserImage = $waContent->widget_content->teaser_image ?: $waContent->widget_content->lead_image;
 
-
+        // General teaser
         update_field('teaser_title', $teaserTitle, $postId);
         update_field('teaser_description', $teaserDescription, $postId);
         update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaserImage), $postId);
 
-
-        //update_field('teaser_title', $teaserTitle, $postId);
-        //update_field('teaser_description', $teaserDescriptioon, $postId);
-        //update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaserImage), $postId);
-        /* Todo: implement facebook teaser if needed
-        update_post_meta($postId, WpComposite::POST_FACEBOOK_TITLE, $teaser->title);
-        update_post_meta($postId, WpComposite::POST_FACEBOOK_DESCRIPTION, $teaser->description);
-        if ($teaser->image) {
-            $imageId = WpAttachment::upload_attachment($postId, $teaser->image);
-            update_post_meta($postId, WpComposite::POST_FACEBOOK_IMAGE, wp_get_attachment_image_url($imageId));
+        // Facebook teaser
+        if($waContent->widget_content->teaser_facebook_only) {
+            update_field('fb_teaser_title', $teaserTitle, $postId);
+            update_field('fb_teaser_description', $teaserDescription, $postId);
+            update_field('fb_teaser_image', WpAttachment::upload_attachment($postId, $teaserImage), $postId);
         }
-        */
 
+        // Meta teaser
+        $metaTitle = $waContent->widget_content->meta_title !== $waContent->widget_content->title ?
+            $waContent->widget_content->meta_title : null;
+        $metaDescription = $waContent->widget_content->meta_description !== $waContent->widget_content->description ?
+            $waContent->widget_content->meta_description : null;
+
+        update_field('seo_teaser_title', $metaTitle, $postId);
+        update_field('seo_teaser_description', $metaDescription, $postId);
     }
 
     private function save_categories($postId, $composite)

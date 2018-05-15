@@ -2,8 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
@@ -62,7 +62,6 @@ class WpComposite
                     'has_archive' => false,
                     'supports' => [
                         'title',
-                        'author'
                     ],
                     'taxonomies' => [
                         'category'
@@ -102,9 +101,9 @@ class WpComposite
 
     private static function register_acf_fields() {
         CompositeFieldGroup::register();
-        MagazineFieldGroup::register();
-        MetaFieldGroup::register();
         TeaserFieldGroup::register();
+        CompositeContentFieldGroup::register();
+        MetaFieldGroup::register();
         TranslationStateFieldGroup::register();
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
