@@ -108,7 +108,6 @@ class WaContent extends BaseCmd
             'post_author' => $this->get_author($waContent),
             'meta_input' => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
-                WpComposite::POST_CANONICAL_URL => $waContent->widget_content->canonical_link,
             ],
         ]);
 
@@ -127,6 +126,7 @@ class WaContent extends BaseCmd
         update_field('magazine_year', $waContent->magazine_year ?? null, $postId);
         update_field('magazine_issue', $waContent->magazine_number ?? null, $postId);
 
+        update_field('canonical_url',  $waContent->widget_content->canonical_link);
 
         if($waContent->widget_content->advertorial_label) {
             update_field('commercial', true, $postId);
