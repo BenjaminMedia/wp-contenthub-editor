@@ -2,8 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
@@ -28,12 +28,18 @@ class WpComposite
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_WHITE_ALBUM_ID = 'white_album_id';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
-    const POST_META_TITLE = '_yoast_wpseo_title';
-    const POST_META_DESCRIPTION = '_yoast_wpseo_metadesc';
-    const POST_CANONICAL_URL = '_yoast_wpseo_canonical';
-    const POST_FACEBOOK_TITLE = '_yoast_wpseo_opengraph-title';
-    const POST_FACEBOOK_DESCRIPTION = '_yoast_wpseo_opengraph-description';
-    const POST_FACEBOOK_IMAGE = '_yoast_wpseo_opengraph-image';
+    const POST_TEASER_TITLE = 'teaser_title';
+    const POST_TEASER_DESCRIPTION = 'teaser_description';
+    const POST_TEASER_IMAGE = 'teaser_image';
+    const POST_META_TITLE = 'seo_teaser_title';
+    const POST_META_DESCRIPTION = 'seo_teaser_description';
+    const POST_CANONICAL_URL = 'canonical_url';
+    const POST_FACEBOOK_TITLE = 'fb_teaser_title';
+    const POST_FACEBOOK_DESCRIPTION = 'fb_teaser_description';
+    const POST_FACEBOOK_IMAGE = 'fb_teaser_image';
+    const POST_TWITTER_TITLE = 'tw_teaser_title';
+    const POST_TWITTER_DESCRIPTION = 'tw_teaser_description';
+    const POST_TWITTER_IMAGE = 'tw_teaser_image';
     const SLUG_CHANGE_HOOK = 'contenthub_composite_slug_change';
 
     /**
@@ -59,7 +65,6 @@ class WpComposite
                     'has_archive' => false,
                     'supports' => [
                         'title',
-                        'author'
                     ],
                     'taxonomies' => [
                         'category'
@@ -99,9 +104,9 @@ class WpComposite
 
     private static function register_acf_fields() {
         CompositeFieldGroup::register();
-        MagazineFieldGroup::register();
-        MetaFieldGroup::register();
         TeaserFieldGroup::register();
+        CompositeContentFieldGroup::register();
+        MetaFieldGroup::register();
         TranslationStateFieldGroup::register();
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
@@ -208,24 +213,15 @@ class WpComposite
 
     public static function on_save($postId, WP_Post $post)
     {
-        if(static::post_type_match_and_not_auto_draft($post) && env('WP_ENV') !== 'testing') {
-
-            $contentHubId = get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true);
-            $action = !$contentHubId ? 'create' : 'update';
-
-            $input = array_merge([
-                'title' => $post->post_title,
-                'kind' => get_field('kind', $postId),
-                'status' => collect([
-                    'publish' => 'Published',
-                    'draft' => 'Draft',
-                    'pending' => 'Ready'
-                ])->get($post->post_status, 'Draft'),
-            ], $action === 'update' ? ['id' => $contentHubId] : []);
-
-            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, CompositeRepository::{$action}($input));
+        if(static::post_type_match_and_not_auto_draft($post) &&
+            !get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) &&
+            $site = Plugin::instance()->settings->get_site(pll_current_language('locale')))
+        {
+            $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
+            update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
         }
     }
+
 
     /**
      * Triggers the slug change hook on post save

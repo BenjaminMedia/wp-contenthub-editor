@@ -10,6 +10,8 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class TeaserFieldGroup
 {
+    const TEASER_IMAGE_FIELD = 'field_58e38da2194e3';
+
     public static function register() {
         static::create_acf_field_group();
     }
@@ -56,7 +58,7 @@ class TeaserFieldGroup
                         'maxlength' => '',
                     ],
                     [
-                        'key' => 'field_58e38da2194e3',
+                        'key' => static::TEASER_IMAGE_FIELD,
                         'label' => 'Teaser Image',
                         'name' => 'teaser_image',
                         'type' => 'image',
@@ -342,9 +344,9 @@ class TeaserFieldGroup
                         ],
                     ],
                 ],
-                'menu_order' => 2,
+                'menu_order' => 1,
                 'position' => 'acf_after_title',
-                'style' => 'default',
+                'style' => 'seamless',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
                 'hide_on_screen' => '',

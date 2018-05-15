@@ -105,7 +105,26 @@ class MarkdownEditor extends acf_field {
 			'label'			=> __('Simple MDE Configuration','acf-markdown-editor'),
 			'instructions'	=> __('Write','acf-markdown-editor'),
 			'type'			=> 'textarea',
-			'name'			=> 'simple_mde_config'
+			'name'			=> 'simple_mde_config',
+            'type' => 'radio',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array (
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'choices' => array (
+                'standard' => 'Standard',
+                'simple' => 'Simple',
+            ),
+            'allow_null' => 0,
+            'other_choice' => 0,
+            'save_other_choice' => 0,
+            'default_value' => 'standard',
+            'layout' => 'vertical',
+            'return_format' => 'value',
 		));
 
 	}
@@ -158,7 +177,7 @@ class MarkdownEditor extends acf_field {
         wp_register_script( 'acf-input-simple-mde', Plugin::instance()->plugin_url . 'js/simplemde.min.js', ['acf-input'], '1.2.5' );
         wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.5');
         
-        wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'], '1.2.5' );
+        wp_enqueue_script( 'acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'], '1.2.6' );
 
         //ContentHub composite fields validation
         $current_screen = get_current_screen();

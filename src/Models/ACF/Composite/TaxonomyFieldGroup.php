@@ -33,7 +33,7 @@ class TaxonomyFieldGroup
                     ],
                 ],
                 'menu_order' => 1,
-                'position' => 'acf_after_title',
+                'position' => 'side',
                 'style' => 'default',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
