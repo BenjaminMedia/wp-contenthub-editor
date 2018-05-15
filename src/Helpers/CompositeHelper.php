@@ -25,7 +25,7 @@ class CompositeHelper
         }
 
         $videoWithTeaser = collect(get_field('composite_content'))->first(function ($content) {
-            return (isset($content['teaser_image']) && $content['teaser_image']) && $content['acf_fc_layout'] === 'video';
+            return (isset($content['video_teaser_image']) && $content['video_teaser_image']) && $content['acf_fc_layout'] === 'video';
         });
 
         if ($videoWithTeaser) {
