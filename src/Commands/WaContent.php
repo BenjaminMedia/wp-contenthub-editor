@@ -252,15 +252,15 @@ class WaContent extends BaseCmd
         $teaserImage = $waContent->widget_content->teaser_image ?: $waContent->widget_content->lead_image;
 
         // General teaser
-        update_field('teaser_title', $teaserTitle, $postId);
-        update_field('teaser_description', $teaserDescription, $postId);
-        update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaserImage), $postId);
+        update_field(WpComposite::POST_TEASER_TITLE, $teaserTitle, $postId);
+        update_field(WpComposite::POST_TEASER_DESCRIPTION, $teaserDescription, $postId);
+        update_field(WpComposite::POST_TEASER_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
 
         // Facebook teaser
         if($waContent->widget_content->teaser_facebook_only) {
-            update_field('fb_teaser_title', $teaserTitle, $postId);
-            update_field('fb_teaser_description', $teaserDescription, $postId);
-            update_field('fb_teaser_image', WpAttachment::upload_attachment($postId, $teaserImage), $postId);
+            update_field(WpComposite::POST_FACEBOOK_TITLE, $teaserTitle, $postId);
+            update_field(WpComposite::POST_FACEBOOK_DESCRIPTION, $teaserDescription, $postId);
+            update_field(WpComposite::POST_FACEBOOK_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
         }
 
         // Meta teaser
@@ -269,8 +269,8 @@ class WaContent extends BaseCmd
         $metaDescription = $waContent->widget_content->meta_description !== $waContent->widget_content->description ?
             $waContent->widget_content->meta_description : null;
 
-        update_field('seo_teaser_title', $metaTitle, $postId);
-        update_field('seo_teaser_description', $metaDescription, $postId);
+        update_field(WpComposite::POST_META_TITLE, $metaTitle, $postId);
+        update_field(WpComposite::POST_META_DESCRIPTION, $metaDescription, $postId);
     }
 
     private function save_categories($postId, $composite)

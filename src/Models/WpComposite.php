@@ -28,6 +28,9 @@ class WpComposite
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_WHITE_ALBUM_ID = 'white_album_id';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
+    const POST_TEASER_TITLE = 'teaser_title';
+    const POST_TEASER_DESCRIPTION = 'teaser_description';
+    const POST_TEASER_IMAGE = 'teaser_image';
     const POST_META_TITLE = 'seo_teaser_title';
     const POST_META_DESCRIPTION = 'seo_teaser_description';
     const POST_CANONICAL_URL = 'canonical_url';
