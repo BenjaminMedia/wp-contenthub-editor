@@ -187,7 +187,8 @@ class CompositeFieldGroup
                 'instruction_placement' => 'label',
                 'hide_on_screen' => [
                     'slug',
-                    'categories'
+                    'categories',
+                    'author'
                 ],
                 'active' => 1,
                 'description' => 'test',
