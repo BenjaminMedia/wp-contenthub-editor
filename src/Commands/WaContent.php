@@ -74,7 +74,7 @@ class WaContent extends BaseCmd
     {
         if(!$waContent) return;
 
-        WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->id);
+        WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->widget_content->id);
 
         $postId = $this->create_post($waContent);
         $compositeContents = $this->format_composite_contents($waContent);
