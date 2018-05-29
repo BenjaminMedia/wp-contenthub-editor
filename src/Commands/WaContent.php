@@ -92,7 +92,7 @@ class WaContent extends BaseCmd
 
     private function create_post($waContent)
     {
-        $existingId = WpComposite::id_from_white_album_id($waContent->id);
+        $existingId = WpComposite::id_from_white_album_id($waContent->widget_content->id);
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
@@ -161,16 +161,19 @@ class WaContent extends BaseCmd
             });
         }
         if(isset($waContent->gallery_images)) {
-            return collect([
-                (object)[
-                    'type' => 'gallery',
-                    'images' => collect($waContent->gallery_images)->pluck('image')->map(function ($waImage) {
-                        $waImage->type = 'image';
-                        return $this->fixFaultyImageFormats($waImage);
-                    }),
-                    'display_hint' => 'inline',
-                ]
-            ]);
+            // Galleries are converted to a combination of text items and image widgets
+            return collect($waContent->gallery_images)->pluck('image')->map(function ($waImage) {
+                $description = $waImage->description;
+                $waImage->type = 'image';
+                unset($waImage->description);
+                return [
+                    $this->fixFaultyImageFormats($waImage),
+                    [
+                        'type' => 'text_item',
+                        'text' => $description
+                    ]
+                ];
+            })->flatten(1)->itemsToObject();
         }
     }
 
