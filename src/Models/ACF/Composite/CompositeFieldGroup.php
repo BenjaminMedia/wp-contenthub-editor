@@ -12,7 +12,6 @@ class CompositeFieldGroup
 {
     public static function register() {
         static::create_acf_field_group();
-        static::register_slug_hooks();
         static::register_author_hooks();
     }
 
@@ -23,25 +22,6 @@ class CompositeFieldGroup
                 'key' => 'group_58abfd3931f2f',
                 'title' => 'Composite Fields',
                 'fields' => [
-                    [
-                        'key' => 'field_5af983e0cca4c',
-                        'label' => 'Slug',
-                        'name' => 'slug',
-                        'type' => 'text',
-                        'instructions' => '',
-                        'required' => 0,
-                        'conditional_logic' => 0,
-                        'wrapper' => [
-                            'width' => '',
-                            'class' => '',
-                            'id' => '',
-                        ],
-                        'default_value' => '',
-                        'placeholder' => '',
-                        'prepend' => '',
-                        'append' => '',
-                        'maxlength' => '',
-                    ],
                     [
                         'key' => 'field_58e388862daa8',
                         'label' => 'Kind',
@@ -195,25 +175,6 @@ class CompositeFieldGroup
             ]);
         endif;
 
-    }
-
-    private static function register_slug_hooks()
-    {
-        add_filter('acf/load_value/name=slug', function($value){
-            return get_post()->post_name;
-        }, 10, 1);
-        add_filter('acf/update_value/name=slug', function($value){
-            $post = get_post();
-            $newSlug = sanitize_title($value);
-            $oldSlug = $post->post_name;
-
-            if($newSlug !== $oldSlug) {
-                $post->post_name = $newSlug;
-                wp_update_post($post);
-            }
-
-            return null;
-        }, 10, 1);
     }
 
     private static function register_author_hooks()
