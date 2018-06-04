@@ -266,14 +266,8 @@ class WaContent extends BaseCmd
             update_field(WpComposite::POST_FACEBOOK_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
         }
 
-        // Meta teaser
-        $metaTitle = $waContent->widget_content->meta_title !== $waContent->widget_content->title ?
-            $waContent->widget_content->meta_title : null;
-        $metaDescription = $waContent->widget_content->meta_description !== $waContent->widget_content->description ?
-            $waContent->widget_content->meta_description : null;
-
-        update_field(WpComposite::POST_META_TITLE, $metaTitle, $postId);
-        update_field(WpComposite::POST_META_DESCRIPTION, $metaDescription, $postId);
+        update_field(WpComposite::POST_META_TITLE, $waContent->widget_content->meta_title, $postId);
+        update_field(WpComposite::POST_META_DESCRIPTION, $waContent->widget_content->meta_description, $postId);
     }
 
     private function save_categories($postId, $composite)
