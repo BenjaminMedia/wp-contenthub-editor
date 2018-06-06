@@ -1,12 +1,9 @@
 (function () {
   function quote(editor) {
     var cm = editor.codemirror;
-    var output = '';
     var selectedText = cm.getSelection();
     var text = selectedText || '';
-
-    output = '<cite>' + text + '</cite>';
-    cm.replaceSelection(output);
+    cm.replaceSelection('<cite>' + text + '</cite>');
   }
 
   function createSimpleMde(textArea, options) {
