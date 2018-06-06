@@ -7,7 +7,8 @@ acf.add_filter('validation_complete', function( json, $form ){
         var leadImageCheckboxes = $(leadImagesSelector);
         var checkedLeadImages = 0;
 
-        //Loop through available lead images
+        // Make sure the user hasn't checked more than one 'Lead Image'
+        // Loop through available lead images
         leadImageCheckboxes.each(function() {
 
             if($(this).attr('checked') === 'checked')
@@ -33,12 +34,23 @@ acf.add_filter('validation_complete', function( json, $form ){
             }
         });
 
-        var teaserImageCheckbox = $(".acf-field-58aae476809c6 .acf-flexible-content .values .acf-fields [data-name='video_teaser_image'] input:checkbox");
+        var videoTeaserImageCheckbox = $(".acf-field-58aae476809c6 .acf-flexible-content .values .acf-fields [data-name='video_teaser_image'] input:checkbox");
         var teaserImage = $('.acf-field-58e38da2194e3 input').val();
 
-        if(teaserImage > 0 && teaserImageCheckbox.attr('checked') === 'checked')
+        // Make sure there is no error with 'Teaser Image value is required' if a video is present with 'Teaser Image' checked
+        if(videoTeaserImageCheckbox.attr('checked') === 'checked') {
+            for(var i=0; i<json.errors.length; i++) {
+                if(json.errors[i].input == 'acf[field_58e38da2194e3]') {
+                    json.errors.splice(i, 1);
+                    break;
+                }
+            }
+        }
+
+        // Make sure the user hasn't selected both a Video Teaser Image and a Teaser Image
+        if(teaserImage > 0 && videoTeaserImageCheckbox.attr('checked') === 'checked')
         {
-            var teaserImageError = {input: $(teaserImageCheckbox).attr('name'), message: "Please make sure you have only 1 teaser image!"};
+            var teaserImageError = {input: $(videoTeaserImageCheckbox).attr('name'), message: "Please make sure you have only 1 teaser image!"};
 
             if(typeof json.errors.length === 'undefined')
             {
@@ -48,7 +60,6 @@ acf.add_filter('validation_complete', function( json, $form ){
             json.errors.push(teaserImageError);
             //invalidate the form
             json.valid = 0;
-
         }
 
     });
