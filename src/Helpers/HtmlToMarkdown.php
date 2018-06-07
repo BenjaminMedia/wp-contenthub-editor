@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
+use DOMAttr;
+use DOMDocument;
 use Exception;
 
 class HtmlToMarkdown extends \GuzzleHttp\Client
@@ -31,8 +33,19 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
         return self::$instance;
     }
 
-    public static function parseHtml($html)
+    /**
+     * @param      $html
+     *
+     * @param bool $fixAnchors
+     *
+     * @return null|string
+     */
+    public static function parseHtml($html, $fixAnchors = true)
     {
+        if($fixAnchors) {
+            $html = static::fixAnchorTags($html);
+        }
+        
         try {
             $request = static::getInstance()->post('/', [
                 'form_params' => [
@@ -43,5 +56,35 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
         } catch (Exception $exception) {
             return null;
         }
+    }
+
+    private static function fixAnchorTags($html)
+    {
+        // Get all anchor tags as html strings
+        preg_match_all('/<a[^>]*>(?:.|\n)*?<\/a>/i', $html, $matches);
+
+        collect($matches)->flatten()->each(function($anchorHMTL) use(&$html){
+            // convert encoding to special chars are read correctly
+            $anchorHMTL = mb_convert_encoding($anchorHMTL, 'HTML-ENTITIES', "UTF-8");
+            // Parse the anchor so we may use objects to access the attributes
+            $anchors = DOMDocument::loadHTML($anchorHMTL)->getElementsByTagName('a');
+            /* @var $anchor \DOMElement */
+            if($anchor = $anchors->item(0)) {
+                $attributes = collect($anchor->attributes)
+                    ->only(['target', 'title', 'rel']) // Get only the attributes we are interested in
+                    ->reduce(function($attributes, DOMAttr $attribute) {
+                        $attributes[$attribute->name] = $attribute->textContent;
+                        return $attributes;
+                    }, []);
+
+                $markdown = sprintf('[%s](%s%s)',
+                    static::parseHtml($anchor->textContent, false), // Fix any html that might be inside
+                    $anchor->getAttribute('href'),
+                    empty($attributes) ? '' : sprintf(' %s', json_encode($attributes))
+                );
+                $html = str_replace($anchorHMTL, $markdown, $html);
+            }
+        });
+        return $html;
     }
 }
