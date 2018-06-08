@@ -13,6 +13,7 @@ namespace Bonnier\WP\ContentHub\Editor;
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
+use Bonnier\WP\ContentHub\Editor\Helpers\CompositeHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
@@ -36,6 +37,7 @@ spl_autoload_register(function ($className) {
                 $className
             )
         );
+
         require_once($classPath . '.php');
     }
 });
@@ -98,6 +100,8 @@ class Plugin
         $this->settings = new SettingsPage();
         new CollectionHelper; // Extends Collection with extra methods
         new MarkdownEditor;
+        new CompositeHelper;
+
         // Register custom post type
         WpTaxonomy::register();
         WpComposite::register();
