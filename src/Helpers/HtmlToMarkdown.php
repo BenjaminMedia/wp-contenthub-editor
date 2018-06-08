@@ -42,10 +42,9 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
      */
     public static function parseHtml($html, $fixAnchors = true)
     {
-        if($fixAnchors) {
+        if ($fixAnchors) {
             $html = static::fixAnchorTags($html);
         }
-        
         try {
             $request = static::getInstance()->post('/', [
                 'form_params' => [
@@ -82,7 +81,7 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
                     $anchor->getAttribute('href'),
                     empty($attributes) ? '' : sprintf(' %s', json_encode($attributes))
                 );
-                $html = str_replace($anchorHMTL, $markdown, $html);
+                $html = str_replace(html_entity_decode($anchorHMTL), $markdown, $html);
             }
         });
         return $html;
