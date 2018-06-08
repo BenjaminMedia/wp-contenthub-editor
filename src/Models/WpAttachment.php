@@ -168,7 +168,7 @@ class WpAttachment
             'meta_input' => [
                 static::POST_META_CONTENTHUB_ID => $file->id,
                 static::POST_META_COPYRIGHT => $file->copyright ?? '',
-                '_wp_attachment_image_alt' => $file->altText ?? $file->alt_text ?? '',
+                '_wp_attachment_image_alt' => static::getAlt($file),
             ]
         ];
         $attachmentId = wp_insert_attachment( $attachment, $uploadedFile['file'], $postId );
@@ -191,14 +191,14 @@ class WpAttachment
     }
 
     private static function update_attachment($attachmentId, $file) {
-        update_post_meta($attachmentId, '_wp_attachment_image_alt', $file->altText ?? '');
+        update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         global $wpdb;
         $wpdb->update('wp_posts', [
-                'post_title' => $file->caption ?? '',
-                'post_content' => '',
-                'post_excerpt' => $file->caption ?? '',
-            ],
+            'post_title' => $file->title ?? $file->caption ?? '',
+            'post_content' => '',
+            'post_excerpt' => $file->caption ?? '',
+        ],
             [
                 'ID' => $attachmentId
             ]);
@@ -227,5 +227,15 @@ class WpAttachment
         }
         // Fallback to default WP file sanitation
         return $sanitizedFileName;
+    }
+
+    private static function getAlt($file)
+    {
+        return collect(['altText', 'alt_text', 'title', 'caption'])->reduce(function ($out, $atr) use ($file) {
+            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
+                $out = $file->{$atr};
+            }
+            return $out;
+        }, '');
     }
 }
