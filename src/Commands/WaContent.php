@@ -59,8 +59,8 @@ class WaContent extends BaseCmd
         $repository = new ContentRepository();
         if($id = $assocArgs['id'] ?? null) {
             $resource = collect([
-               'article' => ContentRepository::ARTICLE_RESOURCE,
-               'gallery' => ContentRepository::GALLERY_RESOURCE,
+                'article' => ContentRepository::ARTICLE_RESOURCE,
+                'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
             $this->import_composite($repository->find_by_id($id, $resource));
         } else {
@@ -93,6 +93,10 @@ class WaContent extends BaseCmd
     private function create_post($waContent)
     {
         $existingId = WpComposite::id_from_white_album_id($waContent->widget_content->id);
+
+        if($existingId && getenv('WP_ENV') === 'production') {
+            usleep(500000); // Delay for half a second when updating on prod to avoid ddos'ing WA
+        }
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';

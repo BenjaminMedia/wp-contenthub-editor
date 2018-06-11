@@ -57,7 +57,7 @@ class ContentRepository
             collect($contents)->each(function($content) use($callback) {
                 $resource = collect([
                     'Article' => static::ARTICLE_RESOURCE,
-                    'Gallery' => static::ARTICLE_RESOURCE,
+                    'Gallery' => static::GALLERY_RESOURCE,
                 ])->get($content->type);
                 if($contentFound = $this->find_by_id($content->id, $resource)) {
                     $callback($contentFound);
