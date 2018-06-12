@@ -23,6 +23,6 @@ class SlugHelper
             $string = str_replace($charToChange, $replacementChar, $string);
         });
 
-        return sanitize_title_with_dashes($string);
+        return sanitize_title($string);
     }
 }
