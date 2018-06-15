@@ -202,21 +202,7 @@ class CompositeFieldGroup
                                             'class' => '',
                                             'id' => '',
                                         ),
-                                        'simple_mde_config' => json_encode([
-                                            'toolbar' => [
-                                                'bold',
-                                                'italic',
-                                                'heading-2',
-                                                'heading-3',
-                                                '|',
-                                                'unordered-list',
-                                                'ordered-list',
-                                                'link',
-                                                '|',
-                                                'preview',
-                                                'guide'
-                                            ]
-                                        ]),
+                                        'simple_mde_config' => 'standard',
                                         'font_size' => 14,
                                     ),
                                 ),
@@ -620,13 +606,32 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            [
                                 'key' => '5a4f4dea1745f',
                                 'name' => 'gallery',
                                 'label' => 'Gallery',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => [
+                                    [
+                                        'key' => 'field_5a952a1a811d2',
+                                        'label' => 'Title',
+                                        'name' => 'title',
+                                        'type' => 'text',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'default_value' => '',
+                                        'placeholder' => '',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'maxlength' => '',
+                                    ],
+                                    [
                                         'key' => 'field_5a4f4dfd17460',
                                         'label' => 'Images',
                                         'name' => 'images',
@@ -634,18 +639,18 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => [
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
-                                        ),
+                                        ],
                                         'collapsed' => '',
                                         'min' => 0,
                                         'max' => 0,
                                         'layout' => 'block',
                                         'button_label' => 'Add Image to Gallery',
-                                        'sub_fields' => array (
-                                            array (
+                                        'sub_fields' => [
+                                            [
                                                 'key' => 'field_5a4f4e0f17461',
                                                 'label' => 'Image',
                                                 'name' => 'image',
@@ -653,11 +658,11 @@ class CompositeFieldGroup
                                                 'instructions' => '',
                                                 'required' => 1,
                                                 'conditional_logic' => 0,
-                                                'wrapper' => array (
+                                                'wrapper' => [
                                                     'width' => '',
                                                     'class' => '',
                                                     'id' => '',
-                                                ),
+                                                ],
                                                 'return_format' => 'id',
                                                 'preview_size' => 'thumbnail',
                                                 'library' => 'all',
@@ -668,40 +673,80 @@ class CompositeFieldGroup
                                                 'max_height' => '',
                                                 'max_size' => '',
                                                 'mime_types' => '',
-                                            ),
-                                        ),
-                                    ),
-                                    array (
+                                            ],
+                                            [
+                                                'key' => 'field_5af2a0fcb1027',
+                                                'label' => 'Description',
+                                                'name' => 'description',
+                                                'type' => 'markdown-editor',
+                                                'instructions' => '',
+                                                'required' => 0,
+                                                'conditional_logic' => 0,
+                                                'wrapper' => [
+                                                    'width' => '',
+                                                    'class' => '',
+                                                    'id' => '',
+                                                ],
+                                                'simple_mde_config' => 'simple',
+                                                'font_size' => 14,
+                                            ],
+                                        ],
+                                    ],
+                                    [
                                         'key' => 'field_5a4f4e5f17462',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => [
+                                            [
+                                                [
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
-                                                ),
-                                            ),
-                                        ),
-                                        'wrapper' => array (
+                                                ],
+                                            ],
+                                        ],
+                                        'wrapper' => [
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
-                                        ),
+                                        ],
                                         'message' => '',
                                         'default_value' => 0,
                                         'ui' => 0,
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
-                                    ),
-                                ),
+                                    ],
+                                    [
+                                        'key' => 'field_5af2a198b1028',
+                                        'label' => 'Display Format',
+                                        'name' => 'display_hint',
+                                        'type' => 'radio',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'choices' => [
+                                            'default' => 'Default',
+                                            'inline' => 'Inline',
+                                        ],
+                                        'allow_null' => 0,
+                                        'other_choice' => 0,
+                                        'save_other_choice' => 0,
+                                        'default_value' => 'default',
+                                        'layout' => 'vertical',
+                                        'return_format' => 'value',
+                                    ],
+                                ],
                                 'min' => '',
                                 'max' => '',
-                            ),
+                            ],
                             array (
                                 'key' => '58aae89d0f005',
                                 'name' => 'inserted_code',
