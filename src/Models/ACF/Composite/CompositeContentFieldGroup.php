@@ -10,6 +10,9 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class CompositeContentFieldGroup
 {
+    const ContentField = 'field_58aae476809c6';
+    const VideoTeaserImageField = 'field_5a8d7ae021e44';
+
     public static function register() {
         static::create_acf_field_group();
     }
@@ -359,7 +362,7 @@ class CompositeContentFieldGroup
                                 'display' => 'block',
                                 'sub_fields' => [
                                     [
-                                        'key' => 'field_5a8d7ae021e44',
+                                        'key' => static::VideoTeaserImageField,
                                         'label' => 'Teaser Image',
                                         'name' => 'video_teaser_image',
                                         'type' => 'true_false',
