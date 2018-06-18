@@ -14,6 +14,7 @@ class TeaserFieldGroup
 
     public static function register() {
         static::create_acf_field_group();
+        add_filter('acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD , [__CLASS__, 'validateTeaserImageField']);
     }
 
     private static function create_acf_field_group() {
@@ -361,5 +362,13 @@ class TeaserFieldGroup
                 'description' => '',
             ]);
         }
+    }
+
+    public static function validateTeaserImageField($valid)
+    {
+        // If not valid and a Video-Widget with Teaser-Image checked exists
+        return $valid ?:
+            collect($_POST['acf'][CompositeContentFieldGroup::ContentField])
+                ->contains(CompositeContentFieldGroup::VideoTeaserImageField, '1');
     }
 }
