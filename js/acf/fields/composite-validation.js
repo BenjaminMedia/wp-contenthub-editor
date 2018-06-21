@@ -45,19 +45,6 @@ acf.add_filter('validation_complete', function( json, $form ){
         }
     }
 
-    // make sure the user hasn't selected both a Video Teaser Image and a Teaser Image
-    if(teaserImage > 0 && videoTeaserImage.length > 0) {
-        var teaserImageError = {input: $(videoTeaserImage).attr('name'), message: "Please make sure you have only 1 teaser image!"};
-
-        if(typeof json.errors.length === 'undefined') {
-            json.errors = [];
-        }
-
-        json.errors.push(teaserImageError);
-        // invalidate the form
-        json.valid = 0;
-    }
-
     // make sure the user hasn't selected multiple Video Teaser Image
     if(videoTeaserImage.length > 1) {
         videoTeaserImage.slice(1).each(function() {
