@@ -33,7 +33,6 @@ class VideoHelper
         return null;
     }
 
-
     /**
      * Determines which cloud video provider is being used based on the passed url,
      * and extracts the video id from the url.
@@ -81,21 +80,30 @@ class VideoHelper
     /**
      * Parses various youtube urls and returns video identifier.
      *
-     * @param string $url The url
+     * @param string $input The url or the embed code
      * @return string the url's id
      */
-    public static function get_youtube_id($url)
-    {
-        $youtube_url_keys = array('v','vi');
 
-        // Try to get ID from url parameters
-        $key_from_params = self::parse_url_for_params($url, $youtube_url_keys);
-        if ($key_from_params) {
-            return $key_from_params;
+    public static function get_youtube_id($input)
+    {
+        // match: <iframe width="560" height="315" src="https://www.youtube.com/embed/dXxEIZTkqMg" ...
+        // match: https://www.youtube.com/embed/dXxEIZTkqMg
+        if (preg_match('#/embed/([^\?&"]+)#', $input, $matches)) {
+            return $matches[1];
         }
 
-        // Try to get ID from last portion of url
-        return self::parse_url_for_last_element($url);
+        // match: https://www.youtube.com/watch?v=dXxEIZTkqMg&feature=youtu.be
+        // match: https://www.youtube.com/watch?vi=dXxEIZTkqMg&feature=youtu.be
+        if (preg_match('#vi?=([^&]+)#', $input, $matches)) {
+            return $matches[1];
+        }
+
+        // match: https://youtu.be/4vXkI1zYyDo
+        if (preg_match('#//youtu.be/([^\?&"/]+)#', $input, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     /**
@@ -115,13 +123,22 @@ class VideoHelper
     /**
      * Parses various vimeo urls and returns video identifier.
      *
-     * @param string $url The url
+     * @param string $input The url or the embed code
      * @return string The url's id
      */
-    public static function get_vimeo_id($url)
+    public static function get_vimeo_id($input)
     {
-        // Try to get ID from last portion of url
-        return self::parse_url_for_last_element($url);
+        // match: https://vimeo.com/39502360
+        if (preg_match('#/vimeo.com/(\d+)#', $input, $matches)) {
+            return $matches[1];
+        }
+
+        // match: <iframe src="https://player.vimeo.com/video/39502360" width="640" height="480" frameborder="0" ...
+        if (preg_match('#/video/(\d+)#', $input, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     /**
@@ -135,49 +152,6 @@ class VideoHelper
         $embed = "http://player.vimeo.com/video/$vimeo_video_id?byline=0&amp;portrait=0&amp;autoplay=$autoplay";
 
         return $embed;
-    }
-
-    /**
-     * Find the first matching parameter value in a url from the passed params array.
-     *
-     * @access private
-     *
-     * @param string $url The url
-     * @param array $target_params Any parameter keys that may contain the id
-     * @return null|string Null on failure to match a target param, the url's id on success
-     */
-    private static function parse_url_for_params($url, $target_params)
-    {
-        parse_str(parse_url($url, PHP_URL_QUERY), $my_array_of_params);
-        foreach ($target_params as $target) {
-            if (array_key_exists($target, $my_array_of_params)) {
-                return $my_array_of_params[$target];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Find the last element in a url, without any trailing parameters
-     *
-     * @access private
-     *
-     * @param string $url The url
-     * @return string The last element of the url
-     */
-    private static function parse_url_for_last_element($url)
-    {
-        //TODO change to:
-        //$path = parse_url($url, PHP_URL_PATH);
-        // basename($path);
-        $url_parts = explode("/", $url);
-        $prospect = end($url_parts);
-        $prospect_and_params = preg_split("/(\?|\=|\&)/", $prospect);
-        if ($prospect_and_params) {
-            return $prospect_and_params[0];
-        } else {
-            return $prospect;
-        }
     }
 
     /**
@@ -223,10 +197,9 @@ class VideoHelper
             'playerBackgroundThumb' => $youtubeHost.$id."/0.jpg"
         );
 
-        foreach($thumbResolutions as $thumbUrl)
-        {
+        foreach ($thumbResolutions as $thumbUrl) {
             //If thumb doesn't exist we will get a 404
-            if(@file_get_contents( urldecode($thumbUrl) )){
+            if (@file_get_contents( urldecode($thumbUrl) )) {
                 return $thumbUrl;
             }
         }
@@ -246,18 +219,16 @@ class VideoHelper
 
             $api_request    = $host.'/api/photo/list?token='.$token.'&photo_id='.$photoId.'&format=xml';
 
-            try{
+            try {
                 //TODO Replace wp_remote_retrieve_body && wp_remote_get to remove wp requirement.
                 $xmlResponse = wp_remote_retrieve_body( wp_remote_get( $api_request ) );
                 $xml = simplexml_load_string($xmlResponse);
             }
-            catch(\Exception $e)
-            {
+            catch (\Exception $e) {
                 throw new \Exception("Request Error: ".$e);
             }
 
-            if(empty(self::xml_attribute($xml->photo, 'large_download') ?? ''))
-            {
+            if (empty(self::xml_attribute($xml->photo, 'large_download') ?? '')) {
                 return false;
             }
 
@@ -273,10 +244,7 @@ class VideoHelper
      */
     public static function getTwentyThreeToken($embed)
     {
-        preg_match("/\?token=(.*?)&/", $embed, $matches);
-
-        if(isset($matches[1]))
-        {
+        if (preg_match("/\?token=(.*?)&/", $embed, $matches)) {
             return $matches[1];
         }
 
@@ -289,10 +257,7 @@ class VideoHelper
      */
     public static function getTwentyThreePhotoId($embed)
     {
-        preg_match("/id=(.*)/", $embed, $matches);
-
-        if(isset($matches[1]))
-        {
+        if (preg_match('/id=([^"]+)/', $embed, $matches)) {
             return $matches[1];
         }
 
@@ -300,33 +265,26 @@ class VideoHelper
     }
 
     /**
-     * @param $embed
+     * @param $input
      * @param null $host
      * @return array|bool|object
      */
-    public static function getLeadImageFile($embed, $host = null)
+    public static function getLeadImageFile($input, $host = null)
     {
-        $url = self::getEmbedCode($embed);
-
-        if(!$url)
-        {
-            return false;
-        }
-
-        $provider = VideoHelper::identify_service($url);
+        $provider = VideoHelper::identify_service($input);
 
         switch ($provider) {
             case VideoHelper::YOUTUBE:
-                $videoId = VideoHelper::get_youtube_id($url);
+                $videoId = VideoHelper::get_youtube_id($input);
                 $thumb = VideoHelper::getYoutubeThumb($videoId);
                 break;
             case VideoHelper::VIMEO:
-                $videoId = VideoHelper::get_vimeo_id($url);
+                $videoId = VideoHelper::get_vimeo_id($input);
                 $thumb = VideoHelper::getVimeoThumb($videoId);
                 break;
             case VideoHelper::TWENTYTHREE:
-                $token = VideoHelper::getTwentyThreeToken($url);
-                $photoId = VideoHelper::getTwentyThreePhotoId($url);
+                $token = VideoHelper::getTwentyThreeToken($input);
+                $photoId = VideoHelper::getTwentyThreePhotoId($input);
                 //This will be used as file id
                 $videoId = $token.$photoId;
 
@@ -347,8 +305,7 @@ class VideoHelper
     {
         preg_match('/src="(.*?)"/', $embed, $matches);
 
-        if(!isset($matches[1]))
-        {
+        if (!isset($matches[1])) {
             return false;
         }
 
@@ -366,7 +323,7 @@ class VideoHelper
      */
     public static function xml_attribute($object, $attribute)
     {
-        if(isset($object[$attribute]))
+        if (isset($object[$attribute]))
             return (string) $object[$attribute];
     }
 }

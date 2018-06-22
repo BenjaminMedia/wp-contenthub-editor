@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "fb80a5c88b366624377195a2ffa3648b",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenjaminMedia/video-helper.git",
-                "reference": "225d77e91614ed1c72a08511c0335978f35f68d0"
+                "reference": "0ab5e775899d56ee9dc23314ca842c6275817487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/video-helper/zipball/225d77e91614ed1c72a08511c0335978f35f68d0",
-                "reference": "225d77e91614ed1c72a08511c0335978f35f68d0",
+                "url": "https://api.github.com/repos/BenjaminMedia/video-helper/zipball/0ab5e775899d56ee9dc23314ca842c6275817487",
+                "reference": "0ab5e775899d56ee9dc23314ca842c6275817487",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 "vimeo",
                 "youtube"
             ],
-            "time": "2018-02-27T12:53:32+00:00"
+            "time": "2018-06-21T11:43:43+00:00"
         },
         {
             "name": "doctrine/inflector",
