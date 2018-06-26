@@ -15,6 +15,7 @@ use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\CompositeHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
+use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
@@ -110,6 +111,9 @@ class Plugin
         WpAttachment::register();
         CmdManager::register();
         PolylangConfig::register();
+
+        $updateEndpoint = new UpdateEndpointController();
+        $updateEndpoint->register_routes();
     }
 
     /**
