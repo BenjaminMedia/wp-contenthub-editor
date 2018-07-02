@@ -10,8 +10,13 @@ class UpdateEndpointHelper extends BaseTaxonomyImporter
     {
     }
 
-    public static function updateCategory()
+    public static function updateCategory($term)
     {
         dd('updateCategory');
+    }
+
+    public static function updateTag($term)
+    {
+        dd('updatetag');
     }
 }

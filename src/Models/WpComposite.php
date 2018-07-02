@@ -8,7 +8,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
-use Bonnier\WP\ContentHub\Editor\Plugin;
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use WP_Post;
 
@@ -219,7 +219,7 @@ class WpComposite
     {
         if(static::post_type_match_and_not_auto_draft($post) &&
             !get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) &&
-            $site = Plugin::instance()->settings->get_site(pll_current_language('locale')))
+            $site = ContenthubEditor::instance()->settings->get_site(pll_current_language('locale')))
         {
             $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
@@ -267,9 +267,9 @@ class WpComposite
     }
 
     private static function flush_rewrite_rules_if_needed() {
-        if ( get_option( Plugin::FLUSH_REWRITE_RULES_FLAG ) ) {
+        if ( get_option( ContenthubEditor::FLUSH_REWRITE_RULES_FLAG ) ) {
             flush_rewrite_rules();
-            delete_option( Plugin::FLUSH_REWRITE_RULES_FLAG );
+            delete_option( ContenthubEditor::FLUSH_REWRITE_RULES_FLAG );
         }
     }
 

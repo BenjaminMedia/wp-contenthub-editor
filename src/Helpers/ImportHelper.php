@@ -1,23 +1,10 @@
 <?php
 
-namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
+namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
-use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
-use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
-use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
-use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
-use WP_CLI;
 
-/**
- * Class BaseTaxonomyImporter
- *
- * @package \Bonnier\WP\ContentHub\Editor\Commands\Taxonomy
- */
-class BaseTaxonomyImporter extends BaseCmd
+class ImportHelper
 {
-    protected $taxonomy;
-    protected $getTermCallback;
-
     protected function triggerImport($taxononmy, $getTermCallback)
     {
         $this->taxonomy = $taxononmy;
@@ -47,7 +34,7 @@ class BaseTaxonomyImporter extends BaseCmd
     {
         $termIdsByLocale = collect($externalTerm->name)->map(function ($name, $languageCode) use ($externalTerm) {
             return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
-        // Creates an associative array with language code as key and term id as value
+            // Creates an associative array with language code as key and term id as value
         })->toAssoc()->rejectNullValues()->toArray();
         pll_save_term_translations($termIdsByLocale);
         return $termIdsByLocale;
@@ -117,18 +104,5 @@ class BaseTaxonomyImporter extends BaseCmd
         });
 
         WP_CLI::success('Done cleaning ' . $taxononmy);
-    }
-    protected function map_sites($callable) {
-        $this->get_sites()->each($callable);
-    }
-
-    protected function get_sites() {
-        return collect(ContenthubEditor::instance()->settings->get_languages())->pluck('locale')->map(function($locale){
-            return ContenthubEditor::instance()->settings->get_site($locale);
-        })->rejectNullValues();
-    }
-
-    protected function get_site() {
-        return $this->get_sites()->first();
     }
 }
