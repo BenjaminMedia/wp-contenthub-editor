@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af61b22c824893cb645789a7c5f1aeb2",
+    "content-hash": "c259b6ce2ce14979fa01c913698fd7e2",
     "packages": [
         {
             "name": "bonnier/php-video-helper",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenjaminMedia/video-helper.git",
@@ -2263,9 +2263,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "bonnier/php-video-helper": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
