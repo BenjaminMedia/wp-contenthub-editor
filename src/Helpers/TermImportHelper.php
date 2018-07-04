@@ -63,7 +63,7 @@ class TermImportHelper
             return false;
         }
         // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
+        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
     }
 
     protected function getParentTermId($languageCode, $externalCategory)
