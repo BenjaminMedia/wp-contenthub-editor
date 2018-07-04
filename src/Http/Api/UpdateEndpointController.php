@@ -2,10 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Http\Api;
 
-use Bonnier\WP\ContentHub\Editor\Helpers\UpdateEndpointHelper;
-use Bonnier\WP\ContentHub\Editor\Repositories\Contracts\SiteManager\TaxonomyContract;
-use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\CategoryRepository;
-use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\TagRepository;
+use Bonnier\WP\ContentHub\Editor\Helpers\TermImportHelper;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -13,16 +10,11 @@ use WP_REST_Server;
 
 class UpdateEndpointController extends WP_REST_Controller
 {
-    const REPOSITORY_MAPPER = [
-        'category' => CategoryRepository::class,
-        'tag' => TagRepository::class,
-    ];
-
     public function register_routes()
     {
         add_action('rest_api_init', function () {
             register_rest_route('content-hub-editor', '/updates', [
-                'methods' => WP_REST_Server::CREATABLE,
+                'methods'  => WP_REST_Server::CREATABLE,
                 'callback' => [$this, 'updateCallback'],
             ]);
         });
@@ -30,30 +22,33 @@ class UpdateEndpointController extends WP_REST_Controller
 
     public function updateCallback(WP_REST_Request $request): WP_REST_Response
     {
-        $resource = $request->get_param('resource');
-        $type = $request->get_param('entity_type');
+        $resource = $this->formatResource($request->get_param('data'));
+        $meta = $request->get_param('meta');
+        $entityType = $meta['entity_type'];
+        $actionType = $meta['action_type'];
 
-        if ($resource && $type && ($termId = $resource['id']) && $repo = $this->getRepo($type)) {
-            $term = $repo->find_by_id($termId);
-
-            if ($type === "category") {
-                UpdateEndpointHelper::updateCategory($term);
-            } elseif ($type === 'tag') {
-                UpdateEndpointHelper::updateTag($term);
+        if ($resource && $entityType) {
+            $termImporter = $this->getTermImporter($entityType);
+            if (in_array($actionType, ['create', 'update'])) {
+                $termImporter->importTermAndLinkTranslations($resource);
             }
-
+            if($actionType === 'delete') {
+                $termImporter->deleteTermAndTranslations($resource);
+            }
             return new WP_REST_Response(['status' => 'OK']);
         }
 
         return new WP_REST_Response(['error' => 'unknown type'], 400);
     }
 
-    private function getRepo($type): ?TaxonomyContract
+    private function getTermImporter($entityType) : TermImportHelper
     {
-        if ($class = collect(self::REPOSITORY_MAPPER)->get($type)) {
-            return new $class;
-        }
+        return new TermImportHelper($entityType);
+    }
 
-        return null;
+    private function formatResource($resource)
+    {
+        // Convert array to object
+        return json_decode(json_encode($resource));
     }
 }
