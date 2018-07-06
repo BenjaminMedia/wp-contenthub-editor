@@ -2,7 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
-use Bonnier\WP\ContentHub\Editor\Plugin;
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
+use Illuminate\Support\Collection;
 use WP_CLI_Command;
 
 /**
@@ -12,17 +13,24 @@ use WP_CLI_Command;
  */
 class BaseCmd extends WP_CLI_Command
 {
-    protected function map_sites($callable) {
-        $this->get_sites()->each($callable);
+    protected function mapSites($callable)
+    {
+        $this->getSites()->each($callable);
     }
 
-    protected function get_sites() {
-        return collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function($locale){
-            return Plugin::instance()->settings->get_site($locale);
-        })->rejectNullValues();
+    protected function getSites(): Collection
+    {
+        return collect(ContenthubEditor::instance()->settings->get_languages())
+            ->pluck('locale')
+            ->map(function ($locale) {
+                return ContenthubEditor::instance()->settings->get_site($locale);
+            })->reject(function ($locale) {
+                return is_null($locale);
+            });
     }
 
-    protected function get_site() {
-        return $this->get_sites()->first();
+    protected function getSite()
+    {
+        return $this->getSites()->first();
     }
 }

@@ -3,10 +3,8 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
 use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
-use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
-use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
-use Bonnier\WP\ContentHub\Editor\Plugin;
-use WP_CLI_Command;
+use Bonnier\WP\ContentHub\Editor\Helpers\TermImportHelper;
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 use WP_CLI;
 
 /**
@@ -17,13 +15,16 @@ use WP_CLI;
 class BaseTaxonomyImporter extends BaseCmd
 {
     protected $taxonomy;
+    protected $termImporter;
     protected $getTermCallback;
 
-    protected function triggerImport($taxononmy, $getTermCallback) {
-        $this->taxonomy = $taxononmy;
+    protected function triggerImport($taxonomy, $getTermCallback)
+    {
+        $this->taxonomy = $taxonomy;
+        $this->termImporter = new TermImportHelper($taxonomy);
         $this->getTermCallback = $getTermCallback;
-        $this->mapTerms($this->get_site(), function($externalTag){
-            $this->importTermAndLinkTranslations($externalTag);
+        $this->mapTerms($this->get_site(), function ($externalTag) {
+            $this->termImporter->importTermAndLinkTranslations($externalTag);
         });
     }
 
@@ -32,49 +33,15 @@ class BaseTaxonomyImporter extends BaseCmd
         $termQuery = call_user_func($this->getTermCallback, $site->brand->id);
 
         while (!is_null($termQuery)) {
-            WP_CLI::line( "Beginning import of page: " . $termQuery->meta->pagination->current_page );
+            WP_CLI::line("Beginning import of page: " . $termQuery->meta->pagination->current_page);
             collect($termQuery->data)->each($callable);
-            if(isset($termQuery->meta->pagination->links->next)) {
+            if (isset($termQuery->meta->pagination->links->next)) {
                 $nextPage = $termQuery->meta->pagination->current_page +1;
                 $termQuery = call_user_func($this->getTermCallback, $site->brand->id, $nextPage);
                 continue;
             }
             $termQuery = null;
         }
-    }
-
-    protected function importTermAndLinkTranslations($externalTerm) {
-        $termIdsByLocale = collect($externalTerm->name)->map(function($name, $languageCode) use($externalTerm) {
-            return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
-        })->toAssoc()->rejectNullValues()->toArray(); // Creates an associative array with language code as key and term id as value
-        pll_save_term_translations($termIdsByLocale);
-        return $termIdsByLocale;
-    }
-
-    protected function importTerm($name, $languageCode, $externalTerm) {
-        $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
-        $taxonomy = isset($externalTerm->vocabulary) ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
-        $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
-
-        $description = $externalTerm->description->{$languageCode} ?? null;
-        $internal = $externalTerm->internal ?? false;
-
-
-        if($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
-            // Term exists so we update it
-            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
-        }
-        // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
-    }
-
-    protected function getParentTermId($languageCode, $externalCategory) {
-        if(!isset($externalCategory->name->{$languageCode}))
-            return null; // Make sure we only create the parent term if a translation exists for the language of the child term
-        if($existingTermId = WpTerm::id_from_contenthub_id($externalCategory->content_hub_ids->{$languageCode}))
-            return $existingTermId; // Term already exists so no need to create it again
-        $this->importTermAndLinkTranslations($externalCategory)[$languageCode] ?? null;
     }
 
     public function clean_terms($taxononmy, $removeEmpty = false)
@@ -84,7 +51,7 @@ class BaseTaxonomyImporter extends BaseCmd
             'hide_empty' => false,
             'number'     => 0
         ]))->filter(function (\WP_Term $term) use ($removeEmpty) {
-            if (! get_term_meta($term->term_id, 'content_hub_id', true) || $term->count === 0 && $removeEmpty) {
+            if (!get_term_meta($term->term_id, 'content_hub_id', true) || $term->count === 0 && $removeEmpty) {
                 return true;
             }
             return false;
@@ -98,5 +65,17 @@ class BaseTaxonomyImporter extends BaseCmd
 
         WP_CLI::success('Done cleaning ' . $taxononmy);
     }
+    protected function map_sites($callable) {
+        $this->get_sites()->each($callable);
+    }
 
+    protected function get_sites() {
+        return collect(ContenthubEditor::instance()->settings->get_languages())->pluck('locale')->map(function($locale){
+            return ContenthubEditor::instance()->settings->get_site($locale);
+        })->rejectNullValues();
+    }
+
+    protected function get_site() {
+        return $this->get_sites()->first();
+    }
 }

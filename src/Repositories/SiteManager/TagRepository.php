@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Repositories\SiteManager;
 
-use Bonnier\WP\ContentHub\Editor\Repositories\Contracts\SiteManager\TagContract;
+use Bonnier\WP\ContentHub\Editor\Repositories\Contracts\SiteManager\TaxonomyContract;
 use Bonnier\WP\ContentHub\Editor\Services\SiteManager\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @package \Bonnier\WP\ContentHub\Repositories\SiteManager
  */
-class TagRepository implements TagContract
+class TagRepository implements TaxonomyContract
 {
 
     public static function get_all($page = 1)
