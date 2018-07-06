@@ -223,5 +223,4 @@
       jQuery(this).prop("checked", jQuery(this).val() === nofollow);
     });
   }
-
 })();
