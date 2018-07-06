@@ -634,7 +634,7 @@ class CompositeContentFieldGroup
                                                     'class' => '',
                                                     'id' => '',
                                                 ],
-                                                'simple_mde_config' => 'simple',
+                                                'simple_mde_config' => 'standard',
                                                 'font_size' => 14,
                                             ],
                                         ],
