@@ -2,13 +2,13 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MagazineFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
-use Bonnier\WP\ContentHub\Editor\Plugin;
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 use WP_Post;
@@ -27,13 +27,20 @@ class WpComposite
     const POST_PERMALINK_STRUCTURE = '/%category%/%postname%';
     const CATEGORY_BASE = '';
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
+    const POST_META_WHITE_ALBUM_ID = 'white_album_id';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
-    const POST_META_TITLE = '_yoast_wpseo_title';
-    const POST_META_DESCRIPTION = '_yoast_wpseo_metadesc';
-    const POST_CANONICAL_URL = '_yoast_wpseo_canonical';
-    const POST_FACEBOOK_TITLE = '_yoast_wpseo_opengraph-title';
-    const POST_FACEBOOK_DESCRIPTION = '_yoast_wpseo_opengraph-description';
-    const POST_FACEBOOK_IMAGE = '_yoast_wpseo_opengraph-image';
+    const POST_TEASER_TITLE = 'teaser_title';
+    const POST_TEASER_DESCRIPTION = 'teaser_description';
+    const POST_TEASER_IMAGE = 'teaser_image';
+    const POST_META_TITLE = 'seo_teaser_title';
+    const POST_META_DESCRIPTION = 'seo_teaser_description';
+    const POST_CANONICAL_URL = 'canonical_url';
+    const POST_FACEBOOK_TITLE = 'fb_teaser_title';
+    const POST_FACEBOOK_DESCRIPTION = 'fb_teaser_description';
+    const POST_FACEBOOK_IMAGE = 'fb_teaser_image';
+    const POST_TWITTER_TITLE = 'tw_teaser_title';
+    const POST_TWITTER_DESCRIPTION = 'tw_teaser_description';
+    const POST_TWITTER_IMAGE = 'tw_teaser_image';
     const SLUG_CHANGE_HOOK = 'contenthub_composite_slug_change';
 
     /**
@@ -41,7 +48,13 @@ class WpComposite
      */
     public static function register() {
 
-        static::register_permalink();
+        add_filter('pre_option_permalink_structure', function($currentSetting){
+            return static::POST_PERMALINK_STRUCTURE;
+        });
+
+        add_filter('pre_option_category_base', function($currentSetting){
+            return static::CATEGORY_BASE;
+        });
 
         add_action('init', function() {
             register_post_type(static::POST_TYPE,
@@ -54,7 +67,7 @@ class WpComposite
                     'rest_base' => 'composites',
                     'show_in_rest' => true, // enable rest api
                     'rewrite' => [
-                        'slug' => static::POST_SLUG,
+                        'willow_custom_permalink' => static::POST_PERMALINK_STRUCTURE,
                     ],
                     'has_archive' => false,
                     'supports' => [
@@ -85,24 +98,33 @@ class WpComposite
         );
     }
 
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function id_from_white_album_id($id) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare("SELECT post_id FROM wp_postmeta WHERE meta_key=%s AND meta_value=%s", static::POST_META_WHITE_ALBUM_ID, $id)
+        );
+    }
+
     private static function register_acf_fields() {
         CompositeFieldGroup::register();
-        MagazineFieldGroup::register();
-        MetaFieldGroup::register();
         TeaserFieldGroup::register();
+        CompositeContentFieldGroup::register();
+        MetaFieldGroup::register();
         TranslationStateFieldGroup::register();
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
     }
 
+    /**
+     * @deprecated
+     * No longer in use. Checkout MU plugin, Willow custom Permalinks.
+     * This Will be deleted in future releases.
+     */
     private static function register_permalink() {
-
-        add_filter('pre_option_permalink_structure', function($currentSetting){
-            return static::POST_PERMALINK_STRUCTURE;
-        });
-
-        add_filter('pre_option_category_base', function($currentSetting){
-            return static::CATEGORY_BASE;
-        });
 
         //check if a page matches
         add_action('parse_request', function ($request) {
@@ -199,12 +221,13 @@ class WpComposite
     {
         if(static::post_type_match_and_not_auto_draft($post) &&
             !get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) &&
-            $site = Plugin::instance()->settings->get_site(pll_current_language('locale')))
+            $site = ContenthubEditor::instance()->settings->get_site(pll_current_language('locale')))
         {
             $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
         }
     }
+
 
     /**
      * Triggers the slug change hook on post save
@@ -246,9 +269,9 @@ class WpComposite
     }
 
     private static function flush_rewrite_rules_if_needed() {
-        if ( get_option( Plugin::FLUSH_REWRITE_RULES_FLAG ) ) {
+        if ( get_option( ContenthubEditor::FLUSH_REWRITE_RULES_FLAG ) ) {
             flush_rewrite_rules();
-            delete_option( Plugin::FLUSH_REWRITE_RULES_FLAG );
+            delete_option( ContenthubEditor::FLUSH_REWRITE_RULES_FLAG );
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use function GuzzleHttp\Psr7\parse_query;
+
 /**
  * Class WpAttachment
  *
@@ -124,7 +126,6 @@ class WpAttachment
             return null;
         }
 
-
         // If attachment already exists then update meta data and return the id
         if($existingId = static::id_from_contenthub_id($file->id)) {
             static::update_attachment($existingId, $file);
@@ -137,7 +138,9 @@ class WpAttachment
         }
 
         $rawFileName = basename( $file->url );
-        $fileName = sanitize_file_name($rawFileName); // Sanitize the new file name so WordPress will upload it
+        // Sanitize the new file name so WordPress will upload it
+        $fileName = static::sanizite_file_name($rawFileName, $file->url);
+
 
         // Make sure to sanitize the file name so urls with spaces and other special chars will work
         $file->url = str_replace($rawFileName, urlencode($rawFileName), $file->url);
@@ -145,7 +148,7 @@ class WpAttachment
         // Getting file stream
         if(!$fileStream = @file_get_contents( $file->url )) {
             if(!$fileStream = @file_get_contents( urldecode($file->url) )) // try the url decoded
-            return null;
+                return null;
         }
 
         // Uploading file
@@ -155,18 +158,17 @@ class WpAttachment
         }
 
         // Creating attachment
-        $fileMeta = wp_check_filetype( $fileName, null );
         $attachment = [
-            'post_mime_type' => $fileMeta['type'],
+            'post_mime_type' => mime_content_type($uploadedFile['file']),
             'post_parent' => $postId,
-            'post_title' => '',
-            'post_content' => '',
+            'post_title' => $file->title ?? '',
+            'post_content' => $file->description ?? '',
             'post_excerpt' => $file->caption ?? '',
             'post_status' => 'inherit',
             'meta_input' => [
                 static::POST_META_CONTENTHUB_ID => $file->id,
                 static::POST_META_COPYRIGHT => $file->copyright ?? '',
-                '_wp_attachment_image_alt' => $file->altText ?? '',
+                '_wp_attachment_image_alt' => static::getAlt($file),
             ]
         ];
         $attachmentId = wp_insert_attachment( $attachment, $uploadedFile['file'], $postId );
@@ -189,17 +191,17 @@ class WpAttachment
     }
 
     private static function update_attachment($attachmentId, $file) {
-        update_post_meta($attachmentId, '_wp_attachment_image_alt', $file->altText ?? '');
+        update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         global $wpdb;
         $wpdb->update('wp_posts', [
-            'post_title' => $file->caption ?? '',
+            'post_title' => $file->title ?? $file->caption ?? '',
             'post_content' => '',
             'post_excerpt' => $file->caption ?? '',
         ],
-        [
-            'ID' => $attachmentId
-        ]);
+            [
+                'ID' => $attachmentId
+            ]);
     }
 
     private static function set_s3_object_visibility($bucket, $key, $acl)
@@ -213,5 +215,27 @@ class WpAttachment
             'Bucket' => $bucket,
             'Key' => $key
         ));
+    }
+
+    private static function sanizite_file_name($rawFileName, $url)
+    {
+        $sanitizedFileName = sanitize_file_name($rawFileName);
+        $query = parse_query(parse_url($url, PHP_URL_QUERY));
+        if(isset($query['fm']) && $fileNameWithoutExtension = pathinfo($sanitizedFileName, PATHINFO_FILENAME)) {
+            // Append correct file extension from imgix format query param
+            return sprintf('%s.%s', $fileNameWithoutExtension, $query['fm']);
+        }
+        // Fallback to default WP file sanitation
+        return $sanitizedFileName;
+    }
+
+    private static function getAlt($file)
+    {
+        return collect(['altText', 'alt_text', 'title', 'caption'])->reduce(function ($out, $atr) use ($file) {
+            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
+                $out = $file->{$atr};
+            }
+            return $out;
+        }, '');
     }
 }

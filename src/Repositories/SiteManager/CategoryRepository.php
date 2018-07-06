@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Repositories\SiteManager;
 
-use Bonnier\WP\ContentHub\Editor\Repositories\Contracts\SiteManager\CategoryContract;
+use Bonnier\WP\ContentHub\Editor\Repositories\Contracts\SiteManager\TaxonomyContract;
 use Bonnier\WP\ContentHub\Editor\Services\SiteManager\Client;
 use GuzzleHttp\Exception\ClientException;
 
@@ -11,13 +11,17 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @package \Bonnier\WP\ContentHub\Repositories\SiteManager
  */
-class CategoryRepository implements CategoryContract
+class CategoryRepository implements TaxonomyContract
 {
 
-    public static function get_all()
+    public static function get_all($page = 1)
     {
         try {
-            $response = Client::getInstance()->get('/api/v1/categories');
+            $response = Client::getInstance()->get('/api/v1/categories', [
+                'query' => [
+                    'page' => $page
+                ]
+            ]);
         } catch (ClientException $e) {
             return [];
         }
