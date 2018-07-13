@@ -41,7 +41,7 @@ spl_autoload_register(function ($className) {
 });
 
 // Load dependencies from includes
-require_once( __DIR__ . '/includes/vendor/autoload.php' );
+require_once(__DIR__ . '/includes/vendor/autoload.php');
 
 class Plugin
 {
@@ -124,7 +124,6 @@ class Plugin
 
         return self::$instance;
     }
-
 }
 
 /**
@@ -136,15 +135,16 @@ function instance()
 }
 
 // Register a flag to flush the rewrite rules after the custom rules have been added
-register_activation_hook( __FILE__, function(){
-    update_option( Plugin::FLUSH_REWRITE_RULES_FLAG, true );
+register_activation_hook(__FILE__, function () {
+    update_option(Plugin::FLUSH_REWRITE_RULES_FLAG, true);
 });
 
 // Flush rewrite rules to generate new permalinks when plugin is deactivated
-register_deactivation_hook( __FILE__, 'flush_rewrite_rules');
+register_deactivation_hook(__FILE__, 'flush_rewrite_rules');
 
 // If the plugin is currently being deactivated we do no want to register our rewrite rules, so we abort.
-if (isset($_GET['action'], $_GET['plugin']) && 'deactivate' === $_GET['action'] && plugin_basename(__FILE__) === $_GET['plugin'])
+if (isset($_GET['action'], $_GET['plugin']) && 'deactivate' === $_GET['action'] && plugin_basename(__FILE__) === $_GET['plugin']) {
     return;
+}
 
 add_action('plugins_loaded', __NAMESPACE__ . '\instance', 0);

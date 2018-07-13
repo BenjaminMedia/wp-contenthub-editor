@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -10,12 +11,14 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class MagazineFieldGroup
 {
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_58f607ebb79e3',
                 'title' => 'Magazine',
@@ -88,8 +91,8 @@ class MagazineFieldGroup
 
     private static function get_magazine_issues()
     {
-        $issues = array_map(function($issue){
-            if($issue <= 9) {
+        $issues = array_map(function ($issue) {
+            if ($issue <= 9) {
                 return '0' . $issue;
             }
             return $issue;
@@ -97,7 +100,8 @@ class MagazineFieldGroup
         return array_combine($issues, $issues);
     }
 
-    private static function get_magazine_years() {
+    private static function get_magazine_years()
+    {
         $years = array_reverse(range(1980, date("Y") + 1));
         return array_combine($years, $years);
     }

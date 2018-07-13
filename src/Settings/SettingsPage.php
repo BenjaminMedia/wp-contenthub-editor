@@ -38,7 +38,7 @@ class SettingsPage
         add_action('admin_init', [$this, 'register_settings']);
     }
 
-    function print_error($error)
+    public function print_error($error)
     {
         $out = "<div class='error settings-error notice is-dismissible'>";
         $out .= "<strong>" . self::NOTICE_PREFIX . "</strong><p>$error</p>";
@@ -66,17 +66,14 @@ class SettingsPage
      */
     public function create_admin_page()
     {
-        // Set class property
-
-        ?>
+        // Set class property ?>
         <div class="wrap">
             <form method="post" action="options.php">
                 <?php
                 // This prints out all hidden setting fields
                 settings_fields(self::SETTINGS_GROUP);
-                do_settings_sections(self::SETTINGS_PAGE);
-                submit_button();
-                ?>
+        do_settings_sections(self::SETTINGS_PAGE);
+        submit_button(); ?>
             </form>
         </div>
         <?php
@@ -161,12 +158,11 @@ class SettingsPage
 
         $field = $this->settingsFields[$function];
         $this->create_settings_field($field, $function);
-
     }
 
     public function get_setting_value($settingKey, $locale = null)
     {
-        if(!$this->settingsValues) {
+        if (!$this->settingsValues) {
             $this->settingsValues = get_option(self::SETTINGS_KEY);
         }
 
@@ -190,9 +186,10 @@ class SettingsPage
         return SiteRepository::find_by_id($this->get_site_id($locale));
     }
 
-    private static function site_manager_get_sites($locale) {
-        return collect(SiteRepository::get_all())->map(function($site){
-           return [
+    private static function site_manager_get_sites($locale)
+    {
+        return collect(SiteRepository::get_all())->map(function ($site) {
+            return [
                'label' => $site->domain,
                'value' => $site->id
            ];
@@ -205,17 +202,14 @@ class SettingsPage
 
         foreach ($this->get_languages() as $language) {
             foreach ($this->settingsFields as $fieldKey => $settingsField) {
-
                 $localeFieldKey = $language->locale . '_' . $fieldKey;
                 $languageEnabledFields[$localeFieldKey] = $settingsField;
                 $languageEnabledFields[$localeFieldKey]['name'] .= ' ' . $language->locale;
                 $languageEnabledFields[$localeFieldKey]['locale'] = $language->locale;
-
             }
         }
 
         $this->settingsFields = $languageEnabledFields;
-
     }
 
     public function languages_is_enabled()
@@ -244,7 +238,8 @@ class SettingsPage
         return null;
     }
 
-    public function get_current_locale() {
+    public function get_current_locale()
+    {
         $currentLang = $this->get_current_language();
         return $currentLang ? $currentLang->locale : null;
     }
@@ -259,7 +254,6 @@ class SettingsPage
         }
 
         return [];
-
     }
 
     private function create_settings_field($field, $fieldKey)
@@ -291,5 +285,4 @@ class SettingsPage
             print $fieldOutput;
         }
     }
-
 }

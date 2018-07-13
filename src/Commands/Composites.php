@@ -55,17 +55,17 @@ class Composites extends BaseCmd
         });
 
         // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
-        remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
-        remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
-        remove_action( 'save_post', [CxensePost::class, 'update_post'], 10, 1 );
+        remove_action('save_post', [WpComposite::class, 'on_save'], 10, 2);
+        remove_action('save_post', [BonnierCachePost::class, 'update_post'], 10, 1);
+        remove_action('save_post', [CxensePost::class, 'update_post'], 10, 1);
         remove_action('save_post', [Post::class, 'save'], 5, 2);
 
-        if($id = $assocArgs['id'] ?? null) {
+        if ($id = $assocArgs['id'] ?? null) {
             $this->import_composite(CompositeRepository::find_by_id($id));
             return;
         }
         $brandId = $this->get_site()->brand->content_hub_id;
-        if($source = $assocArgs['source'] ?? null) {
+        if ($source = $assocArgs['source'] ?? null) {
             $this->map_composites_by_brand_id_and_source($brandId, $source, function ($composite) {
                 $this->import_composite($composite);
             });
@@ -124,10 +124,11 @@ class Composites extends BaseCmd
             $categories->pluck('node')->each(function ($compositeInfo) use ($callable) {
                 $callable(CompositeRepository::find_by_id($compositeInfo->id));
             });
-            if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage)
+            if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage) {
                 $compositeQuery = CompositeRepository::find_by_brand_id($id, $categories->last()->cursor);
-            else
+            } else {
                 $compositeQuery = null;
+            }
         }
     }
 
@@ -140,10 +141,11 @@ class Composites extends BaseCmd
             $categories->pluck('node')->each(function ($compositeInfo) use ($callable) {
                 $callable(CompositeRepository::find_by_id($compositeInfo->id));
             });
-            if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage)
+            if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage) {
                 $compositeQuery = CompositeRepository::find_by_brand_id_and_source($id, $source, $categories->last()->cursor);
-            else
+            } else {
                 $compositeQuery = null;
+            }
         }
     }
 
@@ -193,16 +195,15 @@ class Composites extends BaseCmd
                 WpComposite::POST_CANONICAL_URL => $composite->metaInformation->canonicalUrl,
             ],
         ]);
-
     }
 
     private function handle_translation($postId, $composite)
     {
         pll_set_post_language($postId, $composite->locale); // Set post language
-        if(isset($composite->translationSet->composites->edges)) {
+        if (isset($composite->translationSet->composites->edges)) {
             pll_save_post_translations( // Link translations together
-                collect($composite->translationSet->composites->edges)->pluck('node')->map(function($compositeTranslation){
-                    if($localId = WpComposite::id_from_contenthub_id($compositeTranslation->id)) { // Get local post id
+                collect($composite->translationSet->composites->edges)->pluck('node')->map(function ($compositeTranslation) {
+                    if ($localId = WpComposite::id_from_contenthub_id($compositeTranslation->id)) { // Get local post id
                         return [$compositeTranslation->locale, $localId];
                     }
                     return null;
@@ -289,13 +290,13 @@ class Composites extends BaseCmd
     {
         collect($compositeContents->map(function ($compositeContent) {
             if ($compositeContent->type === 'tag' && $existingTermId = WpTerm::id_from_contenthub_id($compositeContent->content->id)) {
-                if(isset($compositeContent->content->vocabulary->id) && $existingTaxonomy = WpTaxonomy::get_taxonomy($compositeContent->content->vocabulary->id)) {
+                if (isset($compositeContent->content->vocabulary->id) && $existingTaxonomy = WpTaxonomy::get_taxonomy($compositeContent->content->vocabulary->id)) {
                     return [$existingTaxonomy => $existingTermId];
                 }
                 return ['tags' => $existingTermId];
             }
             return null;
-        }))->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use($postId){
+        }))->rejectNullValues()->toAssocCombine()->each(function (Collection $tagIds, $taxonomy) use ($postId) {
             update_field($taxonomy, $tagIds->toArray(), $postId);
         });
     }
@@ -309,7 +310,6 @@ class Composites extends BaseCmd
                 update_field('teaser_image', WpAttachment::upload_attachment($postId, $teaser->image), $postId);
             }
             if ($teaser->kind === 'Facebook') {
-
                 update_post_meta($postId, WpComposite::POST_FACEBOOK_TITLE, $teaser->title);
                 update_post_meta($postId, WpComposite::POST_FACEBOOK_DESCRIPTION, $teaser->description);
                 if ($teaser->image) {
@@ -363,16 +363,16 @@ class Composites extends BaseCmd
     private function remove_if_orphaned(WP_Post $post)
     {
         $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if($compositeId && !CompositeRepository::find_by_id($compositeId)) {
+        if ($compositeId && !CompositeRepository::find_by_id($compositeId)) {
             // Delete attachments on composite
-            collect(get_field('composite_content', $post->ID) ?? [])->each(function($content){
-                if($content['acf_fc_layout'] === 'file') {
+            collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
+                if ($content['acf_fc_layout'] === 'file') {
                     wp_delete_attachment($content['file']['ID'], true);
-                    collect($content['images'])->each(function($image){
+                    collect($content['images'])->each(function ($image) {
                         wp_delete_attachment($image['file']['ID'], true);
                     });
                 }
-                if($content['acf_fc_layout'] === 'image') {
+                if ($content['acf_fc_layout'] === 'image') {
                     wp_delete_attachment($content['file']['ID'], true);
                 }
             });
@@ -384,7 +384,7 @@ class Composites extends BaseCmd
 
     private function get_post_name($composite)
     {
-        if(preg_match('/[^\/]*$/', $composite->metaInformation->originalUrl, $matches) && !empty($matches)) {
+        if (preg_match('/[^\/]*$/', $composite->metaInformation->originalUrl, $matches) && !empty($matches)) {
             return $matches[0]; // return the part of the slug after the last /
         }
         global $locale; // No original url is available so we generate post name from the title instead
@@ -435,5 +435,4 @@ class Composites extends BaseCmd
             WpAttachment::delete_by_contenthub_id($orphanedFileId);
         });
     }
-
 }

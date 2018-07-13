@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CategoryRepository implements CategoryContract
 {
-
     public static function get_all()
     {
         try {

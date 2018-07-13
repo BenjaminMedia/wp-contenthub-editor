@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -10,12 +11,14 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class TeaserFieldGroup
 {
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_58e38d7eca92e',
                 'title' => 'Teaser',

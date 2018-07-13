@@ -14,7 +14,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CompositeRepository implements CompositeContract
 {
-
     public static function get_all($cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_COMPOSITES, [
