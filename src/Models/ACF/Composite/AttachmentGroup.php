@@ -11,17 +11,19 @@ class AttachmentGroup
 {
     const CAPTION_FIELD_NAME = 'attachment_caption';
     const CAPTION_FIELD_KEY = 'field_5b45e57fe6b14';
-    public static function register(){
+    public static function register()
+    {
         static::create_acf_field_group();
     }
 
-    public static function create_acf_field_group(){
-        if( function_exists('acf_add_local_field_group') ):
-            acf_add_local_field_group(array (
+    public static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')):
+            acf_add_local_field_group(array(
                 'key' => 'group_5b45e49cc3d58',
                 'title' => 'Attachment',
-                'fields' => array (
-                    array (
+                'fields' => array(
+                    array(
                         'key' => self::CAPTION_FIELD_KEY,
                         'label' => 'Caption',
                         'name' => self::CAPTION_FIELD_NAME,
@@ -29,7 +31,7 @@ class AttachmentGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -38,9 +40,9 @@ class AttachmentGroup
                         'font_size' => 14,
                     ),
                 ),
-                'location' => array (
-                    array (
-                        array (
+                'location' => array(
+                    array(
+                        array(
                             'param' => 'attachment',
                             'operator' => '==',
                             'value' => 'all',
