@@ -21,7 +21,7 @@ class TermImportHelper
     public function importTermAndLinkTranslations($externalTerm)
     {
         $termIdsByLocale = collect($externalTerm->name)->map(function ($name, $languageCode) use ($externalTerm) {
-            if(!collect(pll_languages_list())->contains($languageCode)) {
+            if (!collect(pll_languages_list())->contains($languageCode)) {
                 return null;
             }
             return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
@@ -47,7 +47,7 @@ class TermImportHelper
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             $this->preparePostRedirects($existingTermId);
             // Term exists so we update it
-            if(WpTerm::update(
+            if (WpTerm::update(
                 $existingTermId,
                 $name,
                 $languageCode,
@@ -56,7 +56,7 @@ class TermImportHelper
                 $parentTermId,
                 $description,
                 $internal
-            )){
+            )) {
                 $this->createPostRedirects();
                 return true;
             }
@@ -75,7 +75,6 @@ class TermImportHelper
         if ($existingTermId = WpTerm::id_from_contenthub_id($externalCategory->content_hub_ids->{$languageCode})) {
             // Term already exists so no need to create it again
             return $existingTermId;
-
         }
         return $this->importTermAndLinkTranslations($externalCategory)[$languageCode] ?? null;
     }
@@ -83,11 +82,11 @@ class TermImportHelper
     public function deleteTermAndTranslations($externalTerm)
     {
         collect($externalTerm->content_hub_ids)->each(function ($contentHubId) {
-           if($wpTermId = WpTerm::id_from_contenthub_id($contentHubId) ?? null) {
-               $this->preparePostRedirects($wpTermId);
-               wp_delete_term($wpTermId, $this->taxonomy);
-               $this->createPostRedirects();
-           }
+            if ($wpTermId = WpTerm::id_from_contenthub_id($contentHubId) ?? null) {
+                $this->preparePostRedirects($wpTermId);
+                wp_delete_term($wpTermId, $this->taxonomy);
+                $this->createPostRedirects();
+            }
         });
     }
 
@@ -98,7 +97,7 @@ class TermImportHelper
             'tag' => 'post_tag',
             'post_tag' => 'post_tag'
         ])->get($taxonomy);
-        if(!$wpTaxonomy) {
+        if (!$wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
         return $wpTaxonomy;
@@ -106,7 +105,7 @@ class TermImportHelper
 
     private function preparePostRedirects($existingTermId)
     {
-        if($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
+        if ($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
             $this->permalinksToRedirect = collect(get_posts([
                 'posts_per_page' => 0,
                 'post_status' => 'publish',
@@ -118,7 +117,7 @@ class TermImportHelper
                         'terms' => $existingTermId
                     ]
                 ]
-            ]))->reduce(function($out, \WP_Post $post) {
+            ]))->reduce(function ($out, \WP_Post $post) {
                 $out[$post->ID] = get_post_permalink($post->ID);
                 return $out;
             }, collect([]));
@@ -129,13 +128,12 @@ class TermImportHelper
 
     private function createPostRedirects()
     {
-        $this->permalinksToRedirect->each(function($oldPermalink, $postId){
-            if(($oldParsedUrl = parse_url($oldPermalink)) &&
-                $newPermalink = get_post_permalink($postId, $leaveName = true)) // Leave name to avoid hitting term cache
-            {
+        $this->permalinksToRedirect->each(function ($oldPermalink, $postId) {
+            if (($oldParsedUrl = parse_url($oldPermalink)) &&
+                $newPermalink = get_post_permalink($postId, $leaveName = true)) { // Leave name to avoid hitting term cache
                 // Since we left the post_name we need to replace it in the permalink.
                 $newPermalink = str_replace('%postname%', get_post($postId)->post_name, $newPermalink);
-                if($oldPermalink !== $newPermalink) {
+                if ($oldPermalink !== $newPermalink) {
                     BonnierRedirect::createRedirect(
                         $oldParsedUrl['path'],
                         parse_url($newPermalink, PHP_URL_PATH),
@@ -146,7 +144,5 @@ class TermImportHelper
                 }
             }
         });
-
     }
-
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -17,13 +18,15 @@ class MetaFieldGroup
         'Offer' => 'Offer',
     ];
 
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
         static::register_pll_translations();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_58fde819ea0f1',
                 'title' => 'Meta',
@@ -217,8 +220,8 @@ class MetaFieldGroup
 
     private static function register_pll_translations()
     {
-        if(function_exists('pll_register_string')) {
-            collect(static::COMMERCIAL_TYPES)->each(function($commercialType){
+        if (function_exists('pll_register_string')) {
+            collect(static::COMMERCIAL_TYPES)->each(function ($commercialType) {
                 pll_register_string($commercialType, $commercialType, 'content-hub-editor');
             });
         }
@@ -226,8 +229,8 @@ class MetaFieldGroup
 
     private static function get_magazine_issues()
     {
-        $issues = array_map(function($issue){
-            if($issue <= 9) {
+        $issues = array_map(function ($issue) {
+            if ($issue <= 9) {
                 return '0' . $issue;
             }
             return $issue;
@@ -235,7 +238,8 @@ class MetaFieldGroup
         return array_combine($issues, $issues);
     }
 
-    private static function get_magazine_years() {
+    private static function get_magazine_years()
+    {
         $years = array_reverse(range(1980, date("Y") + 1));
         return array_combine($years, $years);
     }

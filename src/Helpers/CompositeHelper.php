@@ -30,7 +30,7 @@ class CompositeHelper
 
         if ($videoWithTeaser) {
             $embed = $videoWithTeaser['embed_url'];
-            $teaserImagefile = VideoHelper::getLeadImageFile($embed,'https://bonnier-publications-danmark.23video.com');
+            $teaserImagefile = VideoHelper::getLeadImageFile($embed, 'https://bonnier-publications-danmark.23video.com');
 
             if (empty($embed) ||
                 !$teaserImagefile->url ||

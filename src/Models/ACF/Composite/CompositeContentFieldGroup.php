@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -13,12 +14,14 @@ class CompositeContentFieldGroup
     const ContentField = 'field_58aae476809c6';
     const VideoTeaserImageField = 'field_5a8d7ae021e44';
 
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_5af991aeda261',
                 'title' => 'Article Content',
@@ -634,7 +637,7 @@ class CompositeContentFieldGroup
                                                     'class' => '',
                                                     'id' => '',
                                                 ],
-                                                'simple_mde_config' => 'simple',
+                                                'simple_mde_config' => 'standard',
                                                 'font_size' => 14,
                                             ],
                                         ],
@@ -1032,7 +1035,6 @@ class CompositeContentFieldGroup
                 'active' => 1,
                 'description' => '',
             ]);
-
         }
     }
 }

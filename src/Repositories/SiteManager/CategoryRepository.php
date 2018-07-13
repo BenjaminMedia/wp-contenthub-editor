@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class CategoryRepository implements TaxonomyContract
 {
-
     public static function get_all($page = 1)
     {
         try {

@@ -55,5 +55,4 @@ class Categories extends BaseTaxonomyImporter
     {
         $this->clean_terms('category', isset($assocArgs['remove-empty']));
     }
-
 }

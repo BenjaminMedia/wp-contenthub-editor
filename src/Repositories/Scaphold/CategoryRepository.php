@@ -13,7 +13,6 @@ use Bonnier\WP\ContentHub\Editor\Scaphold\Queries;
  */
 class CategoryRepository implements CategoryContract
 {
-
     public static function get_all($cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_CATEGORIES, [

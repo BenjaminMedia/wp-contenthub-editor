@@ -220,7 +220,6 @@ class MarkdownEditor extends acf_field
             '1.2.5'
         );
         wp_enqueue_style('acf-input-markdown-editor', '', [], '1.2.5');
-
     }
 
     /*
@@ -237,12 +236,12 @@ class MarkdownEditor extends acf_field
     *  @param $field (array) the field array holding all the field options
     *  @return $value
     */
-    function load_value($value, $post_id, $field)
+    public function load_value($value, $post_id, $field)
     {
         return wp_unslash($value);
     }
 
-    function update_value($value, $post_id, $field)
+    public function update_value($value, $post_id, $field)
     {
         // acf saves calls stripslashes_deep() on save which removes all slashes from content
         // to allow slashes we call wp_slash() on value before it is saved to the database
