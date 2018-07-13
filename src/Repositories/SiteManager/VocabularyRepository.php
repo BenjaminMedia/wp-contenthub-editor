@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class VocabularyRepository implements TaxonomyContract
 {
-
     public static function get_all($page = 1)
     {
         try {

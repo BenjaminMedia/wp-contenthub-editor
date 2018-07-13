@@ -15,8 +15,9 @@ class Tags extends BaseTaxonomyImporter
 {
     const CMD_NAMESPACE = 'tags';
 
-    public static function register() {
-        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
+    public static function register()
+    {
+        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
     /**
@@ -27,11 +28,11 @@ class Tags extends BaseTaxonomyImporter
      * wp contenthub editor tags import
      *
      */
-    public function import() {
-
+    public function import()
+    {
         $this->triggerImport('post_tag', [TagRepository::class, 'find_by_brand_id']);
 
-        WP_CLI::success( 'Done importing tags' );
+        WP_CLI::success('Done importing tags');
     }
 
     /**
@@ -46,7 +47,8 @@ class Tags extends BaseTaxonomyImporter
      * wp contenthub editor tags clean
      *
      */
-    public function clean($args, $assocArgs) {
+    public function clean($args, $assocArgs)
+    {
         $this->clean_terms('post_tag', isset($assocArgs['remove-empty']));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -12,13 +13,15 @@ class TeaserFieldGroup
 {
     const TEASER_IMAGE_FIELD = 'field_58e38da2194e3';
 
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
-        add_filter('acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD , [__CLASS__, 'validateTeaserImageField']);
+        add_filter('acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD, [__CLASS__, 'validateTeaserImageField']);
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_58e38d7eca92e',
                 'title' => 'Teasers',

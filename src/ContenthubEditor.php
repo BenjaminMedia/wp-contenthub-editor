@@ -2,7 +2,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor;
 
-
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;

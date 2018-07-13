@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -10,13 +11,15 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class CompositeFieldGroup
 {
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
         static::register_author_hooks();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ):
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')):
 
             acf_add_local_field_group([
                 'key' => 'group_58abfd3931f2f',
@@ -174,18 +177,17 @@ class CompositeFieldGroup
                 'description' => 'test',
             ]);
         endif;
-
     }
 
     private static function register_author_hooks()
     {
-        add_filter('acf/load_value/name=author', function($value){
+        add_filter('acf/load_value/name=author', function ($value) {
             return get_post()->post_author ?: wp_get_current_user()->ID;
         }, 10, 1);
-        add_filter('acf/update_value/name=author', function($newAuthor){
+        add_filter('acf/update_value/name=author', function ($newAuthor) {
             $post = get_post();
             $oldAuthor = $post->post_author;
-            if(intval($newAuthor) !== intval($oldAuthor)) {
+            if (intval($newAuthor) !== intval($oldAuthor)) {
                 $post->post_author = $newAuthor;
                 wp_update_post($post);
             }

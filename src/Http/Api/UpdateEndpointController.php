@@ -32,7 +32,7 @@ class UpdateEndpointController extends WP_REST_Controller
             if (in_array($actionType, ['create', 'update'])) {
                 $termImporter->importTermAndLinkTranslations($resource);
             }
-            if($actionType === 'delete') {
+            if ($actionType === 'delete') {
                 $termImporter->deleteTermAndTranslations($resource);
             }
             return new WP_REST_Response(['status' => 'OK']);

@@ -15,8 +15,9 @@ class AdvancedCustomFields extends WP_CLI_Command
     const EXPORT_DIR = WP_CONTENT_DIR . '/acf-exports/';
     const CMD_NAMESPACE = 'acf';
 
-    public static function register() {
-        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
+    public static function register()
+    {
+        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
     /**
@@ -27,8 +28,8 @@ class AdvancedCustomFields extends WP_CLI_Command
      * wp contenthub editor acf dump
      *
      */
-    public function dump() {
-
+    public function dump()
+    {
         $groups = acf_get_local_field_groups();
         $json = [];
 
@@ -49,14 +50,14 @@ class AdvancedCustomFields extends WP_CLI_Command
         $json = json_encode($json, JSON_PRETTY_PRINT);
 
         // Make sure export dir exists
-        if(!file_exists(static::EXPORT_DIR)) {
+        if (!file_exists(static::EXPORT_DIR)) {
             mkdir(static::EXPORT_DIR, 0777, true);
         }
 
         // Write output to file for easy import into ACF.
         $file = static::EXPORT_DIR . 'export.json';
-        if(file_put_contents($file, $json)) {
-            WP_CLI::success( "Successfully Dumped JSON to: " . $file );
+        if (file_put_contents($file, $json)) {
+            WP_CLI::success("Successfully Dumped JSON to: " . $file);
         } else {
             WP_CLI::ERROR("Failed dumping file, please check that " . WP_CONTENT_DIR . " is write able");
         }

@@ -62,16 +62,16 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
         // Get all anchor tags as html strings
         preg_match_all('/<a[^>]*>(?:.|\n)*?<\/a>/i', $html, $matches);
 
-        collect($matches)->flatten()->each(function($anchorHMTL) use(&$html){
+        collect($matches)->flatten()->each(function ($anchorHMTL) use (&$html) {
             // convert encoding to special chars are read correctly
             $anchorHMTL = mb_convert_encoding($anchorHMTL, 'HTML-ENTITIES', "UTF-8");
             // Parse the anchor so we may use objects to access the attributes
             $anchors = DOMDocument::loadHTML($anchorHMTL)->getElementsByTagName('a');
             /* @var $anchor \DOMElement */
-            if($anchor = $anchors->item(0)) {
+            if ($anchor = $anchors->item(0)) {
                 $attributes = collect($anchor->attributes)
                     ->only(['target', 'title', 'rel']) // Get only the attributes we are interested in
-                    ->reduce(function($attributes, DOMAttr $attribute) {
+                    ->reduce(function ($attributes, DOMAttr $attribute) {
                         $attributes[$attribute->name] = $attribute->textContent;
                         return $attributes;
                     }, []);
