@@ -17,12 +17,14 @@ class TranslationStateFieldGroup
         'translated' => 'Translated',
     ];
 
-    public static function register() {
+    public static function register()
+    {
         static::register_field_group();
     }
 
-    private static function register_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function register_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_5940debee7ae2',
                 'title' => 'Translation State',

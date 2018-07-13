@@ -7,7 +7,6 @@ use Exception;
 
 class Client extends \GuzzleHttp\Client
 {
-
     protected static $instance = null;
     protected static $token = null;
 
@@ -30,7 +29,7 @@ class Client extends \GuzzleHttp\Client
      */
     public static function getInstance()
     {
-        if(is_null(self::$instance)) {
+        if (is_null(self::$instance)) {
             self::$instance = new static();
             self::$instance->login(getenv('SCAPHOLD_USERNAME'), getenv('SCAPHOLD_PASSWORD'));
         }
@@ -61,8 +60,8 @@ class Client extends \GuzzleHttp\Client
         return $this;
     }
 
-    public static function query($query, $variables = null) {
-
+    public static function query($query, $variables = null)
+    {
         $params = [
             'query' => static::removeLineBreaks($query),
             'variables' => $variables
@@ -73,12 +72,13 @@ class Client extends \GuzzleHttp\Client
         return isset($response['body']->data->viewer) ? $response['body']->data->viewer : $response['body']->data;
     }
 
-    private static function removeLineBreaks($string) {
-
+    private static function removeLineBreaks($string)
+    {
         return str_replace(array("\r", "\n"), '', $string);
     }
 
-    private static function requestScaphold(Array $params, $tries = 0) {
+    private static function requestScaphold(array $params, $tries = 0)
+    {
         try {
             $response = static::getInstance()->post(null, [
                 'json' => $params,
@@ -86,7 +86,7 @@ class Client extends \GuzzleHttp\Client
             ]);
             $responseBody = $response->getBody()->getContents();
             // Scaphold sometimes return empty body with response code 200, we try to catch this and re attempt the request
-            if(empty($responseBody)) {
+            if (empty($responseBody)) {
                 throw new Exception("Scaphold returned empty response body, with response code:".$response->getStatusCode());
             }
             return [

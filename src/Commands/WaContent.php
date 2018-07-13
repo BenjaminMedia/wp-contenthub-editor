@@ -27,7 +27,6 @@ class WaContent extends BaseCmd
     public static function register()
     {
         WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE . ' ' . static::CMD_NAMESPACE, __CLASS__);
-
     }
 
     /**
@@ -57,14 +56,14 @@ class WaContent extends BaseCmd
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
 
         $repository = new ContentRepository();
-        if($id = $assocArgs['id'] ?? null) {
+        if ($id = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
                 'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
             $this->import_composite($repository->find_by_id($id, $resource));
         } else {
-            $repository->map_all(function($waContent){
+            $repository->map_all(function ($waContent) {
                 $this->import_composite($waContent);
             });
         }
@@ -72,7 +71,9 @@ class WaContent extends BaseCmd
 
     private function import_composite($waContent)
     {
-        if(!$waContent) return;
+        if (!$waContent) {
+            return;
+        }
 
         WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->widget_content->id);
 
@@ -94,7 +95,7 @@ class WaContent extends BaseCmd
     {
         $existingId = WpComposite::id_from_white_album_id($waContent->widget_content->id);
 
-        if($existingId && getenv('WP_ENV') === 'production') {
+        if ($existingId && getenv('WP_ENV') === 'production') {
             usleep(500000); // Delay for half a second when updating on prod to avoid ddos'ing WA
         }
 
@@ -114,7 +115,6 @@ class WaContent extends BaseCmd
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
             ],
         ]);
-
     }
 
     private function handle_translation($postId, $waContent)
@@ -130,11 +130,11 @@ class WaContent extends BaseCmd
         update_field('magazine_year', $waContent->magazine_year ?? null, $postId);
         update_field('magazine_issue', $waContent->magazine_number ?? null, $postId);
 
-        update_field('canonical_url',  $waContent->widget_content->canonical_link);
+        update_field('canonical_url', $waContent->widget_content->canonical_link);
 
-        if($waContent->widget_content->advertorial_label) {
+        if ($waContent->widget_content->advertorial_label) {
             update_field('commercial', true, $postId);
-            $type = join('', array_map(function($part){
+            $type = join('', array_map(function ($part) {
                 return ucfirst($part);
             }, explode(' ', $waContent->widget_content->advertorial_label)));
             update_field('commercial_type', $type ?? null, $postId);
@@ -143,7 +143,7 @@ class WaContent extends BaseCmd
 
     private function format_composite_contents($waContent)
     {
-        if(isset($waContent->body->widget_groups)) {
+        if (isset($waContent->body->widget_groups)) {
             return collect($waContent->body->widget_groups)->pluck('widgets')->flatten(1)->map(function ($waWidget) {
                 return collect([
                     'type' => collect([ // Map the type
@@ -160,11 +160,11 @@ class WaContent extends BaseCmd
                     'lead_image' => true
                 ])->merge($waContent->widget_content->lead_image)
                 : null
-            )->itemsToObject()->map(function ($content){
+            )->itemsToObject()->map(function ($content) {
                 return $this->fixFaultyImageFormats($content);
             });
         }
-        if(isset($waContent->gallery_images)) {
+        if (isset($waContent->gallery_images)) {
             // Galleries are converted to a combination of text items and image widgets
             return collect($waContent->gallery_images)->pluck('image')->map(function ($waImage) {
                 $description = $waImage->description;
@@ -192,7 +192,6 @@ class WaContent extends BaseCmd
                 ];
             }
             if ($compositeContent->type === 'image') {
-
                 return [
                     'lead_image' => $compositeContent->lead_image ?? false,
                     'file' => WpAttachment::upload_attachment($postId, $compositeContent),
@@ -221,7 +220,7 @@ class WaContent extends BaseCmd
             }
             if ($compositeContent->type === 'gallery') {
                 return [
-                    'images' => $compositeContent->images->map(function($waImage) use($postId){
+                    'images' => $compositeContent->images->map(function ($waImage) use ($postId) {
                         $description = HtmlToMarkdown::parseHtml(
                             sprintf('<h3>%s</h3> %s', $waImage->title, $waImage->description)
                         );
@@ -264,7 +263,7 @@ class WaContent extends BaseCmd
         update_field(WpComposite::POST_TEASER_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
 
         // Facebook teaser
-        if($waContent->widget_content->teaser_facebook_only) {
+        if ($waContent->widget_content->teaser_facebook_only) {
             update_field(WpComposite::POST_FACEBOOK_TITLE, $teaserTitle, $postId);
             update_field(WpComposite::POST_FACEBOOK_DESCRIPTION, $teaserDescription, $postId);
             update_field(WpComposite::POST_FACEBOOK_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
@@ -285,16 +284,16 @@ class WaContent extends BaseCmd
     private function remove_if_orphaned(WP_Post $post)
     {
         $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if($compositeId && !CompositeRepository::find_by_id($compositeId)) {
+        if ($compositeId && !CompositeRepository::find_by_id($compositeId)) {
             // Delete attachments on composite
-            collect(get_field('composite_content', $post->ID) ?? [])->each(function($content){
-                if($content['acf_fc_layout'] === 'file') {
+            collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
+                if ($content['acf_fc_layout'] === 'file') {
                     wp_delete_attachment($content['file']['ID'], true);
-                    collect($content['images'])->each(function($image){
+                    collect($content['images'])->each(function ($image) {
                         wp_delete_attachment($image['file']['ID'], true);
                     });
                 }
-                if($content['acf_fc_layout'] === 'image') {
+                if ($content['acf_fc_layout'] === 'image') {
                     wp_delete_attachment($content['file']['ID'], true);
                 }
             });
@@ -360,10 +359,10 @@ class WaContent extends BaseCmd
         });
 
         // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
-        remove_action( 'save_post', [WpComposite::class, 'on_save'], 10, 2 );
-        remove_action( 'save_post', [BonnierCachePost::class, 'update_post'], 10, 1 );
-        remove_action( 'transition_post_status', [CxensePost::class, 'post_status_changed'], 10, 3);
-        remove_action( 'save_post', [Post::class, 'save'], 5, 2);
+        remove_action('save_post', [WpComposite::class, 'on_save'], 10, 2);
+        remove_action('save_post', [BonnierCachePost::class, 'update_post'], 10, 1);
+        remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10, 3);
+        remove_action('save_post', [Post::class, 'save'], 5, 2);
     }
 
     private function get_author($waContent)
@@ -388,8 +387,9 @@ class WaContent extends BaseCmd
         return $userId;
     }
 
-    private function fixFaultyImageFormats($content){
-        if(
+    private function fixFaultyImageFormats($content)
+    {
+        if (
             $content->type === 'image'
             && ($extension = pathinfo($content->url, PATHINFO_EXTENSION))
             && in_array($extension, ['psd'])
@@ -399,5 +399,4 @@ class WaContent extends BaseCmd
         }
         return $content;
     }
-
 }

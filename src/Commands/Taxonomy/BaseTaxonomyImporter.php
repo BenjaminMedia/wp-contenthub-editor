@@ -65,17 +65,20 @@ class BaseTaxonomyImporter extends BaseCmd
 
         WP_CLI::success('Done cleaning ' . $taxononmy);
     }
-    protected function map_sites($callable) {
+    protected function map_sites($callable)
+    {
         $this->get_sites()->each($callable);
     }
 
-    protected function get_sites() {
-        return collect(ContenthubEditor::instance()->settings->get_languages())->pluck('locale')->map(function($locale){
+    protected function get_sites()
+    {
+        return collect(ContenthubEditor::instance()->settings->get_languages())->pluck('locale')->map(function ($locale) {
             return ContenthubEditor::instance()->settings->get_site($locale);
         })->rejectNullValues();
     }
 
-    protected function get_site() {
+    protected function get_site()
+    {
         return $this->get_sites()->first();
     }
 }

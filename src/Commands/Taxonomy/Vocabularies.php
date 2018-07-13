@@ -17,8 +17,9 @@ class Vocabularies extends BaseCmd
 {
     const CMD_NAMESPACE = 'vocabularies';
 
-    public static function register() {
-        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
+    public static function register()
+    {
+        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
     /**
@@ -29,16 +30,17 @@ class Vocabularies extends BaseCmd
      * wp contenthub editor vocabularies import
      *
      */
-    public function import() {
+    public function import()
+    {
         $vocabularies = collect();
-        $this->map_sites(function($site) use($vocabularies) {
-            $this->map_vocabularies($site, function ($vocabulary) use($vocabularies) {
+        $this->map_sites(function ($site) use ($vocabularies) {
+            $this->map_vocabularies($site, function ($vocabulary) use ($vocabularies) {
                 $vocabularies[$vocabulary->content_hub_id] = $vocabulary;
-                WP_CLI::line( 'Importing: ' . $vocabulary->name );
+                WP_CLI::line('Importing: ' . $vocabulary->name);
             });
         });
         WpTaxonomy::set_custom_taxonomies($vocabularies);
-        WP_CLI::success( 'Done importing Vocabularies' );
+        WP_CLI::success('Done importing Vocabularies');
     }
 
     protected function map_vocabularies($site, $callable)
@@ -46,9 +48,9 @@ class Vocabularies extends BaseCmd
         $vocabularies = VocabularyRepository::find_by_brand_id($site->brand->id);
 
         while ($vocabularies) {
-            WP_CLI::line( "Begning import of page: " . $vocabularies->meta->pagination->current_page );
+            WP_CLI::line("Begning import of page: " . $vocabularies->meta->pagination->current_page);
             collect($vocabularies->data)->each($callable);
-            if(isset($vocabularies->meta->pagination->links->next)) {
+            if (isset($vocabularies->meta->pagination->links->next)) {
                 $nextPage = $vocabularies->meta->pagination->current_page +1;
                 $vocabularies = VocabularyRepository::find_by_brand_id($site->brand->id, $nextPage);
                 continue;

@@ -30,7 +30,7 @@ class ContentRepository
 
     public function find_by_id($id, $resource = null)
     {
-        if(!$resource) {
+        if (!$resource) {
             $resource = static::ARTICLE_RESOURCE;
         }
 
@@ -42,7 +42,8 @@ class ContentRepository
         ]);
     }
 
-    public function get_all($page = 1, $perPage = 50) {
+    public function get_all($page = 1, $perPage = 50)
+    {
         return $this->get(static::CONTENT_RESOURCE, [
             'query' => [
                 'page' => $page,
@@ -51,15 +52,16 @@ class ContentRepository
         ]);
     }
 
-    public function map_all($callback) {
+    public function map_all($callback)
+    {
         $contents = collect($this->get_all($page = 1));
-        while( ! $contents->isEmpty()) {
-            collect($contents)->each(function($content) use($callback) {
+        while (! $contents->isEmpty()) {
+            collect($contents)->each(function ($content) use ($callback) {
                 $resource = collect([
                     'Article' => static::ARTICLE_RESOURCE,
                     'Gallery' => static::GALLERY_RESOURCE,
                 ])->get($content->type);
-                if($contentFound = $this->find_by_id($content->id, $resource)) {
+                if ($contentFound = $this->find_by_id($content->id, $resource)) {
                     $callback($contentFound);
                 }
             });
@@ -68,15 +70,14 @@ class ContentRepository
         }
     }
 
-    private function get($url, $options) {
-
+    private function get($url, $options)
+    {
         try {
-            $response = @$this->client->get($url,$options);
-        } catch(Exception $e)
-        {
+            $response = @$this->client->get($url, $options);
+        } catch (Exception $e) {
             return null;
         }
-        if($response->getStatusCode() !== 200) {
+        if ($response->getStatusCode() !== 200) {
             return null;
         }
         return json_decode($response->getBody()->getContents());

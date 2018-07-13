@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class SiteRepository implements SiteContract
 {
-
     public static function get_all()
     {
         try {
@@ -28,7 +27,7 @@ class SiteRepository implements SiteContract
 
     public static function find_by_id($id)
     {
-        if(is_null($id)) {
+        if (is_null($id)) {
             return null;
         }
         try {
