@@ -13,7 +13,6 @@ use GuzzleHttp\Exception\ClientException;
  */
 class TagRepository implements TagContract
 {
-
     public static function get_all($page = 1)
     {
         try {

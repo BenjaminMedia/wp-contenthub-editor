@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Illuminate\Support\Collection;
 
@@ -11,14 +12,16 @@ use Illuminate\Support\Collection;
  */
 class TaxonomyFieldGroup
 {
-    public static function register(Collection $customTaxonomies) {
-        static::create_acf_field_group($customTaxonomies->map(function($customTaxonomy){
+    public static function register(Collection $customTaxonomies)
+    {
+        static::create_acf_field_group($customTaxonomies->map(function ($customTaxonomy) {
             return static::get_acf_taxonomy_field($customTaxonomy);
         })->toArray());
     }
 
-    private static function create_acf_field_group($formattedFields) {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group($formattedFields)
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_5937df68c8ff8',
                 'title' => 'Taxonomy',
@@ -44,7 +47,8 @@ class TaxonomyFieldGroup
         }
     }
 
-    private static function get_acf_taxonomy_field($customTaxonomy) {
+    private static function get_acf_taxonomy_field($customTaxonomy)
+    {
         return [
             'key' => 'field_'.md5($customTaxonomy->machine_name),
             'label' => $customTaxonomy->name,
@@ -53,7 +57,7 @@ class TaxonomyFieldGroup
             'instructions' => '',
             'required' => 0,
             'conditional_logic' => 0,
-            'wrapper' => array (
+            'wrapper' => array(
                 'width' => '',
                 'class' => '',
                 'id' => '',

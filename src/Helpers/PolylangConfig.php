@@ -12,11 +12,13 @@ use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
  */
 class PolylangConfig
 {
-    public static function register() {
+    public static function register()
+    {
         add_action('option_polylang', [__CLASS__, 'polylang_options']);
     }
 
-    public static function polylang_options($defaultOptions) {
+    public static function polylang_options($defaultOptions)
+    {
         return array_merge($defaultOptions, [
                 'post_types' => [
                     WpComposite::POST_TYPE, // Tell polylang to enable translation for our custom content type

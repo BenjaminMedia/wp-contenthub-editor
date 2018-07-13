@@ -15,8 +15,9 @@ class Categories extends BaseTaxonomyImporter
 {
     const CMD_NAMESPACE = 'categories';
 
-    public static function register() {
-        WP_CLI::add_command( CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE , __CLASS__ );
+    public static function register()
+    {
+        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
     /**
@@ -27,11 +28,11 @@ class Categories extends BaseTaxonomyImporter
      * wp contenthub editor categories import
      *
      */
-    public function import() {
-
+    public function import()
+    {
         $this->triggerImport('category', [CategoryRepository::class, 'find_by_brand_id']);
 
-        WP_CLI::success( 'Done importing Categories' );
+        WP_CLI::success('Done importing Categories');
     }
 
     /**
@@ -46,8 +47,8 @@ class Categories extends BaseTaxonomyImporter
      * wp contenthub editor categories clean
      *
      */
-    public function clean($args, $assocArgs) {
+    public function clean($args, $assocArgs)
+    {
         $this->clean_terms('category', isset($assocArgs['remove-empty']));
     }
-
 }

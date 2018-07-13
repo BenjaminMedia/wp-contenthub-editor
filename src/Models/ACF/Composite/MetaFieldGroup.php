@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -17,13 +18,15 @@ class MetaFieldGroup
         'Offer' => 'Offer',
     ];
 
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
         static::register_pll_translations();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
                 'key' => 'group_58fde819ea0f1',
                 'title' => 'Meta',
@@ -126,8 +129,8 @@ class MetaFieldGroup
 
     private static function register_pll_translations()
     {
-        if(function_exists('pll_register_string')) {
-            collect(static::COMMERCIAL_TYPES)->each(function($commercialType){
+        if (function_exists('pll_register_string')) {
+            collect(static::COMMERCIAL_TYPES)->each(function ($commercialType) {
                 pll_register_string($commercialType, $commercialType, 'content-hub-editor');
             });
         }

@@ -13,9 +13,10 @@ class WpTaxonomy
 {
     const CUSTOM_TAXONOMIES_OPTION = 'content_hub_custom_taxonomies';
 
-    public static function register() {
-        add_action('init', function(){
-            static::get_custom_taxonomies()->each(function($customTaxonomy){
+    public static function register()
+    {
+        add_action('init', function () {
+            static::get_custom_taxonomies()->each(function ($customTaxonomy) {
                 register_taxonomy($customTaxonomy->machine_name, WpComposite::POST_TYPE, [
                     'label'             => $customTaxonomy->name,
                     'show_ui'           => false,
@@ -25,21 +26,25 @@ class WpTaxonomy
         });
     }
 
-    public static function add($externalTaxonomy) {
+    public static function add($externalTaxonomy)
+    {
         $customTaxonomies = static::get_custom_taxonomies();
         $customTaxonomies[$externalTaxonomy->content_hub_id] = $externalTaxonomy;
         static::set_custom_taxonomies($customTaxonomies);
     }
 
-    public static function get_taxonomy($contentHubId) {
+    public static function get_taxonomy($contentHubId)
+    {
         return static::get_custom_taxonomies()->get($contentHubId)->machine_name ?? null;
     }
 
-    public static function get_custom_taxonomies() {
+    public static function get_custom_taxonomies()
+    {
         return collect(get_option(static::CUSTOM_TAXONOMIES_OPTION, []));
     }
 
-    public static function set_custom_taxonomies(Collection $taxonomies) {
+    public static function set_custom_taxonomies(Collection $taxonomies)
+    {
         update_option(static::CUSTOM_TAXONOMIES_OPTION, $taxonomies->toArray(), true);
     }
 }

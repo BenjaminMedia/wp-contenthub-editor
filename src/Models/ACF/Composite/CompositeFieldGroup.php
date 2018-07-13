@@ -1,6 +1,7 @@
 <?php
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
+
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -10,18 +11,20 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class CompositeFieldGroup
 {
-    public static function register() {
+    public static function register()
+    {
         static::create_acf_field_group();
     }
 
-    private static function create_acf_field_group() {
-        if( function_exists('acf_add_local_field_group') ):
+    private static function create_acf_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')):
 
-            acf_add_local_field_group(array (
+            acf_add_local_field_group(array(
                 'key' => 'group_58abfd3931f2f',
                 'title' => 'Composite Fields',
-                'fields' => array (
-                    array (
+                'fields' => array(
+                    array(
                         'key' => 'field_58e388862daa8',
                         'label' => 'Kind',
                         'name' => 'kind',
@@ -29,12 +32,12 @@ class CompositeFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
                         ),
-                        'choices' => array (
+                        'choices' => array(
                             'Article' => 'Article',
                             'Gallery' => 'Gallery',
                             'Story' => 'Story',
@@ -48,7 +51,7 @@ class CompositeFieldGroup
                         'allow_null' => 0,
                         'return_format' => 'value',
                     ),
-                    array (
+                    array(
                         'key' => 'field_58abfebd21b82',
                         'label' => 'Description',
                         'name' => 'description',
@@ -56,7 +59,7 @@ class CompositeFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -69,7 +72,7 @@ class CompositeFieldGroup
                         'readonly' => 0,
                         'disabled' => 0,
                     ),
-                    array (
+                    array(
                         'key' => 'field_58e39a7118284',
                         'label' => 'Category',
                         'name' => 'category',
@@ -77,7 +80,7 @@ class CompositeFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -91,7 +94,7 @@ class CompositeFieldGroup
                         'return_format' => 'object',
                         'multiple' => 0,
                     ),
-                    array (
+                    array(
                         'key' => 'field_58f606b6e1fb0',
                         'label' => 'Tags',
                         'name' => 'tags',
@@ -99,7 +102,7 @@ class CompositeFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -113,7 +116,7 @@ class CompositeFieldGroup
                         'return_format' => 'object',
                         'multiple' => 0,
                     ),
-                    array (
+                    array(
                         'key' => 'field_5921f0c676974',
                         'label' => 'Locked Content',
                         'name' => 'locked_content',
@@ -121,7 +124,7 @@ class CompositeFieldGroup
                         'instructions' => 'Check this box if you want parts of the content to be locked. Please note that you should mark each content item that you want to be locked by checking the "Locked Content" checkbox.',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -132,32 +135,32 @@ class CompositeFieldGroup
                         'ui_on_text' => '',
                         'ui_off_text' => '',
                     ),
-                    array (
+                    array(
                         'key' => 'field_5921f0e576975',
                         'label' => 'Required User Role',
                         'name' => 'required_user_role',
                         'type' => 'select',
                         'instructions' => 'Select the role required to access the locked parts of the content',
                         'required' => 0,
-                        'conditional_logic' => array (
-                            array (
-                                array (
+                        'conditional_logic' => array(
+                            array(
+                                array(
                                     'field' => 'field_5921f0c676974',
                                     'operator' => '==',
                                     'value' => '1',
                                 ),
                             ),
                         ),
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
                         ),
-                        'choices' => array (
+                        'choices' => array(
                             'RegUser' => 'Registered User',
                             'Subscriber' => 'Subscriber',
                         ),
-                        'default_value' => array (
+                        'default_value' => array(
                         ),
                         'allow_null' => 0,
                         'multiple' => 0,
@@ -166,7 +169,7 @@ class CompositeFieldGroup
                         'return_format' => 'value',
                         'placeholder' => '',
                     ),
-                    array (
+                    array(
                         'key' => 'field_58aae476809c6',
                         'label' => 'Content (Widgets)',
                         'name' => 'composite_content',
@@ -174,7 +177,7 @@ class CompositeFieldGroup
                         'instructions' => '',
                         'required' => 1,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -182,14 +185,14 @@ class CompositeFieldGroup
                         'button_label' => 'Add Widget',
                         'min' => '',
                         'max' => '',
-                        'layouts' => array (
-                            array (
+                        'layouts' => array(
+                            array(
                                 'key' => '58aae53c26608',
                                 'name' => 'text_item',
                                 'label' => 'Text',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_58aae55326609',
                                         'label' => 'Body',
                                         'name' => 'body',
@@ -197,7 +200,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -209,13 +212,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '58aaef9fb02bc',
                                 'name' => 'image',
                                 'label' => 'Image',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_5908407c246cb',
                                         'label' => 'Lead Image',
                                         'name' => 'lead_image',
@@ -223,7 +226,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -234,7 +237,7 @@ class CompositeFieldGroup
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_58aaf042b02c1',
                                         'label' => 'File',
                                         'name' => 'file',
@@ -242,7 +245,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -258,23 +261,23 @@ class CompositeFieldGroup
                                         'max_size' => '',
                                         'mime_types' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922bd8e5cd9e',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -289,13 +292,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '590aef9de4a5e',
                                 'name' => 'file',
                                 'label' => 'File',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_590aefe3e4a5f',
                                         'label' => 'Caption',
                                         'name' => 'caption',
@@ -303,7 +306,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -314,7 +317,7 @@ class CompositeFieldGroup
                                         'rows' => '',
                                         'new_lines' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_590af026e4a61',
                                         'label' => 'File',
                                         'name' => 'file',
@@ -322,7 +325,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -333,7 +336,7 @@ class CompositeFieldGroup
                                         'max_size' => '',
                                         'mime_types' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5921e5a83f4ea',
                                         'label' => 'Images',
                                         'name' => 'images',
@@ -341,7 +344,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -351,8 +354,8 @@ class CompositeFieldGroup
                                         'max' => 0,
                                         'layout' => 'table',
                                         'button_label' => 'Add Image',
-                                        'sub_fields' => array (
-                                            array (
+                                        'sub_fields' => array(
+                                            array(
                                                 'key' => 'field_5921e94c3f4eb',
                                                 'label' => 'File',
                                                 'name' => 'file',
@@ -360,7 +363,7 @@ class CompositeFieldGroup
                                                 'instructions' => '',
                                                 'required' => 1,
                                                 'conditional_logic' => 0,
-                                                'wrapper' => array (
+                                                'wrapper' => array(
                                                     'width' => '',
                                                     'class' => '',
                                                     'id' => '',
@@ -378,23 +381,23 @@ class CompositeFieldGroup
                                             ),
                                         ),
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_590af0eee4a62',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -405,14 +408,14 @@ class CompositeFieldGroup
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_59e49490911cf',
                                         'label' => 'Download Button Text (Optional)',
                                         'name' => 'download_button_text',
                                         'type' => 'text',
                                         'instructions' => 'This will override the default button text.',
                                         'required' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -427,13 +430,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '58aaea63b12d2',
                                 'name' => 'video',
                                 'label' => 'Video',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_5938fe71ed0bb',
                                         'label' => 'Embed Url',
                                         'name' => 'embed_url',
@@ -441,7 +444,7 @@ class CompositeFieldGroup
                                         'instructions' => 'Paste the embed url from your video provider, supported providers are: Vimeo, YouTube, 23Video',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -452,7 +455,7 @@ class CompositeFieldGroup
                                         'append' => '',
                                         'maxlength' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_58aaeb26b12d4',
                                         'label' => 'Caption',
                                         'name' => 'caption',
@@ -460,7 +463,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -471,23 +474,23 @@ class CompositeFieldGroup
                                         'rows' => '',
                                         'new_lines' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922be0e5cda4',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -502,13 +505,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '590b1798c8768',
                                 'name' => 'link',
                                 'label' => 'Link',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_590b17c4c876a',
                                         'label' => 'URL',
                                         'name' => 'url',
@@ -516,7 +519,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -527,7 +530,7 @@ class CompositeFieldGroup
                                         'append' => '',
                                         'maxlength' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_590b179fc8769',
                                         'label' => 'Button text',
                                         'name' => 'title',
@@ -535,7 +538,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -546,7 +549,7 @@ class CompositeFieldGroup
                                         'append' => '',
                                         'maxlength' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_590b17d4c876b',
                                         'label' => 'Target',
                                         'name' => 'target',
@@ -554,18 +557,18 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
                                         ),
-                                        'choices' => array (
+                                        'choices' => array(
                                             'Default' => 'Default For the Site',
                                             'Self' => 'Open in same window/tab',
                                             'Blank' => 'Open in a new tab',
                                             'Download' => 'Force download a file',
                                         ),
-                                        'default_value' => array (
+                                        'default_value' => array(
                                             0 => 'Default',
                                         ),
                                         'allow_null' => 0,
@@ -575,23 +578,23 @@ class CompositeFieldGroup
                                         'return_format' => 'value',
                                         'placeholder' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922be3e5cda5',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -747,13 +750,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            array (
+                            array(
                                 'key' => '58aae89d0f005',
                                 'name' => 'inserted_code',
                                 'label' => 'Inserted Code',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_58aae8b00f006',
                                         'label' => 'Code',
                                         'name' => 'code',
@@ -761,7 +764,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -772,23 +775,23 @@ class CompositeFieldGroup
                                         'rows' => '',
                                         'new_lines' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922bdbd5cda1',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -803,13 +806,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '58aae479d3958',
                                 'name' => 'infobox',
                                 'label' => 'Infobox',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_58aae4b6809c7',
                                         'label' => 'Title',
                                         'name' => 'title',
@@ -817,7 +820,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -828,7 +831,7 @@ class CompositeFieldGroup
                                         'append' => '',
                                         'maxlength' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_58aae4d4809c8',
                                         'label' => 'Body',
                                         'name' => 'body',
@@ -836,7 +839,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -847,23 +850,23 @@ class CompositeFieldGroup
                                         'rows' => '',
                                         'new_lines' => '',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922bdd55cda2',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -878,13 +881,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '58e393a7128b3',
                                 'name' => 'associated_composite',
                                 'label' => 'Sub Content',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_58e393e0128b4',
                                         'label' => 'Content',
                                         'name' => 'composite',
@@ -892,17 +895,17 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
                                         ),
-                                        'post_type' => array (
+                                        'post_type' => array(
                                             0 => 'contenthub_composite',
                                         ),
-                                        'taxonomy' => array (
+                                        'taxonomy' => array(
                                         ),
-                                        'filters' => array (
+                                        'filters' => array(
                                             0 => 'search',
                                             1 => 'taxonomy',
                                         ),
@@ -911,23 +914,23 @@ class CompositeFieldGroup
                                         'max' => 1,
                                         'return_format' => 'object',
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922be585cda6',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -942,13 +945,13 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ),
-                            array (
+                            array(
                                 'key' => '58aeadaacbe5c',
                                 'name' => 'inventory',
                                 'label' => 'Inventory',
                                 'display' => 'block',
-                                'sub_fields' => array (
-                                    array (
+                                'sub_fields' => array(
+                                    array(
                                         'key' => 'field_58e3971e4d277',
                                         'label' => 'Title',
                                         'name' => 'title',
@@ -956,7 +959,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 1,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -969,7 +972,7 @@ class CompositeFieldGroup
                                         'readonly' => 0,
                                         'disabled' => 0,
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_58aeadcdcbe5d',
                                         'label' => 'Inventory Items',
                                         'name' => 'inventory_items',
@@ -977,7 +980,7 @@ class CompositeFieldGroup
                                         'instructions' => '',
                                         'required' => 0,
                                         'conditional_logic' => 0,
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -987,8 +990,8 @@ class CompositeFieldGroup
                                         'max' => 0,
                                         'layout' => 'table',
                                         'button_label' => 'Add Row',
-                                        'sub_fields' => array (
-                                            array (
+                                        'sub_fields' => array(
+                                            array(
                                                 'key' => 'field_58aeae3fcbe61',
                                                 'label' => 'Name',
                                                 'name' => 'name',
@@ -996,7 +999,7 @@ class CompositeFieldGroup
                                                 'instructions' => '',
                                                 'required' => 1,
                                                 'conditional_logic' => 0,
-                                                'wrapper' => array (
+                                                'wrapper' => array(
                                                     'width' => '',
                                                     'class' => '',
                                                     'id' => '',
@@ -1009,7 +1012,7 @@ class CompositeFieldGroup
                                                 'readonly' => 0,
                                                 'disabled' => 0,
                                             ),
-                                            array (
+                                            array(
                                                 'key' => 'field_58aeae4ccbe62',
                                                 'label' => 'Value',
                                                 'name' => 'value',
@@ -1017,7 +1020,7 @@ class CompositeFieldGroup
                                                 'instructions' => '',
                                                 'required' => 0,
                                                 'conditional_logic' => 0,
-                                                'wrapper' => array (
+                                                'wrapper' => array(
                                                     'width' => '',
                                                     'class' => '',
                                                     'id' => '',
@@ -1032,23 +1035,23 @@ class CompositeFieldGroup
                                             ),
                                         ),
                                     ),
-                                    array (
+                                    array(
                                         'key' => 'field_5922be6d5cda7',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
                                         'type' => 'true_false',
                                         'instructions' => '',
                                         'required' => 0,
-                                        'conditional_logic' => array (
-                                            array (
-                                                array (
+                                        'conditional_logic' => array(
+                                            array(
+                                                array(
                                                     'field' => 'field_5921f0c676974',
                                                     'operator' => '==',
                                                     'value' => '1',
                                                 ),
                                             ),
                                         ),
-                                        'wrapper' => array (
+                                        'wrapper' => array(
                                             'width' => '',
                                             'class' => '',
                                             'id' => '',
@@ -1065,7 +1068,7 @@ class CompositeFieldGroup
                             ),
                         ),
                     ),
-                    array (
+                    array(
                         'key' => 'field_5a8d44d026528',
                         'label' => 'Photo & Styling Byline',
                         'name' => 'photo_styling_byline',
@@ -1073,7 +1076,7 @@ class CompositeFieldGroup
                         'instructions' => 'Set the photo and styling byline here',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -1085,9 +1088,9 @@ class CompositeFieldGroup
                         'maxlength' => '',
                     ),
                 ),
-                'location' => array (
-                    array (
-                        array (
+                'location' => array(
+                    array(
+                        array(
                             'param' => 'post_type',
                             'operator' => '==',
                             'value' => WpComposite::POST_TYPE,
@@ -1099,13 +1102,12 @@ class CompositeFieldGroup
                 'style' => 'seamless',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
-                'hide_on_screen' => array (
+                'hide_on_screen' => array(
                     0 => 'categories',
                 ),
                 'active' => 1,
                 'description' => '',
             ));
         endif;
-
     }
 }

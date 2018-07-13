@@ -17,17 +17,19 @@ class TranslationStateFieldGroup
         'translated' => 'Translated',
     ];
 
-    public static function register() {
+    public static function register()
+    {
         static::register_field_group();
     }
 
-    private static function register_field_group() {
-        if( function_exists('acf_add_local_field_group') ) {
-            acf_add_local_field_group(array (
+    private static function register_field_group()
+    {
+        if (function_exists('acf_add_local_field_group')) {
+            acf_add_local_field_group(array(
                 'key' => 'group_5940debee7ae2',
                 'title' => 'Translation State',
-                'fields' => array (
-                    array (
+                'fields' => array(
+                    array(
                         'key' => 'field_5940df2d4eff9',
                         'label' => '',
                         'name' => 'translation_state',
@@ -35,13 +37,13 @@ class TranslationStateFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
                         ),
                         'choices' => static::TRANSLATION_STATES,
-                        'default_value' => array (
+                        'default_value' => array(
                         ),
                         'allow_null' => 1,
                         'multiple' => 0,
@@ -50,7 +52,7 @@ class TranslationStateFieldGroup
                         'return_format' => 'value',
                         'placeholder' => '',
                     ),
-                    array (
+                    array(
                         'key' => 'field_59885bce3d421',
                         'label' => 'Translation deadline',
                         'name' => 'translation_deadline',
@@ -58,7 +60,7 @@ class TranslationStateFieldGroup
                         'instructions' => '',
                         'required' => 0,
                         'conditional_logic' => 0,
-                        'wrapper' => array (
+                        'wrapper' => array(
                             'width' => '',
                             'class' => '',
                             'id' => '',
@@ -68,9 +70,9 @@ class TranslationStateFieldGroup
                         'first_day' => 1,
                     ),
                 ),
-                'location' => array (
-                    array (
-                        array (
+                'location' => array(
+                    array(
+                        array(
                             'param' => 'post_type',
                             'operator' => '==',
                             'value' => WpComposite::POST_TYPE,
