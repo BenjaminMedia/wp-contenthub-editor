@@ -29,7 +29,8 @@ class WpAttachment
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
     }
 
-    public static function save_caption_to_wordpress($value, $postId, $field){
+    public static function save_caption_to_wordpress($value, $postId, $field)
+    {
         wp_update_post([
             'ID' => $postId,
             'post_excerpt' => $value
@@ -37,13 +38,15 @@ class WpAttachment
         return $value;
     }
 
-    public static function add_caption_value_to_markdown_caption_field($value, $postId, $field){
+    public static function add_caption_value_to_markdown_caption_field($value, $postId, $field)
+    {
         $caption = get_the_excerpt($postId) ?? $value;
 
         return $caption;
     }
 
-    public static function remove_caption_field() {
+    public static function remove_caption_field()
+    {
         //unfortunately we have to hide it through css since it's not possible to hide the field through code as if WP 3.5+
         // for more info: https://wordpress.stackexchange.com/a/94476
         echo
