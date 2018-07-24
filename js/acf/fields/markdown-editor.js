@@ -83,7 +83,7 @@
     var url = '';
     var title = '';
     var target = 'off';
-    var nofollow = 'off';
+    var nofollow = 'on';
     if(selectedText) {
       var markdownMatch = selectedText.match(/\[(.*)\]\(([^\s]+) ?(.*)?\)/);
       if(markdownMatch) {
@@ -165,11 +165,11 @@
             <td>
                 <fieldset>
                     <label>
-                        <input type="radio" checked name="simpleMDE-link-nofollow" value="off" /> Normal link
+                        <input type="radio" name="simpleMDE-link-nofollow" value="off" /> Normal link
                     </label>
                     <br />
                     <label>
-                        <input type="radio" name="simpleMDE-link-nofollow" value="on" /> Nofollow link
+                        <input type="radio" checked name="simpleMDE-link-nofollow" value="on" /> Nofollow link
                     </label>
                 </fieldset>
             </td>
@@ -199,6 +199,8 @@
       }
       if(jQuery('input[name="simpleMDE-link-nofollow"]:checked').val() === 'on') {
         attributes.rel = 'nofollow';
+      } else {
+        attributes.rel = 'follow';
       }
       if(Object.keys(attributes).length !== 0) {
         output += ' ' + JSON.stringify(attributes);
