@@ -11,6 +11,7 @@ use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
+use Bonnier\WP\ContentHub\Editor\Models\WpUserProfile;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 
 class ContenthubEditor
@@ -78,6 +79,7 @@ class ContenthubEditor
         WpTaxonomy::register();
         WpComposite::register();
         WpAttachment::register();
+        WpUserProfile::register();
         CmdManager::register();
         PolylangConfig::register();
 
