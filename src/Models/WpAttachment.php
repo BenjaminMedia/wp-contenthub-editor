@@ -249,11 +249,13 @@ class WpAttachment
 
     private static function set_s3_object_visibility($bucket, $key, $acl)
     {
+        /** @var \Amazon_S3_And_CloudFront $as3cf */
         global $as3cf;
 
+        /** @var AWS_Provider $s3Client */
         $s3Client = $as3cf->get_s3client();
 
-        $s3Client->putObjectAcl(array(
+        $s3Client->update_object_acl(array(
             'ACL' => $acl,
             'Bucket' => $bucket,
             'Key' => $key
