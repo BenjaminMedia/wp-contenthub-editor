@@ -21,14 +21,14 @@ class WpTerm
         ]);
 
         if (is_wp_error($createdTerm)) {
-            WP_CLI::warning("Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
+            static::log('warning', "Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
                 . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
         pll_set_term_language($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
         update_term_meta($createdTerm['term_id'], 'internal', $internal);
-        WP_CLI::success("Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
+        static::log('success', "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $createdTerm['term_id'];
     }
 
@@ -42,14 +42,14 @@ class WpTerm
         ]);
 
         if (is_wp_error($updatedTerm)) {
-            WP_CLI::warning("Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
+            static::log('warning', "Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
                 . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
         pll_set_term_language($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
         update_term_meta($existingTermId, 'internal', $internal);
-        WP_CLI::success("Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
+        static::log('success', "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $existingTermId;
     }
 
@@ -64,5 +64,12 @@ class WpTerm
         return $wpdb->get_var(
             $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'content_hub_id', $id)
         );
+    }
+
+    private static function log($type, $message)
+    {
+        if (class_exists('WP_CLI')) {
+            WP_CLI::$type($message);
+        }
     }
 }

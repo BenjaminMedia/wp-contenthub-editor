@@ -14,6 +14,7 @@ use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
+use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
@@ -104,6 +105,9 @@ class Plugin
         WpAttachment::register();
         CmdManager::register();
         PolylangConfig::register();
+
+        $updateEndpoint = new UpdateEndpointController();
+        $updateEndpoint->register_routes();
     }
 
     /**
