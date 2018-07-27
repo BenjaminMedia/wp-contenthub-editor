@@ -129,8 +129,10 @@ class TermImportHelper
     private function createPostRedirects()
     {
         $this->permalinksToRedirect->each(function ($oldPermalink, $postId) {
+            // Leave name to avoid hitting term cache
             if (($oldParsedUrl = parse_url($oldPermalink)) &&
-                $newPermalink = get_post_permalink($postId, $leaveName = true)) { // Leave name to avoid hitting term cache
+                $newPermalink = get_post_permalink($postId, $leaveName = true)
+            ) {
                 // Since we left the post_name we need to replace it in the permalink.
                 $newPermalink = str_replace('%postname%', get_post($postId)->post_name, $newPermalink);
                 if ($oldPermalink !== $newPermalink) {
