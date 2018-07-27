@@ -58,7 +58,7 @@ class UpdateEndpointController extends WP_REST_Controller
 
     private function refreshCache($resource, $meta)
     {
-        if($meta['entity_type'] !== 'category' && (!class_exists('WpSiteManager\Plugin')))
+        if($meta['entity_type'] !== 'category' || (!class_exists('WpSiteManager\Plugin')))
         {
             return;
         }
