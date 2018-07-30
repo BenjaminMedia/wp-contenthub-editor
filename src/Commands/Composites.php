@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
@@ -199,15 +200,18 @@ class Composites extends BaseCmd
 
     private function handle_translation($postId, $composite)
     {
-        pll_set_post_language($postId, $composite->locale); // Set post language
+        LanguageProvider::setPostLanguage($postId, $composite->locale);
         if (isset($composite->translationSet->composites->edges)) {
-            pll_save_post_translations( // Link translations together
-                collect($composite->translationSet->composites->edges)->pluck('node')->map(function ($compositeTranslation) {
-                    if ($localId = WpComposite::id_from_contenthub_id($compositeTranslation->id)) { // Get local post id
-                        return [$compositeTranslation->locale, $localId];
-                    }
-                    return null;
-                })->rejectNullValues()->toAssoc()->toArray() // returns something like ['da' => 232, 'sv' => 231]
+            LanguageProvider::savePostTranslations( // Link translations together
+                collect($composite->translationSet->composites->edges)
+                    ->pluck('node')
+                    ->map(function ($compositeTranslation) {
+                        // Get local post id
+                        if ($localId = WpComposite::id_from_contenthub_id($compositeTranslation->id)) {
+                            return [$compositeTranslation->locale, $localId];
+                        }
+                        return null;
+                    })->rejectNullValues()->toAssoc()->toArray() // returns something like ['da' => 232, 'sv' => 231]
             );
         }
     }

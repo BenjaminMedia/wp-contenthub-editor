@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\ACF;
 
 use acf_field;
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
@@ -195,7 +196,7 @@ class MarkdownEditor extends acf_field
 
         $language = 'da';
         if (isset($_GET['post'])) {
-            $language = pll_get_post_language($_GET['post']);
+            $language = LanguageProvider::getPostLanguage($_GET['post']);
         } elseif (isset($_GET['new_lang'])) {
             $language = $_GET['new_lang'];
         }

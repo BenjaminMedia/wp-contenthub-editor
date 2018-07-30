@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
 use function GuzzleHttp\Psr7\parse_query;
 
@@ -225,8 +226,8 @@ class WpAttachment
             return null;
         }
 
-        if (function_exists('pll_set_post_language')) {
-            pll_set_post_language($attachmentId, pll_get_post_language($postId));
+        if ($language = LanguageProvider::getPostLanguage($postId)) {
+            LanguageProvider::setPostLanguage($attachmentId, $language);
         }
 
         return $attachmentId;

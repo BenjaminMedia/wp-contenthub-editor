@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
@@ -21,13 +22,13 @@ class TermImportHelper
     public function importTermAndLinkTranslations($externalTerm)
     {
         $termIdsByLocale = collect($externalTerm->name)->map(function ($name, $languageCode) use ($externalTerm) {
-            if (!collect(pll_languages_list())->contains($languageCode)) {
+            if (!collect(LanguageProvider::getLanguageList())->contains($languageCode)) {
                 return null;
             }
             return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
             // Creates an associative array with language code as key and term id as value
         })->toAssoc()->rejectNullValues()->toArray();
-        pll_save_term_translations($termIdsByLocale);
+        LanguageProvider::saveTermTranslations($termIdsByLocale);
         return $termIdsByLocale;
     }
 
@@ -139,7 +140,7 @@ class TermImportHelper
                     BonnierRedirect::createRedirect(
                         $oldParsedUrl['path'],
                         parse_url($newPermalink, PHP_URL_PATH),
-                        pll_get_post_language($postId),
+                        LanguageProvider::getPostLanguage($postId),
                         'category-slug-change',
                         $postId
                     );

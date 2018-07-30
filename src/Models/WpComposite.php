@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\PermalinkHelper;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
@@ -130,7 +131,7 @@ class WpComposite
     {
         if (static::post_type_match_and_not_auto_draft($post) &&
             !get_post_meta($postId, static::POST_META_CONTENTHUB_ID, true) &&
-            $site = ContenthubEditor::instance()->settings->get_site(pll_current_language('locale'))) {
+            $site = ContenthubEditor::instance()->settings->get_site(LanguageProvider::getCurrentLanguage('locale'))) {
             $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
         }

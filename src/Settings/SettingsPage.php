@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Settings;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
 use PLL_Language;
 
@@ -228,20 +229,19 @@ class SettingsPage
     /**
      * Get the current language by looking at the current HTTP_HOST
      *
-     * @return null|PLL_Language
+     * @return null|string
      */
     public function get_current_language()
     {
         if ($this->languages_is_enabled()) {
-            return PLL()->model->get_language(pll_current_language());
+            return LanguageProvider::getCurrentLanguage('locale');
         }
         return null;
     }
 
     public function get_current_locale()
     {
-        $currentLang = $this->get_current_language();
-        return $currentLang ? $currentLang->locale : null;
+        return $this->get_current_language() ?? null;
     }
 
     private function get_select_field_options($field)

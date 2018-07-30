@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
+use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
@@ -119,7 +120,7 @@ class WaContent extends BaseCmd
 
     private function handle_translation($postId, $waContent)
     {
-        pll_set_post_language($postId, $waContent->translation->locale ?? 'da'); // Set post language
+        LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
     }
 
     private function set_meta($postId, $waContent)
