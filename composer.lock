@@ -59,12 +59,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:BenjaminMedia/willow-mu-plugins.git",
-                "reference": "0cde8557520e2a981037120c4763f14e37369dbb"
+                "reference": "69fa3f09259d83fa1df7892646fe3abf9b895ef6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/0cde8557520e2a981037120c4763f14e37369dbb",
-                "reference": "0cde8557520e2a981037120c4763f14e37369dbb",
+                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/69fa3f09259d83fa1df7892646fe3abf9b895ef6",
+                "reference": "69fa3f09259d83fa1df7892646fe3abf9b895ef6",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
                 "source": "https://github.com/BenjaminMedia/willow-mu-plugins/tree/master",
                 "issues": "https://github.com/BenjaminMedia/willow-mu-plugins/issues"
             },
-            "time": "2018-07-30T07:13:57+00:00"
+            "time": "2018-07-30T08:24:22+00:00"
         },
         {
             "name": "composer/installers",

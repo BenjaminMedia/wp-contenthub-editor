@@ -4,7 +4,6 @@ namespace Bonnier\WP\ContentHub\Editor\Settings;
 
 use Bonnier\Willow\MuPlugins\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
-use PLL_Language;
 
 class SettingsPage
 {
@@ -215,13 +214,13 @@ class SettingsPage
 
     public function languages_is_enabled()
     {
-        return function_exists('Pll') && PLL()->model->get_languages_list();
+        return LanguageProvider::enabled();
     }
 
     public function get_languages()
     {
         if ($this->languages_is_enabled()) {
-            return PLL()->model->get_languages_list();
+            return LanguageProvider::getLanguageList();
         }
         return false;
     }
