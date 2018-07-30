@@ -88,7 +88,9 @@ class PermalinkHelper
             }
 
             // remove default struct rules
-            add_filter($type->name . '_rewrite_rules', create_function('$rules', 'return array();'), 11);
+            add_filter($type->name . '_rewrite_rules', function ($rules) {
+                return array();
+            }, 11);
 
             if (! isset($permalink_structures[ $type->rewrite[ static::$customPermalink ] ])) {
                 $permalink_structures[ $type->rewrite[ static::$customPermalink ] ] = array();
