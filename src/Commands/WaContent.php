@@ -57,42 +57,46 @@ class WaContent extends BaseCmd
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
 
         $repository = new ContentRepository();
-        if ($id = $assocArgs['id'] ?? null) {
+        if ($contentId = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
                 'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
-            $this->import_composite($repository->find_by_id($id, $resource));
+            $this->importComposite($repository->find_by_id($contentId, $resource));
         } else {
             $repository->map_all(function ($waContent) {
-                $this->import_composite($waContent);
+                $this->importComposite($waContent);
             });
         }
     }
 
-    private function import_composite($waContent)
+    private function importComposite($waContent)
     {
         if (!$waContent) {
             return;
         }
 
-        WP_CLI::line('Beginning import of: ' . $waContent->widget_content->title  . ' id: ' . $waContent->widget_content->id);
+        WP_CLI::line(sprintf(
+            'Beginning import of: %s id: %s',
+            $waContent->widget_content->title,
+            $waContent->widget_content->id
+        ));
 
-        $postId = $this->create_post($waContent);
-        $compositeContents = $this->format_composite_contents($waContent);
+        $postId = $this->createPost($waContent);
+        $compositeContents = $this->formatCompositeContents($waContent);
 
-        $this->handle_translation($postId, $waContent);
-        $this->set_meta($postId, $waContent);
-        $this->delete_orphaned_files($postId, $compositeContents);
-        $this->save_composite_contents($postId, $compositeContents);
-        $this->save_teasers($postId, $waContent);
-        $this->save_categories($postId, $waContent);
-        $this->save_tags($postId, $waContent);
+        $this->handleTranslation($postId, $waContent);
+        $this->setMeta($postId, $waContent);
+        $this->deleteOrphanedFiles($postId, $compositeContents);
+        $this->saveCompositeContents($postId, $compositeContents);
+        $this->saveTeasers($postId, $waContent);
+        $this->saveCategories($postId, $waContent);
+        $this->saveTags($postId, $waContent);
 
         WP_CLI::success('imported: ' . $waContent->widget_content->title  . ' id: ' . $postId);
     }
 
-    private function create_post($waContent)
+    private function createPost($waContent)
     {
         $existingId = WpComposite::id_from_white_album_id($waContent->widget_content->id);
 
@@ -111,19 +115,19 @@ class WaContent extends BaseCmd
             'post_type' => WpComposite::POST_TYPE,
             'post_date' => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
-            'post_author' => $this->get_author($waContent),
+            'post_author' => $this->getAuthor($waContent),
             'meta_input' => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
             ],
         ]);
     }
 
-    private function handle_translation($postId, $waContent)
+    private function handleTranslation($postId, $waContent)
     {
         LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
     }
 
-    private function set_meta($postId, $waContent)
+    private function setMeta($postId, $waContent)
     {
         update_field('kind', 'Article', $postId); // Todo: set proper kind
         update_field('description', trim($waContent->widget_content->description), $postId);
@@ -142,107 +146,125 @@ class WaContent extends BaseCmd
         }
     }
 
-    private function format_composite_contents($waContent)
+    private function formatCompositeContents($waContent)
     {
         if (isset($waContent->body->widget_groups)) {
-            return collect($waContent->body->widget_groups)->pluck('widgets')->flatten(1)->map(function ($waWidget) {
-                return collect([
-                    'type' => collect([ // Map the type
-                        'Widgets::Text'         => 'text_item',
-                        'Widgets::Image'        => 'image',
-                        'Widgets::InsertedCode' => 'inserted_code',
-                        'Widgets::InfoBox' => 'info_box',
-                    ])->get($waWidget->type, null),
-                ])->merge($waWidget->properties) // merge properties
-                ->merge($waWidget->image ?? null); // merge image
-            })->prepend($waContent->widget_content->lead_image ? // prepend lead image
-                collect([
-                    'type'       => 'image',
-                    'lead_image' => true
-                ])->merge($waContent->widget_content->lead_image)
-                : null
-            )->itemsToObject()->map(function ($content) {
-                return $this->fixFaultyImageFormats($content);
-            });
+            return collect($waContent->body->widget_groups)
+                ->pluck('widgets')
+                ->flatten(1)
+                ->map(function ($waWidget) {
+                    return collect([
+                        'type' => collect([ // Map the type
+                            'Widgets::Text'         => 'text_item',
+                            'Widgets::Image'        => 'image',
+                            'Widgets::InsertedCode' => 'inserted_code',
+                            'Widgets::InfoBox' => 'info_box',
+                        ])
+                        ->get($waWidget->type, null),
+                    ])
+                    ->merge($waWidget->properties) // merge properties
+                    ->merge($waWidget->image ?? null); // merge image
+                })
+                ->prepend(
+                    $waContent->widget_content->lead_image ? // prepend lead image
+                    collect([
+                        'type'       => 'image',
+                        'lead_image' => true
+                    ])
+                    ->merge($waContent->widget_content->lead_image)
+                    : null
+                )->itemsToObject()->map(function ($content) {
+                    return $this->fixFaultyImageFormats($content);
+                });
         }
         if (isset($waContent->gallery_images)) {
             // Galleries are converted to a combination of text items and image widgets
-            return collect($waContent->gallery_images)->pluck('image')->map(function ($waImage) {
-                $description = $waImage->description;
-                $waImage->type = 'image';
-                unset($waImage->description);
-                return [
-                    $this->fixFaultyImageFormats($waImage),
-                    [
-                        'type' => 'text_item',
-                        'text' => $description
-                    ]
-                ];
-            })->flatten(1)->itemsToObject();
+            return collect($waContent->gallery_images)
+                ->pluck('image')
+                ->map(function ($waImage) {
+                    $description = $waImage->description;
+                    $waImage->type = 'image';
+                    unset($waImage->description);
+                    return [
+                        $this->fixFaultyImageFormats($waImage),
+                        [
+                            'type' => 'text_item',
+                            'text' => $description
+                        ]
+                    ];
+                })
+                ->flatten(1)
+                ->itemsToObject();
         }
+        return null;
     }
 
-    private function save_composite_contents($postId, $compositeContents)
+    private function saveCompositeContents($postId, Collection $compositeContents)
     {
-        $content = $compositeContents->map(function ($compositeContent) use ($postId) {
-            if ($compositeContent->type === 'text_item') {
-                return [
-                    'body' => HtmlToMarkdown::parseHtml($compositeContent->text),
-                    'locked_content' => false,
-                    'acf_fc_layout' => $compositeContent->type
-                ];
-            }
-            if ($compositeContent->type === 'image') {
-                return [
-                    'lead_image' => $compositeContent->lead_image ?? false,
-                    'file' => WpAttachment::upload_attachment($postId, $compositeContent),
-                    'locked_content' => false,
-                    'acf_fc_layout' => $compositeContent->type
-                ];
-            }
-            if ($compositeContent->type === 'file') { // Todo implement file if necessary
-                /*return [
-                    'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
-                    'images' => collect($compositeContent->content->images->edges)->map(function ($image) use ($postId) {
-                        return [
-                            'file' => WpAttachment::upload_attachment($postId, $image->node),
-                        ];
-                    }),
-                    'locked_content' => $compositeContent->locked,
-                    'acf_fc_layout' => $compositeContent->type
-                ];*/
-            }
-            if ($compositeContent->type === 'inserted_code') {
-                return [
-                    'code' => $compositeContent->code,
-                    'locked_content' => false,
-                    'acf_fc_layout' => $compositeContent->type
-                ];
-            }
-            if ($compositeContent->type === 'gallery') {
-                return [
-                    'images' => $compositeContent->images->map(function ($waImage) use ($postId) {
-                        $description = HtmlToMarkdown::parseHtml(
-                            sprintf('<h3>%s</h3> %s', $waImage->title, $waImage->description)
-                        );
-                        $waImage->description = null; // Unset description from image as it will be imported to gallery
-                        return [
-                            'image' => WpAttachment::upload_attachment($postId, $waImage),
-                            // Prepend title to description as we do not support titles per image
-                            'description' => $description
-                        ];
-                    }),
-                    'display_hint' => $compositeContent->display_hint,
-                    'locked_content' => false,
-                    'acf_fc_layout' => $compositeContent->type
-                ];
-            }
-        })->rejectNullValues();
+        $content = $compositeContents
+            ->map(function ($compositeContent) use ($postId) {
+                if ($compositeContent->type === 'text_item') {
+                    return [
+                        'body' => HtmlToMarkdown::parseHtml($compositeContent->text),
+                        'locked_content' => false,
+                        'acf_fc_layout' => $compositeContent->type
+                    ];
+                }
+                if ($compositeContent->type === 'image') {
+                    return [
+                        'lead_image' => $compositeContent->lead_image ?? false,
+                        'file' => WpAttachment::upload_attachment($postId, $compositeContent),
+                        'locked_content' => false,
+                        'acf_fc_layout' => $compositeContent->type
+                    ];
+                }
+                if ($compositeContent->type === 'file') {
+                    // Todo implement file if necessary
+                    /*return [
+                        'file' => WpAttachment::upload_attachment($postId, $compositeContent->content),
+                        'images' => collect($compositeContent->content->images->edges)
+                            ->map(function ($image) use ($postId) {
+                                return [
+                                    'file' => WpAttachment::upload_attachment($postId, $image->node),
+                                ];
+                            }),
+                            'locked_content' => $compositeContent->locked,
+                            'acf_fc_layout' => $compositeContent->type
+                        ];*/
+                }
+                if ($compositeContent->type === 'inserted_code') {
+                    return [
+                        'code' => $compositeContent->code,
+                        'locked_content' => false,
+                        'acf_fc_layout' => $compositeContent->type
+                    ];
+                }
+                if ($compositeContent->type === 'gallery') {
+                    return [
+                        'images' => $compositeContent->images->map(function ($waImage) use ($postId) {
+                            $description = HtmlToMarkdown::parseHtml(
+                                sprintf('<h3>%s</h3> %s', $waImage->title, $waImage->description)
+                            );
+                            // Unset description from image as it will be imported to gallery
+                            $waImage->description = null;
+                            return [
+                                'image' => WpAttachment::upload_attachment($postId, $waImage),
+                                // Prepend title to description as we do not support titles per image
+                                'description' => $description
+                            ];
+                        }),
+                        'display_hint' => $compositeContent->display_hint,
+                        'locked_content' => false,
+                        'acf_fc_layout' => $compositeContent->type
+                    ];
+                }
+                return null;
+            })->rejectNullValues();
 
         update_field('composite_content', $content->toArray(), $postId);
     }
 
-    private function save_tags($postId, $waContent)
+    private function saveTags($postId, $waContent)
     {
         $tagIds = collect($waContent->widget_content->tags)->map(function ($waTag) {
             $contentHubId = base64_encode(sprintf('tags-wa-%s', $waTag->id));
@@ -252,7 +274,7 @@ class WaContent extends BaseCmd
         update_field('tags', $tagIds->toArray(), $postId);
     }
 
-    private function save_teasers($postId, $waContent)
+    private function saveTeasers($postId, $waContent)
     {
         $teaserTitle = $waContent->widget_content->teaser_title ?: $waContent->widget_content->title;
         $teaserDescription = $waContent->widget_content->teaser_description ?: $waContent->widget_content->description;
@@ -267,14 +289,17 @@ class WaContent extends BaseCmd
         if ($waContent->widget_content->teaser_facebook_only) {
             update_field(WpComposite::POST_FACEBOOK_TITLE, $teaserTitle, $postId);
             update_field(WpComposite::POST_FACEBOOK_DESCRIPTION, $teaserDescription, $postId);
-            update_field(WpComposite::POST_FACEBOOK_IMAGE, WpAttachment::upload_attachment($postId, $teaserImage), $postId);
+            update_field(WpComposite::POST_FACEBOOK_IMAGE, WpAttachment::upload_attachment(
+                $postId,
+                $teaserImage
+            ), $postId);
         }
 
         update_field(WpComposite::POST_META_TITLE, $waContent->widget_content->meta_title, $postId);
         update_field(WpComposite::POST_META_DESCRIPTION, $waContent->widget_content->meta_description, $postId);
     }
 
-    private function save_categories($postId, $composite)
+    private function saveCategories($postId, $composite)
     {
         $contentHubId = base64_encode(sprintf('categories-wa-%s', $composite->widget_content->category_id));
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
@@ -300,7 +325,12 @@ class WaContent extends BaseCmd
             });
             // Delete composite
             wp_delete_post($post->ID, true);
-            WP_CLI::line(sprintf('Removed post: %s, with id:%s and composite id:%s', $post->post_title, $post->ID, $compositeId));
+            WP_CLI::line(sprintf(
+                'Removed post: %s, with id:%s and composite id:%s',
+                $post->post_title,
+                $post->ID,
+                $compositeId
+            ));
         }
     }
 
@@ -310,43 +340,50 @@ class WaContent extends BaseCmd
      *
      * Deletes attachments that would have otherwise become orphaned after import
      */
-    private function delete_orphaned_files($postId, Collection $compositeContents)
+    private function deleteOrphanedFiles($postId, Collection $compositeContents)
     {
-        $currentFileIds = collect(get_field('composite_content', $postId))->map(function ($content) use ($postId) {
-            if ($content['acf_fc_layout'] === 'image') {
-                return WpAttachment::contenthub_id($content['file'] ?? null);
-            }
-            if ($content['acf_fc_layout'] === 'file') {
-                return [
-                    'file'   => WpAttachment::contenthub_id($content['file'] ?? null),
-                    'images' => collect($content['images'])->map(function ($image) {
-                        return WpAttachment::contenthub_id($image['file'] ?? null);
-                    })
-                ];
-            }
-            if ($content['acf_fc_layout'] === 'gallery') {
-                return collect($content['images'])->map(function ($galleryItem) {
-                    return WpAttachment::contenthub_id($galleryItem['image'] ?? null);
-                });
-            }
-        })->flatten()
+        $currentFileIds = collect(get_field('composite_content', $postId))
+            ->map(function ($content) use ($postId) {
+                if ($content['acf_fc_layout'] === 'image') {
+                    return WpAttachment::contenthub_id($content['file'] ?? null);
+                }
+                if ($content['acf_fc_layout'] === 'file') {
+                    return [
+                        'file'   => WpAttachment::contenthub_id($content['file'] ?? null),
+                        'images' => collect($content['images'])->map(function ($image) {
+                            return WpAttachment::contenthub_id($image['file'] ?? null);
+                        })
+                    ];
+                }
+                if ($content['acf_fc_layout'] === 'gallery') {
+                    return collect($content['images'])->map(function ($galleryItem) {
+                        return WpAttachment::contenthub_id($galleryItem['image'] ?? null);
+                    });
+                }
+                return null;
+            })->flatten()
             ->push(WpAttachment::contenthub_id(get_field('teaser_image', $postId)))
             ->rejectNullValues();
 
 
 
-        $newFileIds = $compositeContents->map(function ($compositeContent) {
-            if ($compositeContent->type === 'image') {
-                return $compositeContent->id;
-            }
-            if ($compositeContent->type === 'gallery') {
-                return $compositeContent->images->map(function ($galleryItem) {
-                    return $galleryItem->id;
-                });
-            }
-        })->flatten()->rejectNullValues();
+        $newFileIds = $compositeContents
+            ->map(function ($compositeContent) {
+                if ($compositeContent->type === 'image') {
+                    return $compositeContent->id;
+                }
+                if ($compositeContent->type === 'gallery') {
+                    return $compositeContent->images->map(function ($galleryItem) {
+                        return $galleryItem->id;
+                    });
+                }
+                return null;
+            })
+            ->flatten()
+            ->rejectNullValues();
 
-        $currentFileIds->diff($newFileIds)->each(function ($orphanedFileId) { // Compare current file ids to new file ids
+        // Compare current file ids to new file ids
+        $currentFileIds->diff($newFileIds)->each(function ($orphanedFileId) {
             // We delete any of the current files that would be come orphaned
             WpAttachment::delete_by_contenthub_id($orphanedFileId);
         });
@@ -360,20 +397,24 @@ class WaContent extends BaseCmd
         });
 
         // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
-        remove_action('save_post', [WpComposite::class, 'on_save'], 10, 2);
-        remove_action('save_post', [BonnierCachePost::class, 'update_post'], 10, 1);
-        remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10, 3);
-        remove_action('save_post', [Post::class, 'save'], 5, 2);
+        remove_action('save_post', [WpComposite::class, 'on_save'], 10);
+        remove_action('save_post', [BonnierCachePost::class, 'update_post'], 10);
+        remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10);
+        remove_action('save_post', [Post::class, 'save'], 5);
     }
 
-    private function get_author($waContent)
+    private function getAuthor($waContent)
     {
         global $wpdb;
 
         $contentHubId = base64_encode(sprintf('wa-author-%s', md5(strtolower(trim($waContent->author)))));
 
         $existingId = $wpdb->get_var(
-            $wpdb->prepare("SELECT user_id FROM wp_usermeta WHERE meta_key=%s AND meta_value=%s", 'contenthub_id', $contentHubId)
+            $wpdb->prepare(
+                "SELECT user_id FROM wp_usermeta WHERE meta_key=%s AND meta_value=%s",
+                'contenthub_id',
+                $contentHubId
+            )
         );
 
         $userId = wp_insert_user([
@@ -390,8 +431,7 @@ class WaContent extends BaseCmd
 
     private function fixFaultyImageFormats($content)
     {
-        if (
-            $content->type === 'image'
+        if ($content->type === 'image'
             && ($extension = pathinfo($content->url, PATHINFO_EXTENSION))
             && in_array($extension, ['psd'])
         ) {

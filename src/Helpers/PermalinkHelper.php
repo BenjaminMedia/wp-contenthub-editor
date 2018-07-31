@@ -23,7 +23,7 @@ class PermalinkHelper
      * May be used to access class methods from outside.
      *
      * @see    __construct()
-     * @return void
+     * @return PermalinkHelper
      */
     public static function instance()
     {
@@ -131,9 +131,9 @@ class PermalinkHelper
      * custom taxonomies as well as the standard %author% etc...
      *
      * @param string $post_link The post URL
-     * @param object $post      The post object
+     * @param \WP_Post $post The post object
      * @param bool $leavename Passed to pre_post_link filter
-     * @param bool $sample    Used in admin if generating an example permalink
+     * @param bool $sample Used in admin if generating an example permalink
      *
      * @return string    The parsed permalink
      */

@@ -11,8 +11,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
-use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
-use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 use WP_Post;
 
 /**

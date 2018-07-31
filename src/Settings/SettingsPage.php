@@ -158,6 +158,8 @@ class SettingsPage
 
         $field = $this->settingsFields[$function];
         $this->create_settings_field($field, $function);
+
+        return true;
     }
 
     public function get_setting_value($settingKey, $locale = null)

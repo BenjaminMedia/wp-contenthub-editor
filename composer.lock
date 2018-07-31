@@ -4,8 +4,67 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f2cfc0177cbc1771c8ce4c45a559444",
+    "content-hash": "4334a6d4e466b36b4e94709ab5686e89",
     "packages": [
+        {
+            "name": "advanced-custom-fields/advanced-custom-fields-pro",
+            "version": "5.7.1",
+            "dist": {
+                "type": "zip",
+                "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&t=5.7.1",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "^1.0",
+                "philippbaschke/acf-pro-installer": "^1.0"
+            },
+            "type": "wordpress-plugin"
+        },
+        {
+            "name": "benjaminmedia/wp-cxense",
+            "version": "dev-IVD",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BenjaminMedia/wp-cxense.git",
+                "reference": "3ff05701903fb22e0330b8bc95c26ac3d1e5f1e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BenjaminMedia/wp-cxense/zipball/3ff05701903fb22e0330b8bc95c26ac3d1e5f1e1",
+                "reference": "3ff05701903fb22e0330b8bc95c26ac3d1e5f1e1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.6",
+                "php": ">=7.1"
+            },
+            "type": "wordpress-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Bonnier\\WP\\Cxense\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Bonnier Publications",
+                    "email": "interactive@bonnier.dk",
+                    "homepage": "http://bonnierpublications.com"
+                },
+                {
+                    "name": "Alf Henderson",
+                    "email": "alf.henderson@bonnier.dk"
+                }
+            ],
+            "description": "This plugin integrates your site with cXense by adding meta tags and calling the cXense api",
+            "homepage": "https://github.com/BenjaminMedia/wp-cxense",
+            "keywords": [
+                "plugin",
+                "wordpress"
+            ],
+            "time": "2018-07-30T08:58:53+00:00"
+        },
         {
             "name": "bonnier/php-video-helper",
             "version": "1.0.0",
@@ -59,12 +118,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:BenjaminMedia/willow-mu-plugins.git",
-                "reference": "69fa3f09259d83fa1df7892646fe3abf9b895ef6"
+                "reference": "dbb7bd63269e2e47a28036df48a675b5b2f55526"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/69fa3f09259d83fa1df7892646fe3abf9b895ef6",
-                "reference": "69fa3f09259d83fa1df7892646fe3abf9b895ef6",
+                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/dbb7bd63269e2e47a28036df48a675b5b2f55526",
+                "reference": "dbb7bd63269e2e47a28036df48a675b5b2f55526",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +151,81 @@
                 "source": "https://github.com/BenjaminMedia/willow-mu-plugins/tree/master",
                 "issues": "https://github.com/BenjaminMedia/willow-mu-plugins/issues"
             },
-            "time": "2018-07-30T08:24:22+00:00"
+            "time": "2018-07-31T06:57:01+00:00"
+        },
+        {
+            "name": "bonnier/wp-bonnier-cache",
+            "version": "dev-IVD",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BenjaminMedia/WP-Bonnier-Cache.git",
+                "reference": "97490827154ce085e13d184ba149daaf757234e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BenjaminMedia/WP-Bonnier-Cache/zipball/97490827154ce085e13d184ba149daaf757234e6",
+                "reference": "97490827154ce085e13d184ba149daaf757234e6",
+                "shasum": ""
+            },
+            "require": {
+                "bonnier/contenthub-editor": "dev-IVD",
+                "guzzlehttp/guzzle": "^6.3",
+                "johnpbloch/wordpress": "4.9.7"
+            },
+            "type": "wordpress-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Bonnier\\WP\\Cache\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Bonnier Publications",
+                    "email": "interactive@bonnier.dk"
+                }
+            ],
+            "description": "Integrates Bonnier Caching into WordPress",
+            "time": "2018-07-30T08:58:03+00:00"
+        },
+        {
+            "name": "bonnier/wp-bonnier-redirect",
+            "version": "dev-IVD",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BenjaminMedia/wp-bonnier-redirect.git",
+                "reference": "96d5aa7e6ef80214afaaacf0051a9fa1bba73844"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BenjaminMedia/wp-bonnier-redirect/zipball/96d5aa7e6ef80214afaaacf0051a9fa1bba73844",
+                "reference": "96d5aa7e6ef80214afaaacf0051a9fa1bba73844",
+                "shasum": ""
+            },
+            "require": {
+                "bonnier/contenthub-editor": "dev-IVD",
+                "bonnier/wp-bonnier-cache": "dev-IVD",
+                "illuminate/support": "^5.6",
+                "johnpbloch/wordpress": "4.9.7",
+                "league/csv": "^9.1",
+                "php": ">=7.1"
+            },
+            "type": "wordpress-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Bonnier\\WP\\Redirect\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Bonnier Publications",
+                    "email": "interactive@bonnier.dk",
+                    "homepage": "http://bonnierpublications.com"
+                }
+            ],
+            "description": "Redirect for Bonnier integration with Custom Permalink and Polylang",
+            "time": "2018-07-30T08:58:15+00:00"
         },
         {
             "name": "composer/installers",
@@ -693,6 +826,73 @@
             "time": "2018-01-29T14:49:29+00:00"
         },
         {
+            "name": "league/csv",
+            "version": "9.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/csv.git",
+                "reference": "9c8ad06fb5d747c149875beb6133566c00eaa481"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/9c8ad06fb5d747c149875beb6133566c00eaa481",
+                "reference": "9c8ad06fb5d747c149875beb6133566c00eaa481",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=7.0.10"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "phpstan/phpstan": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.9.4",
+                "phpstan/phpstan-strict-rules": "^0.9.0",
+                "phpunit/phpunit": "^6.0"
+            },
+            "suggest": {
+                "ext-iconv": "Needed to ease transcoding CSV using iconv stream filters"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Csv\\": "src"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Csv data manipulation made easy in PHP",
+            "homepage": "http://csv.thephpleague.com",
+            "keywords": [
+                "csv",
+                "export",
+                "filter",
+                "import",
+                "read",
+                "write"
+            ],
+            "time": "2018-05-01T18:32:48+00:00"
+        },
+        {
             "name": "nesbot/carbon",
             "version": "1.32.0",
             "source": {
@@ -746,6 +946,62 @@
                 "time"
             ],
             "time": "2018-07-05T06:59:26+00:00"
+        },
+        {
+            "name": "philippbaschke/acf-pro-installer",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhilippBaschke/acf-pro-installer.git",
+                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhilippBaschke/acf-pro-installer/zipball/f18e537183958159ef5f6cb1f5b684f59d55f3eb",
+                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "php": ">=5.5",
+                "vlucas/phpdotenv": "^2.2"
+            },
+            "require-dev": {
+                "composer/composer": "1.0.*",
+                "phpunit/phpunit": "4.8.*",
+                "satooshi/php-coveralls": "1.*",
+                "squizlabs/php_codesniffer": "2.*"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PhilippBaschke\\ACFProInstaller\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhilippBaschke\\ACFProInstaller\\": "src/ACFProInstaller"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Philipp Baschke",
+                    "email": "philipp@baschke.com"
+                }
+            ],
+            "description": "An install helper for Advanced Custom Fields PRO",
+            "keywords": [
+                "acf",
+                "composer",
+                "env",
+                "plugin",
+                "pro",
+                "wordpress",
+                "wp"
+            ],
+            "time": "2016-07-20T10:19:36+00:00"
         },
         {
             "name": "psr/container",
@@ -1021,6 +1277,76 @@
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
             "time": "2018-07-23T08:20:20+00:00"
+        },
+        {
+            "name": "vlucas/phpdotenv",
+            "version": "v2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlucas/phpdotenv.git",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Dotenv\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Vance Lucas",
+                    "email": "vance@vancelucas.com",
+                    "homepage": "http://www.vancelucas.com"
+                }
+            ],
+            "description": "Loads environment variables from `.env` to `getenv()`, `$_ENV` and `$_SERVER` automagically.",
+            "keywords": [
+                "dotenv",
+                "env",
+                "environment"
+            ],
+            "time": "2018-07-29T20:33:41+00:00"
+        },
+        {
+            "name": "wpackagist-plugin/amazon-s3-and-cloudfront",
+            "version": "1.4.2",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/amazon-s3-and-cloudfront/",
+                "reference": "tags/1.4.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/amazon-s3-and-cloudfront.1.4.2.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/amazon-s3-and-cloudfront/"
         }
     ],
     "packages-dev": [
@@ -2433,7 +2759,10 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "bonnier/willow-mu-plugins": 20
+        "bonnier/willow-mu-plugins": 20,
+        "benjaminmedia/wp-cxense": 20,
+        "bonnier/wp-bonnier-cache": 20,
+        "bonnier/wp-bonnier-redirect": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
