@@ -22,7 +22,7 @@ class TermImportHelper
     public function importTermAndLinkTranslations($externalTerm)
     {
         $termIdsByLocale = collect($externalTerm->name)->map(function ($name, $languageCode) use ($externalTerm) {
-            if (!collect(LanguageProvider::getLanguageList())->contains($languageCode)) {
+            if (!collect(LanguageProvider::getSimpleLanguageList())->contains($languageCode)) {
                 return null;
             }
             return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
