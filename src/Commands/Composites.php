@@ -61,7 +61,7 @@ class Composites extends BaseCmd
         remove_action('save_post', [Post::class, 'save'], 5);
 
         if ($compositeId = $assocArgs['id'] ?? null) {
-            $this->importComposite(CompositeRepository::find_by_id($compositeId));
+            $this->importComposite(CompositeRepository::findById($compositeId));
             return;
         }
         $brandId = $this->get_site()->brand->content_hub_id;
@@ -117,15 +117,15 @@ class Composites extends BaseCmd
 
     private function mapCompositesByBrandId($brandId, callable $callable)
     {
-        $compositeQuery = CompositeRepository::find_by_brand_id($brandId);
+        $compositeQuery = CompositeRepository::findByBrandId($brandId);
 
         while ($compositeQuery) {
             $categories = collect($compositeQuery->edges);
             $categories->pluck('node')->each(function ($compositeInfo) use ($callable) {
-                $callable(CompositeRepository::find_by_id($compositeInfo->id));
+                $callable(CompositeRepository::findById($compositeInfo->id));
             });
             if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage) {
-                $compositeQuery = CompositeRepository::find_by_brand_id($brandId, $categories->last()->cursor);
+                $compositeQuery = CompositeRepository::findByBrandId($brandId, $categories->last()->cursor);
             } else {
                 $compositeQuery = null;
             }
@@ -134,15 +134,15 @@ class Composites extends BaseCmd
 
     private function mapCompositesByBrandIdAndSource($brandId, $source, callable $callable)
     {
-        $compositeQuery = CompositeRepository::find_by_brand_id_and_source($brandId, $source);
+        $compositeQuery = CompositeRepository::findByBrandIdAndSource($brandId, $source);
 
         while ($compositeQuery) {
             $categories = collect($compositeQuery->edges);
             $categories->pluck('node')->each(function ($compositeInfo) use ($callable) {
-                $callable(CompositeRepository::find_by_id($compositeInfo->id));
+                $callable(CompositeRepository::findById($compositeInfo->id));
             });
             if (isset($compositeQuery->pageInfo->hasNextPage) && $compositeQuery->pageInfo->hasNextPage) {
-                $compositeQuery = CompositeRepository::find_by_brand_id_and_source(
+                $compositeQuery = CompositeRepository::findByBrandIdAndSource(
                     $brandId,
                     $source,
                     $categories->last()->cursor
@@ -402,7 +402,7 @@ class Composites extends BaseCmd
     private function removeIfOrphaned(WP_Post $post)
     {
         $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if ($compositeId && !CompositeRepository::find_by_id($compositeId)) {
+        if ($compositeId && !CompositeRepository::findById($compositeId)) {
             // Delete attachments on composite
             collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
                 if ($content['acf_fc_layout'] === 'file') {

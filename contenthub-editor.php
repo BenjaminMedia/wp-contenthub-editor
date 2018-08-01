@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * @return \Bonnier\WP\ContentHub\Editor\ContenthubEditor $instance returns an instance of the plugin
  */
-function instance()
+function loadContenthubEditor()
 {
     return \Bonnier\WP\ContentHub\Editor\ContenthubEditor::instance();
 }
@@ -37,4 +37,4 @@ if (isset($_GET['action'], $_GET['plugin']) &&
     return;
 }
 
-add_action('plugins_loaded', __NAMESPACE__ . '\instance', 0);
+add_action('plugins_loaded', 'loadContenthubEditor', 0);

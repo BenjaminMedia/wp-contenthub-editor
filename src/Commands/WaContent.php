@@ -310,7 +310,7 @@ class WaContent extends BaseCmd
     private function remove_if_orphaned(WP_Post $post)
     {
         $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if ($compositeId && !CompositeRepository::find_by_id($compositeId)) {
+        if ($compositeId && !CompositeRepository::findById($compositeId)) {
             // Delete attachments on composite
             collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
                 if ($content['acf_fc_layout'] === 'file') {

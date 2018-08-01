@@ -13,7 +13,7 @@ use Bonnier\WP\ContentHub\Editor\Scaphold\Queries;
  */
 class CompositeRepository implements CompositeContract
 {
-    public static function get_all($cursor = '', $limit = 100)
+    public static function getAll($cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_COMPOSITES, [
             'cursor' => $cursor,
@@ -21,12 +21,12 @@ class CompositeRepository implements CompositeContract
         ])->allComposites;
     }
 
-    public static function find_by_id($compositeId)
+    public static function findById($compositeId)
     {
         return Client::query(Queries::GET_COMPOSITE, ['id' => $compositeId])->getComposite ?? null;
     }
 
-    public static function find_by_brand_id($brandId, $cursor = '', $limit = 100)
+    public static function findByBrandId($brandId, $cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_COMPOSITES_BY_BRAND, [
             'brandId' => $brandId,
@@ -35,11 +35,11 @@ class CompositeRepository implements CompositeContract
         ])->allComposites;
     }
 
-    public static function find_by_brand_id_and_source($id, $source, $cursor = '', $limit = 100)
+    public static function findByBrandIdAndSource($brandId, $source, $cursor = '', $limit = 100)
     {
         return Client::query(Queries::GET_COMPOSITES_BY_BRAND_AND_SOURCE, [
             'source' => $source,
-            'brandId' => $id,
+            'brandId' => $brandId,
             'cursor' => $cursor,
             'limit' => $limit
         ])->allComposites;

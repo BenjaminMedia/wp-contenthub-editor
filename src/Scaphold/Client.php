@@ -85,9 +85,12 @@ class Client extends \GuzzleHttp\Client
                 'headers' => static::$token ? [ 'Authorization' => 'Bearer ' . static::$token ] : null,
             ]);
             $responseBody = $response->getBody()->getContents();
-            // Scaphold sometimes return empty body with response code 200, we try to catch this and re attempt the request
+            // Scaphold sometimes return empty body with response code 200,
+            // we try to catch this and re attempt the request
             if (empty($responseBody)) {
-                throw new Exception("Scaphold returned empty response body, with response code:".$response->getStatusCode());
+                throw new Exception(
+                    "Scaphold returned empty response body, with response code:".$response->getStatusCode()
+                );
             }
             return [
                 'body' => json_decode($responseBody),
@@ -96,7 +99,9 @@ class Client extends \GuzzleHttp\Client
         } catch (Exception $e) {
             sleep(1);
             if ($tries > 20) {
-                throw new ErrorException("Request Attempts to scaphold exceeded 20, skipping node (Exception: ".$e->getMessage());
+                throw new ErrorException(
+                    "Request Attempts to scaphold exceeded 20, skipping node (Exception: ".$e->getMessage()
+                );
             }
             return static::requestScaphold($params, $tries = $tries + 1);
         }
