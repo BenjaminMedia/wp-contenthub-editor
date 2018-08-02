@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\PermalinkHelper;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;

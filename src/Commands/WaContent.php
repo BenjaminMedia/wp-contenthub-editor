@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;

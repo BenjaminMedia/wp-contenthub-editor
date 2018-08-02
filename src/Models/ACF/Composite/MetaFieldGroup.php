@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**

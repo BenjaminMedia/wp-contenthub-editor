@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 

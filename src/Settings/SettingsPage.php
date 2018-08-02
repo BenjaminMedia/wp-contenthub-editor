@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Settings;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
 
 class SettingsPage

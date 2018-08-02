@@ -3,7 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\ACF;
 
 use acf_field;
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 

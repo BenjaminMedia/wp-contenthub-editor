@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-use Bonnier\Willow\MuPlugins\LanguageProvider;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
 use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
 use function GuzzleHttp\Psr7\parse_query;
