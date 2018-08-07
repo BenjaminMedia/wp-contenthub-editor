@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Unit;
+namespace Bonnier\WP\ContentHub\Editor\Tests\Wpunit;
 
 use BadMethodCallException;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
-use WP_REST_Server;
 
 class BasicTest extends TestCase
 {
