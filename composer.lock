@@ -163,12 +163,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenjaminMedia/wp-bonnier-redirect.git",
-                "reference": "f327957278ef4517fc7c8281f9cc03531349d25c"
+                "reference": "edfe05d864fa8b324c432dd9d0a475d4752cd685"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/wp-bonnier-redirect/zipball/f327957278ef4517fc7c8281f9cc03531349d25c",
-                "reference": "f327957278ef4517fc7c8281f9cc03531349d25c",
+                "url": "https://api.github.com/repos/BenjaminMedia/wp-bonnier-redirect/zipball/edfe05d864fa8b324c432dd9d0a475d4752cd685",
+                "reference": "edfe05d864fa8b324c432dd9d0a475d4752cd685",
                 "shasum": ""
             },
             "require": {
@@ -196,7 +196,7 @@
                 }
             ],
             "description": "Redirect for Bonnier integration with Custom Permalink and Polylang",
-            "time": "2018-08-07T10:32:58+00:00"
+            "time": "2018-08-07T10:39:24+00:00"
         },
         {
             "name": "composer/installers",
