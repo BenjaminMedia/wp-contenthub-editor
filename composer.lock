@@ -4,23 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "34cc049fc854b688c2ba27d9fbb9ef4d",
+    "content-hash": "b04d52b39cd324db6c9b6db49a2d1410",
     "packages": [
-        {
-            "name": "advanced-custom-fields/advanced-custom-fields-pro",
-            "version": "5.7.1",
-            "dist": {
-                "type": "zip",
-                "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&t=5.7.1",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "composer/installers": "^1.0",
-                "philippbaschke/acf-pro-installer": "^1.0"
-            },
-            "type": "wordpress-plugin"
-        },
         {
             "name": "bonnier/php-video-helper",
             "version": "1.0.0",
@@ -125,12 +110,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenjaminMedia/WP-Bonnier-Cache.git",
-                "reference": "c83c14ff40b7fc13371a3fc88fe365622406abe8"
+                "reference": "48bc1c377e6577e30d5f6f4ee429d62b49a559e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/WP-Bonnier-Cache/zipball/c83c14ff40b7fc13371a3fc88fe365622406abe8",
-                "reference": "c83c14ff40b7fc13371a3fc88fe365622406abe8",
+                "url": "https://api.github.com/repos/BenjaminMedia/WP-Bonnier-Cache/zipball/48bc1c377e6577e30d5f6f4ee429d62b49a559e9",
+                "reference": "48bc1c377e6577e30d5f6f4ee429d62b49a559e9",
                 "shasum": ""
             },
             "require": {
@@ -155,7 +140,7 @@
                 }
             ],
             "description": "Integrates Bonnier Caching into WordPress",
-            "time": "2018-08-07T10:35:00+00:00"
+            "time": "2018-08-07T10:40:03+00:00"
         },
         {
             "name": "bonnier/wp-bonnier-redirect",
@@ -669,6 +654,60 @@
             "time": "2018-07-26T15:32:11+00:00"
         },
         {
+            "name": "junaidbhura/advanced-custom-fields-pro",
+            "version": "5.7.2",
+            "dist": {
+                "type": "zip",
+                "url": "https://www.advancedcustomfields.com",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "junaidbhura/composer-wp-pro-plugins": "*"
+            },
+            "type": "wordpress-plugin"
+        },
+        {
+            "name": "junaidbhura/composer-wp-pro-plugins",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/junaidbhura/composer-wp-pro-plugins.git",
+                "reference": "94a36f218eba29877619f2745c8b9821479b72ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/junaidbhura/composer-wp-pro-plugins/zipball/94a36f218eba29877619f2745c8b9821479b72ab",
+                "reference": "94a36f218eba29877619f2745c8b9821479b72ab",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1",
+                "vlucas/phpdotenv": "^2.4"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Junaidbhura\\Composer\\WPProPlugins\\Installer"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Junaidbhura\\Composer\\WPProPlugins\\": "",
+                    "Junaidbhura\\Composer\\WPProPlugins\\Plugins\\": "plugins"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Junaid Bhura",
+                    "email": "info@junaidbhura.com"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/junaidbhura/composer-wp-pro-plugins/tree/1.0.3",
+                "issues": "https://github.com/junaidbhura/composer-wp-pro-plugins/issues"
+            },
+            "time": "2018-07-20T09:39:44+00:00"
+        },
+        {
             "name": "league/csv",
             "version": "9.1.4",
             "source": {
@@ -789,62 +828,6 @@
                 "time"
             ],
             "time": "2018-08-07T08:39:47+00:00"
-        },
-        {
-            "name": "philippbaschke/acf-pro-installer",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PhilippBaschke/acf-pro-installer.git",
-                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PhilippBaschke/acf-pro-installer/zipball/f18e537183958159ef5f6cb1f5b684f59d55f3eb",
-                "reference": "f18e537183958159ef5f6cb1f5b684f59d55f3eb",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0",
-                "php": ">=5.5",
-                "vlucas/phpdotenv": "^2.2"
-            },
-            "require-dev": {
-                "composer/composer": "1.0.*",
-                "phpunit/phpunit": "4.8.*",
-                "satooshi/php-coveralls": "1.*",
-                "squizlabs/php_codesniffer": "2.*"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "PhilippBaschke\\ACFProInstaller\\Plugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "PhilippBaschke\\ACFProInstaller\\": "src/ACFProInstaller"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Philipp Baschke",
-                    "email": "philipp@baschke.com"
-                }
-            ],
-            "description": "An install helper for Advanced Custom Fields PRO",
-            "keywords": [
-                "acf",
-                "composer",
-                "env",
-                "plugin",
-                "pro",
-                "wordpress",
-                "wp"
-            ],
-            "time": "2016-07-20T10:19:36+00:00"
         },
         {
             "name": "psr/container",
