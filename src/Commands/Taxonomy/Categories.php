@@ -49,7 +49,8 @@ class Categories extends BaseTaxonomyImporter
      * ## EXAMPLES
      *
      * wp contenthub editor categories clean
-     *
+     * @param $args
+     * @param $assocArgs
      */
     public function clean($args, $assocArgs)
     {

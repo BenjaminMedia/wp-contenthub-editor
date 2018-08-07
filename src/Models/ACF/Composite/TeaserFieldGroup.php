@@ -2,8 +2,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
-use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
-
 /**
  * Class MetaFieldGroup
  *
@@ -16,7 +14,10 @@ class TeaserFieldGroup
     public static function register()
     {
         static::create_acf_field_group();
-        add_filter('acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD, [__CLASS__, 'validateTeaserImageField']);
+        add_filter(
+            'acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD,
+            [__CLASS__, 'validateTeaserImageField']
+        );
     }
 
     private static function create_acf_field_group()

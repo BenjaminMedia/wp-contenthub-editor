@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 
@@ -25,7 +26,7 @@ class WpTerm
                 . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
-        pll_set_term_language($createdTerm['term_id'], $languageCode);
+        LanguageProvider::setTermLanguage($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
         update_term_meta($createdTerm['term_id'], 'internal', $internal);
         static::log('success', "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
@@ -46,7 +47,7 @@ class WpTerm
                 . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
-        pll_set_term_language($existingTermId, $languageCode);
+        LanguageProvider::setTermLanguage($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
         update_term_meta($existingTermId, 'internal', $internal);
         static::log('success', "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");

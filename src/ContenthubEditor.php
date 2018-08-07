@@ -11,6 +11,7 @@ use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
+use Bonnier\WP\ContentHub\Editor\Models\WpUserProfile;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 
 class ContenthubEditor
@@ -44,12 +45,12 @@ class ContenthubEditor
     /**
      * @var string Plugins directory for this plugin.
      */
-    public $plugin_dir;
+    public $pluginDir;
 
     /**
      * @var string Plugins url for this plugin.
      */
-    public $plugin_url;
+    public $pluginUrl;
 
     /**
      * Do not load this more than once.
@@ -59,8 +60,8 @@ class ContenthubEditor
         // Set plugin file variables
         $this->dir = __DIR__;
         $this->basename = plugin_basename($this->dir);
-        $this->plugin_dir = plugin_dir_path($this->dir);
-        $this->plugin_url = plugin_dir_url($this->dir);
+        $this->pluginDir = plugin_dir_path($this->dir);
+        $this->pluginUrl = plugin_dir_url($this->dir);
 
         // Load textdomain
         load_plugin_textdomain(
@@ -70,7 +71,7 @@ class ContenthubEditor
         );
 
         $this->settings = new SettingsPage();
-        new CollectionHelper; // Extends Collection with extra methods
+        CollectionHelper::register(); // Extends Collection with extra methods
         new MarkdownEditor;
         new CompositeHelper;
 
@@ -78,6 +79,7 @@ class ContenthubEditor
         WpTaxonomy::register();
         WpComposite::register();
         WpAttachment::register();
+        WpUserProfile::register();
         CmdManager::register();
         PolylangConfig::register();
 
@@ -92,9 +94,6 @@ class ContenthubEditor
     {
         if (!self::$instance) {
             self::$instance = new self;
-            global $contenhub_editor;
-            $contenhub_editor = self::$instance;
-
             /**
              * Run after the plugin has been loaded.
              */

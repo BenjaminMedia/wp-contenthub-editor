@@ -45,7 +45,8 @@ class Tags extends BaseTaxonomyImporter
      * ## EXAMPLES
      *
      * wp contenthub editor tags clean
-     *
+     * @param $args
+     * @param $assocArgs
      */
     public function clean($args, $assocArgs)
     {

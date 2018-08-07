@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -21,7 +22,7 @@ class MetaFieldGroup
     public static function register()
     {
         static::create_acf_field_group();
-        static::register_pll_translations();
+        static::register_translations();
     }
 
     private static function create_acf_field_group()
@@ -218,13 +219,11 @@ class MetaFieldGroup
         }
     }
 
-    private static function register_pll_translations()
+    private static function register_translations()
     {
-        if (function_exists('pll_register_string')) {
-            collect(static::COMMERCIAL_TYPES)->each(function ($commercialType) {
-                pll_register_string($commercialType, $commercialType, 'content-hub-editor');
-            });
-        }
+        collect(static::COMMERCIAL_TYPES)->each(function ($commercialType) {
+            LanguageProvider::registerStringTranslation($commercialType, $commercialType, 'content-hub-editor');
+        });
     }
 
     private static function get_magazine_issues()

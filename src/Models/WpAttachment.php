@@ -2,7 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
+use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
 use function GuzzleHttp\Psr7\parse_query;
 
 /**
@@ -65,7 +67,7 @@ class WpAttachment
 
         // Check that attachment meta contains s3 info so we can set the visibility of the object
         if (isset($postMeta['amazonS3_info'][0]) && $s3Info = unserialize($postMeta['amazonS3_info'][0])) {
-            static::set_s3_object_visibility($s3Info['bucket'], $s3Info['key'], 'private');
+            static::setS3ObjectVisibility($s3Info['bucket'], $s3Info['key'], 'private');
         }
 
         return $data;
@@ -111,7 +113,7 @@ class WpAttachment
      * @param object $post
      * @param object $attachment
      *
-     * @return array
+     * @return object
      */
     public static function add_copyright_field_to_media_uploader_save($post, $attachment)
     {
@@ -159,6 +161,7 @@ class WpAttachment
         if ($attachmentId = static::id_from_contenthub_id($id)) {
             return wp_delete_post($attachmentId, true);
         }
+        return null;
     }
 
     public static function upload_attachment($postId, $file)
@@ -169,7 +172,7 @@ class WpAttachment
 
         // If attachment already exists then update meta data and return the id
         if ($existingId = static::id_from_contenthub_id($file->id)) {
-            static::update_attachment($existingId, $file);
+            static::updateAttachment($existingId, $file);
             return $existingId;
         }
 
@@ -180,7 +183,7 @@ class WpAttachment
 
         $rawFileName = basename($file->url);
         // Sanitize the new file name so WordPress will upload it
-        $fileName = static::sanizite_file_name($rawFileName, $file->url);
+        $fileName = static::sanitizeFileName($rawFileName, $file->url);
 
 
         // Make sure to sanitize the file name so urls with spaces and other special chars will work
@@ -225,48 +228,55 @@ class WpAttachment
             return null;
         }
 
-        if (function_exists('pll_set_post_language')) {
-            pll_set_post_language($attachmentId, pll_get_post_language($postId));
+        if ($language = LanguageProvider::getPostLanguage($postId)) {
+            LanguageProvider::setPostLanguage($attachmentId, $language);
         }
 
         return $attachmentId;
     }
 
-    private static function update_attachment($attachmentId, $file)
+    private static function updateAttachment($attachmentId, $file)
     {
         update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         global $wpdb;
-        $wpdb->update('wp_posts', [
-            'post_title' => $file->title ?? $file->caption ?? '',
-            'post_content' => '',
-            'post_excerpt' => $file->caption ?? '',
-        ],
+        $wpdb->update(
+            'wp_posts',
+            [
+                'post_title' => $file->title ?? $file->caption ?? '',
+                'post_content' => '',
+                'post_excerpt' => $file->caption ?? '',
+            ],
             [
                 'ID' => $attachmentId
-            ]);
+            ]
+        );
     }
 
-    private static function set_s3_object_visibility($bucket, $key, $acl)
+    private static function setS3ObjectVisibility($bucket, $key, $acl)
     {
+        /** @var \Amazon_S3_And_CloudFront $as3cf */
         global $as3cf;
 
+        /** @var AWS_Provider $s3Client */
         $s3Client = $as3cf->get_s3client();
 
-        $s3Client->putObjectAcl(array(
+        $s3Client->update_object_acl(array(
             'ACL' => $acl,
             'Bucket' => $bucket,
             'Key' => $key
         ));
     }
 
-    private static function sanizite_file_name($rawFileName, $url)
+    private static function sanitizeFileName($rawFileName, $url)
     {
         $sanitizedFileName = sanitize_file_name($rawFileName);
         $query = parse_query(parse_url($url, PHP_URL_QUERY));
-        if (isset($query['fm']) && $fileNameWithoutExtension = pathinfo($sanitizedFileName, PATHINFO_FILENAME)) {
+        if (isset($query['fm']) &&
+            $fileWithoutExt = pathinfo($sanitizedFileName, PATHINFO_FILENAME)
+        ) {
             // Append correct file extension from imgix format query param
-            return sprintf('%s.%s', $fileNameWithoutExtension, $query['fm']);
+            return sprintf('%s.%s', $fileWithoutExt, $query['fm']);
         }
         // Fallback to default WP file sanitation
         return $sanitizedFileName;
