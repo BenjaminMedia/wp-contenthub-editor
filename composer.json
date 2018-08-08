@@ -21,10 +21,6 @@
       "url": "https://wpackagist.org"
     },
     {
-      "type": "vcs",
-      "url": "https://github.com/BenjaminMedia/willow-mu-plugins"
-    },
-    {
       "type":"vcs",
       "url":"https://github.com/junaidbhura/composer-wp-pro-plugins"
     },
@@ -70,7 +66,7 @@
     "illuminate/support": "^5.6",
     "junaidbhura/advanced-custom-fields-pro": "*",
     "bonnier/php-video-helper": "1.0.*",
-    "bonnier/willow-mu-plugins": "^1.0",
+    "bonnier/willow-mu-plugins": "^1.0.0",
     "wpackagist-plugin/amazon-s3-and-cloudfront": "^1.4"
   },
   "require-dev": {
