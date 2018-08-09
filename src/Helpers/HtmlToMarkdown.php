@@ -66,7 +66,10 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
             // convert encoding to special chars are read correctly
             $anchorHMTL = mb_convert_encoding($anchorHMTL, 'HTML-ENTITIES', "UTF-8");
             // Parse the anchor so we may use objects to access the attributes
-            $anchors = DOMDocument::loadHTML($anchorHMTL)->getElementsByTagName('a');
+
+            $domDocument = (new DOMDocument());
+            $domDocument->loadHTML($anchorHMTL);
+            $anchors = $domDocument->getElementsByTagName('a');
             /* @var $anchor \DOMElement */
             if ($anchor = $anchors->item(0)) {
                 $attributes = collect($anchor->attributes)

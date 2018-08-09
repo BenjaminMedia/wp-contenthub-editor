@@ -14,7 +14,7 @@ class TermImportHelper
     protected $taxonomy;
     protected $permalinksToRedirect;
 
-    public function __construct($taxonomy)
+    public function  __construct($taxonomy)
     {
         $this->taxonomy = $this->getWpTaxonomy($taxonomy);
     }
@@ -35,6 +35,7 @@ class TermImportHelper
     protected function importTerm($name, $languageCode, $externalTerm)
     {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
+        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode};
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
@@ -56,7 +57,8 @@ class TermImportHelper
                 $taxonomy,
                 $parentTermId,
                 $description,
-                $internal
+                $internal,
+                $whitealbumId
             )) {
                 $this->createPostRedirects();
                 return true;
@@ -64,7 +66,7 @@ class TermImportHelper
             return false;
         }
         // Create new term
-        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
+        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal, $whitealbumId);
     }
 
     protected function getParentTermId($languageCode, $externalCategory)

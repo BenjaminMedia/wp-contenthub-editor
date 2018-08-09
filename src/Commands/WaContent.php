@@ -106,7 +106,7 @@ class WaContent extends BaseCmd
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
-
+        
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $waContent->widget_content->title,
@@ -267,9 +267,7 @@ class WaContent extends BaseCmd
     private function saveTags($postId, $waContent)
     {
         $tagIds = collect($waContent->widget_content->tags)->map(function ($waTag) {
-            $contentHubId = base64_encode(sprintf('tags-wa-%s', $waTag->id));
-            $existingTermId = WpTerm::id_from_contenthub_id($contentHubId);
-            return $existingTermId ?: null;
+            return WpTerm::id_from_whitealbum_id($waTag->id) ?: null;
         })->rejectNullValues();
         update_field('tags', $tagIds->toArray(), $postId);
     }
@@ -301,8 +299,7 @@ class WaContent extends BaseCmd
 
     private function saveCategories($postId, $composite)
     {
-        $contentHubId = base64_encode(sprintf('categories-wa-%s', $composite->widget_content->category_id));
-        if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
+        if ($existingTermId = WpTerm::id_from_whitealbum_id($composite->widget_content->category_id)) {
             update_field('category', $existingTermId, $postId);
         }
     }
@@ -423,6 +420,10 @@ class WaContent extends BaseCmd
             'display_name' => $waContent->author,
             'user_pass' => md5(rand(1, 32)),
         ]);
+
+        if(is_wp_error($userId)) {
+            return null;
+        }
 
         update_user_meta($userId, 'contenthub_id', $contentHubId);
 
