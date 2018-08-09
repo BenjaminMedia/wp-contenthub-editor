@@ -13,7 +13,16 @@ use WP_CLI;
  */
 class WpTerm
 {
-    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal, $whitealbumId)
+    public static function create(
+        $name,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $internal,
+        $whitealbumId
+    )
     {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent' => $parentTermId,
@@ -34,7 +43,17 @@ class WpTerm
         return $createdTerm['term_id'];
     }
 
-    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal, $whitealbumId)
+    public static function update(
+        $existingTermId,
+        $name,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $internal,
+        $whitealbumId
+    )
     {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name' => $name,
