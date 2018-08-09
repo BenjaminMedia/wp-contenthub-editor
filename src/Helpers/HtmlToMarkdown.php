@@ -67,7 +67,7 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
             $anchorHMTL = mb_convert_encoding($anchorHMTL, 'HTML-ENTITIES', "UTF-8");
             // Parse the anchor so we may use objects to access the attributes
 
-            $domDocument = (new DOMDocument());
+            $domDocument = new DOMDocument();
             $domDocument->loadHTML($anchorHMTL);
             $anchors = $domDocument->getElementsByTagName('a');
             /* @var $anchor \DOMElement */
