@@ -421,7 +421,7 @@ class WaContent extends BaseCmd
             'user_pass' => md5(rand(1, 32)),
         ]);
 
-        if(is_wp_error($userId)) {
+        if (is_wp_error($userId)) {
             return null;
         }
 

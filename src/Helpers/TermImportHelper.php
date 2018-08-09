@@ -14,7 +14,7 @@ class TermImportHelper
     protected $taxonomy;
     protected $permalinksToRedirect;
 
-    public function  __construct($taxonomy)
+    public function __construct($taxonomy)
     {
         $this->taxonomy = $this->getWpTaxonomy($taxonomy);
     }
