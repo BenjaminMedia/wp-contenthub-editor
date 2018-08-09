@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 
@@ -12,8 +13,16 @@ use WP_CLI;
  */
 class WpTerm
 {
-    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal)
-    {
+    public static function create(
+        $name,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $internal,
+        $whitealbumId
+    ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent' => $parentTermId,
             'slug' => SlugHelper::create_slug($name),
@@ -25,15 +34,25 @@ class WpTerm
                 . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
-        pll_set_term_language($createdTerm['term_id'], $languageCode);
+        LanguageProvider::setTermLanguage($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
         update_term_meta($createdTerm['term_id'], 'internal', $internal);
+        update_term_meta($createdTerm['term_id'], 'whitealbum_id', $whitealbumId);
         static::log('success', "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $createdTerm['term_id'];
     }
 
-    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal)
-    {
+    public static function update(
+        $existingTermId,
+        $name,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $internal,
+        $whitealbumId
+    ) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name' => $name,
             'parent' => $parentTermId,
@@ -46,9 +65,10 @@ class WpTerm
                 . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
-        pll_set_term_language($existingTermId, $languageCode);
+        LanguageProvider::setTermLanguage($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
         update_term_meta($existingTermId, 'internal', $internal);
+        update_term_meta($existingTermId, 'whitealbum_id', $whitealbumId);
         static::log('success', "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $existingTermId;
     }
@@ -63,6 +83,19 @@ class WpTerm
         global $wpdb;
         return $wpdb->get_var(
             $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'content_hub_id', $id)
+        );
+    }
+
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function id_from_whitealbum_id($id)
+    {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'whitealbum_id', $id)
         );
     }
 

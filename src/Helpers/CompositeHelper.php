@@ -25,12 +25,16 @@ class CompositeHelper
         }
 
         $videoWithTeaser = collect(get_field('composite_content'))->first(function ($content) {
-            return (isset($content['video_teaser_image']) && $content['video_teaser_image']) && $content['acf_fc_layout'] === 'video';
+            return (isset($content['video_teaser_image']) && $content['video_teaser_image']) &&
+                $content['acf_fc_layout'] === 'video';
         });
 
         if ($videoWithTeaser) {
             $embed = $videoWithTeaser['embed_url'];
-            $teaserImagefile = VideoHelper::getLeadImageFile($embed, 'https://bonnier-publications-danmark.23video.com');
+            $teaserImagefile = VideoHelper::getLeadImageFile(
+                $embed,
+                'https://bonnier-publications-danmark.23video.com'
+            );
 
             if (empty($embed) ||
                 !$teaserImagefile->url ||

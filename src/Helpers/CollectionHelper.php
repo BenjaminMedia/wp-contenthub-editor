@@ -9,12 +9,9 @@ use Illuminate\Support\Collection;
  *
  * @package \Bonnier\WP\ContentHub\Editor\Helpers
  */
-class CollectionHelper extends Collection
+class CollectionHelper
 {
-    /**
-     * CollectionHelper constructor.
-     */
-    public function __construct()
+    public static function register()
     {
         Collection::macro('toAssocCombine', function () {
             return $this->reduce(function ($assoc, $taxonomyValue) {

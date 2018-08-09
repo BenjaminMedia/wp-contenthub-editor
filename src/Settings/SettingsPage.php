@@ -2,8 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Settings;
 
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\SiteRepository;
-use PLL_Language;
 
 class SettingsPage
 {
@@ -66,7 +66,7 @@ class SettingsPage
      */
     public function create_admin_page()
     {
-        // Set class property ?>
+        // Set class property?>
         <div class="wrap">
             <form method="post" action="options.php">
                 <?php
@@ -158,6 +158,8 @@ class SettingsPage
 
         $field = $this->settingsFields[$function];
         $this->create_settings_field($field, $function);
+
+        return true;
     }
 
     public function get_setting_value($settingKey, $locale = null)
@@ -214,13 +216,13 @@ class SettingsPage
 
     public function languages_is_enabled()
     {
-        return function_exists('Pll') && PLL()->model->get_languages_list();
+        return LanguageProvider::enabled();
     }
 
     public function get_languages()
     {
         if ($this->languages_is_enabled()) {
-            return PLL()->model->get_languages_list();
+            return LanguageProvider::getLanguageList();
         }
         return false;
     }
@@ -228,20 +230,19 @@ class SettingsPage
     /**
      * Get the current language by looking at the current HTTP_HOST
      *
-     * @return null|PLL_Language
+     * @return null|string
      */
     public function get_current_language()
     {
         if ($this->languages_is_enabled()) {
-            return PLL()->model->get_language(pll_current_language());
+            return LanguageProvider::getCurrentLanguage('locale');
         }
         return null;
     }
 
     public function get_current_locale()
     {
-        $currentLang = $this->get_current_language();
-        return $currentLang ? $currentLang->locale : null;
+        return $this->get_current_language() ?? null;
     }
 
     private function get_select_field_options($field)

@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\ACF;
 
 use acf_field;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
@@ -169,7 +170,7 @@ class MarkdownEditor extends acf_field
         // register & include JS
         wp_register_script(
             'acf-input-simple-mde',
-            ContenthubEditor::instance()->plugin_url . 'js/simplemde.min.js',
+            ContenthubEditor::instance()->pluginUrl . 'js/simplemde.min.js',
             ['acf-input'],
             '1.2.5'
         );
@@ -177,7 +178,7 @@ class MarkdownEditor extends acf_field
 
         wp_enqueue_script(
             'acf-input-markdown-editor',
-            ContenthubEditor::instance()->plugin_url . 'js/acf/fields/markdown-editor.js',
+            ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
             ['acf-input'],
             '1.2.6'
         );
@@ -187,7 +188,7 @@ class MarkdownEditor extends acf_field
         if (isset($current_screen->id) && $current_screen->id === WpComposite::POST_TYPE) {
             wp_enqueue_script(
                 'acf-composite-validation',
-                ContenthubEditor::instance()->plugin_url . 'js/acf/fields/composite-validation.js',
+                ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/composite-validation.js',
                 ['acf-input'],
                 '1.2.5'
             );
@@ -195,18 +196,18 @@ class MarkdownEditor extends acf_field
 
         $language = 'da';
         if (isset($_GET['post'])) {
-            $language = pll_get_post_language($_GET['post']);
+            $language = LanguageProvider::getPostLanguage($_GET['post']);
         } elseif (isset($_GET['new_lang'])) {
             $language = $_GET['new_lang'];
         }
         if ($language) {
             wp_localize_script('acf-input-markdown-editor', 'dictionary', [
                 'dic' => parse_url(
-                    ContenthubEditor::instance()->plugin_url,
+                    ContenthubEditor::instance()->pluginUrl,
                     PHP_URL_PATH
                 ) . 'js/lang/' . $language . '.dic.txt?ver=1.2.5',
                 'aff' => parse_url(
-                    ContenthubEditor::instance()->plugin_url,
+                    ContenthubEditor::instance()->pluginUrl,
                     PHP_URL_PATH
                 ) . 'js/lang/' . $language . '.aff.txt?ver=1.2.5'
             ]);
@@ -215,7 +216,7 @@ class MarkdownEditor extends acf_field
         // register & include CSS
         wp_register_style(
             'acf-input-markdown-editor',
-            ContenthubEditor::instance()->plugin_url . 'css/simplemde.min.css',
+            ContenthubEditor::instance()->pluginUrl . 'css/simplemde.min.css',
             ['acf-input'],
             '1.2.5'
         );
