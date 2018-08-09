@@ -35,7 +35,7 @@ class TermImportHelper
     protected function importTerm($name, $languageCode, $externalTerm)
     {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode};
+        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode} ?? null;
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
