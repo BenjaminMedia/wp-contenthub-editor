@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b73466420c7139151cffa049bbcfd426",
+    "content-hash": "4a9abae2afef0edaa712f2cd6eca2a54",
     "packages": [
         {
             "name": "bonnier/php-video-helper",
@@ -55,16 +55,16 @@
         },
         {
             "name": "bonnier/willow-mu-plugins",
-            "version": "v1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenjaminMedia/willow-mu-plugins.git",
-                "reference": "470ff905d5f9da04a3c2f735acffe991e578ccbb"
+                "reference": "15fbcc1978a56b400774292788d145c2b3b27b6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/470ff905d5f9da04a3c2f735acffe991e578ccbb",
-                "reference": "470ff905d5f9da04a3c2f735acffe991e578ccbb",
+                "url": "https://api.github.com/repos/BenjaminMedia/willow-mu-plugins/zipball/15fbcc1978a56b400774292788d145c2b3b27b6e",
+                "reference": "15fbcc1978a56b400774292788d145c2b3b27b6e",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,7 @@
                 }
             ],
             "description": "A collection of Must Use WordPress Plugins for Willow",
-            "time": "2018-08-08T13:20:59+00:00"
+            "time": "2018-08-13T12:53:51+00:00"
         },
         {
             "name": "composer/installers",
@@ -466,16 +466,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.6.29",
+            "version": "v5.6.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "3dc639feabe0f302f574157a782ede323881a944"
+                "reference": "2c029101285f6066f45e3ae5910b1b5f900fdcb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/3dc639feabe0f302f574157a782ede323881a944",
-                "reference": "3dc639feabe0f302f574157a782ede323881a944",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/2c029101285f6066f45e3ae5910b1b5f900fdcb4",
+                "reference": "2c029101285f6066f45e3ae5910b1b5f900fdcb4",
                 "shasum": ""
             },
             "require": {
@@ -506,20 +506,20 @@
             ],
             "description": "The Illuminate Contracts package.",
             "homepage": "https://laravel.com",
-            "time": "2018-05-11T23:38:58+00:00"
+            "time": "2018-07-31T12:49:53+00:00"
         },
         {
             "name": "illuminate/support",
-            "version": "v5.6.29",
+            "version": "v5.6.33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "c684cb5e77e213020f7a4ed213d94b2b384c2951"
+                "reference": "0561e4e48797fbaeafeec0054b14605b08722a5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/c684cb5e77e213020f7a4ed213d94b2b384c2951",
-                "reference": "c684cb5e77e213020f7a4ed213d94b2b384c2951",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/0561e4e48797fbaeafeec0054b14605b08722a5a",
+                "reference": "0561e4e48797fbaeafeec0054b14605b08722a5a",
                 "shasum": ""
             },
             "require": {
@@ -564,7 +564,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "https://laravel.com",
-            "time": "2018-07-26T15:32:11+00:00"
+            "time": "2018-08-06T19:58:11+00:00"
         },
         {
             "name": "junaidbhura/advanced-custom-fields-pro",
@@ -582,16 +582,16 @@
         },
         {
             "name": "junaidbhura/composer-wp-pro-plugins",
-            "version": "1.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/junaidbhura/composer-wp-pro-plugins.git",
-                "reference": "94a36f218eba29877619f2745c8b9821479b72ab"
+                "reference": "c9886fdb4b2c7888281ec344e215b09e0bbb5f6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/junaidbhura/composer-wp-pro-plugins/zipball/94a36f218eba29877619f2745c8b9821479b72ab",
-                "reference": "94a36f218eba29877619f2745c8b9821479b72ab",
+                "url": "https://api.github.com/repos/junaidbhura/composer-wp-pro-plugins/zipball/c9886fdb4b2c7888281ec344e215b09e0bbb5f6e",
+                "reference": "c9886fdb4b2c7888281ec344e215b09e0bbb5f6e",
                 "shasum": ""
             },
             "require": {
@@ -615,10 +615,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/junaidbhura/composer-wp-pro-plugins/tree/1.0.3",
+                "source": "https://github.com/junaidbhura/composer-wp-pro-plugins/tree/1.0.4",
                 "issues": "https://github.com/junaidbhura/composer-wp-pro-plugins/issues"
             },
-            "time": "2018-07-20T09:39:44+00:00"
+            "time": "2018-08-09T02:46:24+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -6725,9 +6725,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [],
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.1"
