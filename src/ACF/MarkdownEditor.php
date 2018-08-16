@@ -9,6 +9,7 @@ use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
 class MarkdownEditor extends acf_field
 {
+    const VERSION_NUMBER = '3.0.3';
     /*
     *  __construct
     *
@@ -167,20 +168,22 @@ class MarkdownEditor extends acf_field
     */
     public function input_admin_enqueue_scripts()
     {
+        wp_enqueue_script('marked-js', 'https://cdn.jsdelivr.net/npm/marked/marked.min.js');
+
         // register & include JS
         wp_register_script(
             'acf-input-simple-mde',
             ContenthubEditor::instance()->pluginUrl . 'js/simplemde.min.js',
             ['acf-input'],
-            '1.2.5'
+            self::VERSION_NUMBER
         );
-        wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.5');
+        wp_enqueue_script('acf-input-simple-mde', '', [], self::VERSION_NUMBER);
 
         wp_enqueue_script(
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
-            ['acf-input'],
-            '1.2.6'
+            ['acf-input', 'marked-js'],
+            self::VERSION_NUMBER
         );
 
         //ContentHub composite fields validation
@@ -190,7 +193,7 @@ class MarkdownEditor extends acf_field
                 'acf-composite-validation',
                 ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/composite-validation.js',
                 ['acf-input'],
-                '1.2.5'
+                self::VERSION_NUMBER
             );
         }
 
@@ -205,11 +208,11 @@ class MarkdownEditor extends acf_field
                 'dic' => parse_url(
                     ContenthubEditor::instance()->pluginUrl,
                     PHP_URL_PATH
-                ) . 'js/lang/' . $language . '.dic.txt?ver=1.2.5',
+                ) . 'js/lang/' . $language . '.dic.txt?ver=' . self::VERSION_NUMBER,
                 'aff' => parse_url(
                     ContenthubEditor::instance()->pluginUrl,
                     PHP_URL_PATH
-                ) . 'js/lang/' . $language . '.aff.txt?ver=1.2.5'
+                ) . 'js/lang/' . $language . '.aff.txt?ver=' . self::VERSION_NUMBER
             ]);
         }
 
@@ -218,9 +221,9 @@ class MarkdownEditor extends acf_field
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'css/simplemde.min.css',
             ['acf-input'],
-            '1.2.5'
+            self::VERSION_NUMBER
         );
-        wp_enqueue_style('acf-input-markdown-editor', '', [], '1.2.5');
+        wp_enqueue_style('acf-input-markdown-editor', '', [], self::VERSION_NUMBER);
     }
 
     /*

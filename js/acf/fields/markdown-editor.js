@@ -1,14 +1,37 @@
 (function () {
+  function parseLink(plaintext) {
+    return plaintext.replace(/\[(.*)\]\((.*) (.*)\)/, function(fullMatch, text, link, attributeData) {
+      var attributes = JSON.parse(attributeData);
+      var attr = '';
+      Object.keys(attributes).forEach(function (key) {
+        attr += `${key}="${attributes[key]}" `;
+      });
+      return`<a href="${link}" ${attr}>${text}</a>`;
+    });
+  }
+
+  function parseCite(plaintext) {
+    return plaintext.replace(/(^|[^~])(?:~([^~]+)~)/, '$1<cite>$2</cite>');
+  }
+
+  function previewContent(plaintext) {
+    marked.setOptions({
+      gfm: true,
+    });
+    return marked(parseCite(parseLink(plaintext)));
+  }
+
   function quote(editor) {
     var cm = editor.codemirror;
     var selectedText = cm.getSelection();
     var text = selectedText || '';
-    cm.replaceSelection('<cite>' + text + '</cite>');
+    cm.replaceSelection('~' + text + '~');
   }
 
   function createSimpleMde(textArea, options) {
     var mdeOptions = {
       element: textArea,
+      previewRender: previewContent,
       spellChecker: true,
     };
     if (typeof dictionary !== "undefined") {
@@ -50,7 +73,12 @@
           "|",
           "unordered-list",
           "ordered-list",
-          "link",
+          {
+            name: "link",
+            action: createLinkModal,
+            className: "fa fa-link",
+            title: "Create Link"
+          },
           "|",
           "preview",
           "guide"
