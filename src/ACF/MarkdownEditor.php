@@ -167,6 +167,8 @@ class MarkdownEditor extends acf_field
     */
     public function input_admin_enqueue_scripts()
     {
+        wp_enqueue_script('marked-js', 'https://cdn.jsdelivr.net/npm/marked/marked.min.js');
+
         // register & include JS
         wp_register_script(
             'acf-input-simple-mde',
@@ -179,7 +181,7 @@ class MarkdownEditor extends acf_field
         wp_enqueue_script(
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
-            ['acf-input'],
+            ['acf-input', 'marked-js'],
             '1.2.6'
         );
 
