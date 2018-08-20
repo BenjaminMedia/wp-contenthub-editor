@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
@@ -114,6 +115,7 @@ class WpComposite
 
     private static function register_acf_fields()
     {
+        AttachmentGroup::register();
         CompositeFieldGroup::register();
         TeaserFieldGroup::register();
         CompositeContentFieldGroup::register();
