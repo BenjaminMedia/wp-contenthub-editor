@@ -66,7 +66,7 @@ class SettingsPage
      */
     public function create_admin_page()
     {
-        // Set class property ?>
+        // Set class property?>
         <div class="wrap">
             <form method="post" action="options.php">
                 <?php
