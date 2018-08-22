@@ -21,26 +21,22 @@ class WpAttachment
         add_filter('attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2);
         add_filter('attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2);
         // load existing value from caption field and pass to acf
-        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], null, 3);
+        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], 0, 3);
         add_action('admin_head', [__CLASS__, 'remove_caption_field']);
-        add_filter('acf/update_value/key='.AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'save_caption_to_wordpress'], null, 3);
+        add_filter('attachment_fields_to_save', [__CLASS__, 'save_caption_to_wordpress'], 0, 2);
 
         // Make attachments private
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
     }
 
-    public static function save_caption_to_wordpress($value, $postId, $field)
-    {
-        wp_update_post([
-            'ID' => $postId,
-            'post_excerpt' => $value
-        ]);
-        return $value;
+    public static function save_caption_to_wordpress($post_data,  $attachment_data){
+        $post_data['post_excerpt'] = $_POST['acf'][AttachmentGroup::CAPTION_FIELD_KEY];
+        return $post_data;
     }
 
     public static function add_caption_value_to_markdown_caption_field($value, $postId, $field)
     {
-        $caption = get_the_excerpt($postId) ?? $value;
+        $caption = get_post($postId)->post_excerpt ?? $value;
 
         return $caption;
     }
