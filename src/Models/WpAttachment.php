@@ -29,7 +29,8 @@ class WpAttachment
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
     }
     
-    public static function save_caption_to_wordpress($post_data,  $attachment_data){
+    public static function save_caption_to_wordpress($post_data, $attachment_data)
+    {
         $post_data['post_excerpt'] = $_POST['acf'][AttachmentGroup::CAPTION_FIELD_KEY] ?? '';
         return $post_data;
     }
