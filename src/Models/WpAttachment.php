@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
+use function GuzzleHttp\Psr7\parse_query;
 
 /**
  * Class WpAttachment
@@ -20,27 +21,27 @@ class WpAttachment
         add_filter('attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2);
         add_filter('attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2);
         // load existing value from caption field and pass to acf
-        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], null, 3);
+        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], 0, 3);
         add_action('admin_head', [__CLASS__, 'remove_caption_field']);
-        add_filter('acf/update_value/key='.AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'save_caption_to_wordpress'], null, 3);
+        add_filter('attachment_fields_to_save', [__CLASS__, 'save_caption_to_wordpress'], 0, 2);
 
         // Make attachments private
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
     }
-
-    public static function save_caption_to_wordpress($value, $postId, $field)
+    
+    public static function save_caption_to_wordpress($post_data, $attachment_data)
     {
-        wp_update_post([
-            'ID' => $postId,
-            'post_excerpt' => $value
-        ]);
-        return $value;
+        $post_data['post_excerpt'] = $_POST['acf'][AttachmentGroup::CAPTION_FIELD_KEY] ?? '';
+        return $post_data;
     }
+
     public static function add_caption_value_to_markdown_caption_field($value, $postId, $field)
     {
-        $caption = get_the_excerpt($postId) ?? $value;
+        $caption = get_post($postId)->post_excerpt ?? $value;
+
         return $caption;
     }
+
     public static function remove_caption_field()
     {
         //unfortunately we have to hide it through css since it's not possible to hide the field through code as if WP 3.5+
@@ -163,7 +164,6 @@ class WpAttachment
             return null;
         }
 
-
         // If attachment already exists then update meta data and return the id
         if ($existingId = static::id_from_contenthub_id($file->id)) {
             static::update_attachment($existingId, $file);
@@ -176,7 +176,9 @@ class WpAttachment
         }
 
         $rawFileName = basename($file->url);
-        $fileName = sanitize_file_name($rawFileName); // Sanitize the new file name so WordPress will upload it
+        // Sanitize the new file name so WordPress will upload it
+        $fileName = static::sanizite_file_name($rawFileName, $file->url);
+
 
         // Make sure to sanitize the file name so urls with spaces and other special chars will work
         $file->url = str_replace($rawFileName, urlencode($rawFileName), $file->url);
@@ -195,18 +197,17 @@ class WpAttachment
         }
 
         // Creating attachment
-        $fileMeta = wp_check_filetype($fileName, null);
         $attachment = [
-            'post_mime_type' => $fileMeta['type'],
+            'post_mime_type' => mime_content_type($uploadedFile['file']),
             'post_parent' => $postId,
-            'post_title' => '',
-            'post_content' => '',
+            'post_title' => $file->title ?? '',
+            'post_content' => $file->description ?? '',
             'post_excerpt' => $file->caption ?? '',
             'post_status' => 'inherit',
             'meta_input' => [
                 static::POST_META_CONTENTHUB_ID => $file->id,
                 static::POST_META_COPYRIGHT => $file->copyright ?? '',
-                '_wp_attachment_image_alt' => $file->altText ?? '',
+                '_wp_attachment_image_alt' => static::getAlt($file),
             ]
         ];
         $attachmentId = wp_insert_attachment($attachment, $uploadedFile['file'], $postId);
@@ -230,17 +231,17 @@ class WpAttachment
 
     private static function update_attachment($attachmentId, $file)
     {
-        update_post_meta($attachmentId, '_wp_attachment_image_alt', $file->altText ?? '');
+        update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         global $wpdb;
         $wpdb->update('wp_posts', [
-            'post_title' => $file->caption ?? '',
+            'post_title' => $file->title ?? $file->caption ?? '',
             'post_content' => '',
             'post_excerpt' => $file->caption ?? '',
         ],
-        [
-            'ID' => $attachmentId
-        ]);
+            [
+                'ID' => $attachmentId
+            ]);
     }
 
     private static function set_s3_object_visibility($bucket, $key, $acl)
@@ -254,5 +255,27 @@ class WpAttachment
             'Bucket' => $bucket,
             'Key' => $key
         ));
+    }
+
+    private static function sanizite_file_name($rawFileName, $url)
+    {
+        $sanitizedFileName = sanitize_file_name($rawFileName);
+        $query = parse_query(parse_url($url, PHP_URL_QUERY));
+        if (isset($query['fm']) && $fileNameWithoutExtension = pathinfo($sanitizedFileName, PATHINFO_FILENAME)) {
+            // Append correct file extension from imgix format query param
+            return sprintf('%s.%s', $fileNameWithoutExtension, $query['fm']);
+        }
+        // Fallback to default WP file sanitation
+        return $sanitizedFileName;
+    }
+
+    private static function getAlt($file)
+    {
+        return collect(['altText', 'alt_text', 'title', 'caption'])->reduce(function ($out, $atr) use ($file) {
+            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
+                $out = $file->{$atr};
+            }
+            return $out;
+        }, '');
     }
 }
