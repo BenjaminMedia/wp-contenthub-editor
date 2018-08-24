@@ -33,6 +33,7 @@
       element: textArea,
       previewRender: previewContent,
       spellChecker: true,
+      forceSync: true,
     };
     if (typeof dictionary !== "undefined") {
       mdeOptions.dictionary = dictionary;
