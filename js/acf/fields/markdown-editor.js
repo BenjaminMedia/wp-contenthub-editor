@@ -10,6 +10,7 @@
     var mdeOptions = {
       element: textArea,
       spellChecker: true,
+      forceSync: true,
     };
     if (typeof dictionary !== "undefined") {
       mdeOptions.dictionary = dictionary;
