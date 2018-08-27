@@ -158,7 +158,7 @@ class MarkdownEditor extends acf_field
         
         // register & include JS
         wp_register_script('acf-input-simple-mde', Plugin::instance()->plugin_url . 'js/simplemde.min.js', ['acf-input'], '1.2.5');
-        wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.5');
+        wp_enqueue_script('acf-input-simple-mde', '', [], '1.2.17');
         
         wp_enqueue_script('acf-input-markdown-editor', Plugin::instance()->plugin_url . 'js/acf/fields/markdown-editor.js', ['acf-input'], '1.2.5');
         $language = null;
