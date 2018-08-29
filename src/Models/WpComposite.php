@@ -60,7 +60,8 @@ class WpComposite
                     'has_archive' => false,
                     'supports' => [
                         'title',
-                        'author'
+                        'author',
+                        'revisions'
                     ],
                     'taxonomies' => [
                         'category'
