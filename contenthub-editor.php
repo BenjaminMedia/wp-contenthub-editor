@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ContentHub Editor
- * Version: 1.2.18
+ * Version: 1.2.19
  * Plugin URI: https://github.com/BenjaminMedia/contenthub-editor
  * Description: This plugin integrates Bonnier Contenthub and adds a custom post type Composite
  * Author: Bonnier - Alf Henderson
@@ -13,6 +13,7 @@ namespace Bonnier\WP\ContentHub\Editor;
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
+use Bonnier\WP\ContentHub\Editor\Helpers\PermalinkHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
 use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
@@ -100,6 +101,7 @@ class Plugin
         new CollectionHelper; // Extends Collection with extra methods
         new MarkdownEditor;
         // Register custom post type
+        PermalinkHelper::instance();
         WpTaxonomy::register();
         WpComposite::register();
         WpAttachment::register();
