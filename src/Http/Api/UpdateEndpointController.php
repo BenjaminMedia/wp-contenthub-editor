@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Http\Api;
 
 use Bonnier\WP\ContentHub\Editor\Helpers\TermImportHelper;
+use PLL_Admin_Share_Term_Slug;
 use wpSiteManager\Services\CategoryService;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -23,6 +24,8 @@ class UpdateEndpointController extends WP_REST_Controller
 
     public function updateCallback(WP_REST_Request $request): WP_REST_Response
     {
+        $this->initPolylangShareTermSlug(); // Make sure that category slugs are sharable across languages
+
         $resource = $this->formatResource($request->get_param('data'));
         $meta = $request->get_param('meta');
         $entityType = $meta['entity_type'];
@@ -65,5 +68,11 @@ class UpdateEndpointController extends WP_REST_Controller
         foreach ($resource->content_hub_ids as $contentHubId) {
             CategoryService::clearCache($contentHubId);
         }
+    }
+
+    private function initPolylangShareTermSlug()
+    {
+        $polylang = PLL(); // We have to store in variable because class is using & which is not allowed for objects
+        new PLL_Admin_Share_Term_Slug($polylang);
     }
 }
