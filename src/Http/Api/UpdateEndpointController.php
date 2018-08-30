@@ -72,7 +72,7 @@ class UpdateEndpointController extends WP_REST_Controller
 
     private function initPolylangShareTermSlug()
     {
-        $polylang = PLL(); // We have to story in variable because class is using & which is not allowed for objects
+        $polylang = PLL(); // We have to store in variable because class is using & which is not allowed for objects
         new PLL_Admin_Share_Term_Slug($polylang);
     }
 }
