@@ -110,7 +110,7 @@ class TermImportHelper
     {
         if ($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
             $this->permalinksToRedirect = collect(get_posts([
-                'posts_per_page' => 0,
+                'posts_per_page' => -1, // Get all posts that match our query
                 'post_status' => 'publish',
                 'post_type' => WpComposite::POST_TYPE,
                 'tax_query' => [
