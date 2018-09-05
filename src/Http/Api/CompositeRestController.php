@@ -11,10 +11,12 @@ use WP_REST_Posts_Controller;
  */
 class CompositeRestController extends WP_REST_Posts_Controller
 {
-    public function check_read_permission( $post ) {
+    public function check_read_permission($post)
+    {
         return true;
     }
-    public function sanitize_post_statuses( $statuses, $request, $parameter ) {
+    public function sanitize_post_statuses($statuses, $request, $parameter)
+    {
         return $statuses;
     }
 }
