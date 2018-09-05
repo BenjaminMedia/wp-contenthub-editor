@@ -106,7 +106,7 @@ class WaContent extends BaseCmd
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
-        
+
         return wp_insert_post([
             'ID' => $existingId,
             'post_title' => $waContent->widget_content->title,
@@ -159,6 +159,7 @@ class WaContent extends BaseCmd
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
                             'Widgets::InfoBox' => 'info_box',
+                            'Widgets::Video' => 'video',
                         ])
                         ->get($waWidget->type, null),
                     ])
@@ -254,6 +255,13 @@ class WaContent extends BaseCmd
                             ];
                         }),
                         'display_hint' => $compositeContent->display_hint,
+                        'locked_content' => false,
+                        'acf_fc_layout' => $compositeContent->type
+                    ];
+                }
+                if ($compositeContent->type === 'video') {
+                    return [
+                        'embed_url' => $this->getVideoProvider($compositeContent->video_site) . $compositeContent->video_id,
                         'locked_content' => false,
                         'acf_fc_layout' => $compositeContent->type
                     ];
@@ -440,5 +448,19 @@ class WaContent extends BaseCmd
             $content->url .= '?fm=png';
         }
         return $content;
+    }
+
+    private function getVideoProvider($provider) {
+      switch ($provider) {
+        case 'youtube':
+            return 'https://www.youtube.com/embed/';
+          break;
+        case 'vimeo':
+          return 'https://player.vimeo.com/video/';
+          break;
+        case 'video23':
+          return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
+          break;
+      }
     }
 }
