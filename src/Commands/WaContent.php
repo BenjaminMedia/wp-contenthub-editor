@@ -450,8 +450,9 @@ class WaContent extends BaseCmd
         return $content;
     }
 
-    private function getVideoProvider($provider) {
-      switch ($provider) {
+    private function getVideoProvider($provider)
+    {
+        switch ($provider) {
         case 'youtube':
             return 'https://www.youtube.com/embed/';
           break;
