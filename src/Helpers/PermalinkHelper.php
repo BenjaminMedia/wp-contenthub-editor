@@ -43,12 +43,12 @@ class PermalinkHelper
          * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
          * By default, core only accounts for posts and pages where the slug is /post-name/
          */
-         add_action('pre_get_posts', function ($query) {
+        add_action('pre_get_posts', function ($query) {
             if (is_admin() || !$query->is_main_query()) {
                 return;
             }
-             $query->set('post_type', [ 'post', 'page', WpComposite::POST_TYPE ]);
-             return $query;
+            $query->set('post_type', [ 'post', 'page', WpComposite::POST_TYPE ]);
+            return $query;
         });
 
         // Late init to protect endpoints
