@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
+use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
+
 class PermalinkHelper
 {
     public static $customPermalink = 'willow_custom_permalink';
@@ -36,6 +38,19 @@ class PermalinkHelper
 
     public function __construct()
     {
+        /**
+         * Have WordPress match postname to any of our public post types (post, page, contenthub_composite)
+         * All of our public post types can have /post-name/ as the slug, so they better be unique across all posts
+         * By default, core only accounts for posts and pages where the slug is /post-name/
+         */
+         add_action('pre_get_posts', function ($query) {
+            if (is_admin() || !$query->is_main_query()) {
+                return;
+            }
+             $query->set('post_type', [ 'post', 'page', WpComposite::POST_TYPE ]);
+             return $query;
+        });
+
         // Late init to protect endpoints
         add_action('init', array( $this, 'late_init' ), 999);
 
