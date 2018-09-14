@@ -37,6 +37,18 @@ class CategoryRepository implements CategoryContract
             null;
     }
 
+    public static function find_by_content_hub_id($id)
+    {
+        try {
+            $response = Client::getInstance()->get('/api/v1/categories/content-hub-id/'.$id);
+        } catch (ClientException $e) {
+            return null;
+        }
+        return $response->getStatusCode() === 200 ?
+            json_decode($response->getBody()->getContents()) :
+            null;
+    }
+
     public static function find_by_brand_id($id, $page = 1)
     {
         try {

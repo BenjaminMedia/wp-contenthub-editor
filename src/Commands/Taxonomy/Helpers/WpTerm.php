@@ -66,6 +66,16 @@ class WpTerm
         );
     }
 
+    /**
+     * @param $id integer wp_term->term_id
+     *
+     * @return null|string
+     */
+    public static function content_hub_id($id)
+    {
+        return get_term_meta($id, 'content_hub_id', true);
+    }
+
     private static function log($type, $message)
     {
         if (class_exists('WP_CLI')) {
