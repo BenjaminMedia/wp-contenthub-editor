@@ -4,7 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
 use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
 use Bonnier\WP\ContentHub\Editor\Helpers\TermImportHelper;
-use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use WP_CLI;
 
 /**
@@ -17,6 +17,15 @@ class BaseTaxonomyImporter extends BaseCmd
     protected $taxonomy;
     protected $termImporter;
     protected $getTermCallback;
+    protected $termImportHelper;
+
+    protected function triggerSync($taxononmy, $getTermCallback)
+    {
+        $this->taxonomy = $taxononmy;
+        $this->getTermCallback = $getTermCallback;
+        $this->termImportHelper = new TermImportHelper($taxononmy);
+        $this->syncTerms();
+    }
 
     protected function triggerImport($taxonomy, $getTermCallback)
     {
@@ -65,24 +74,33 @@ class BaseTaxonomyImporter extends BaseCmd
 
         WP_CLI::success('Done cleaning ' . $taxononmy);
     }
-    protected function map_sites($callable)
-    {
-        $this->get_sites()->each($callable);
-    }
 
-    protected function get_sites()
+    private function syncTerms()
     {
-        return collect(ContenthubEditor::instance()->settings->get_languages())
-            ->pluck('locale')
-            ->map(function ($locale) {
-                return ContenthubEditor::instance()->settings->get_site($locale);
-            })->reject(function ($site) {
-                return is_null($site);
-            });
-    }
-
-    protected function get_site()
-    {
-        return $this->get_sites()->first();
+        collect(get_terms([
+            'taxonomy'   => $this->taxonomy,
+            'hide_empty' => false,
+            'number'     => 0
+        ]))->reject(function(\WP_Term $term){
+            return str_contains(strtolower($term->name), 'uncategorized');
+        })->reject(function (\WP_Term $term) {
+            $externalTerm = call_user_func($this->getTermCallback, WpTerm::content_hub_id($term->term_id));
+            if ($externalTerm) {
+                WP_CLI::line(sprintf('Term: %s from taxonomy: %s exist skipping', $term->name, $this->taxonomy));
+                return true;
+            }
+            WP_CLI::warning(sprintf('Term: %s from taxonomy: %s is missing form sm will remove', $term->name, $this->taxonomy));
+            WP_CLI::warning(WpTerm::content_hub_id($term->term_id));
+            return false;
+        })->pipe(function ($terms) {
+            WP_CLI::warning('A total of: ' . $terms->count() . ' will be removed');
+            return $terms;
+        })->each(function (\WP_Term $term) {
+            if($this->termImportHelper->deleteTerm($term)) {
+                WP_CLI::line(sprintf('Removed term: %s from taxonomy: %s', $term->name, $this->taxonomy));
+            } else {
+                WP_CLI::warning(sprintf('Failed removing term: %s from taxonomy: %s', $term->name, $this->taxonomy));
+            }
+        });
     }
 }
