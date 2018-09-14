@@ -22,8 +22,7 @@ class WpTerm
         $description,
         $internal,
         $whitealbumId
-    )
-    {
+    ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent'      => $parentTermId,
             'slug'        => SlugHelper::create_slug($name),
@@ -53,8 +52,7 @@ class WpTerm
         $description,
         $internal,
         $whitealbumId
-    )
-    {
+    ) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name'        => $name,
             'parent'      => $parentTermId,
@@ -99,7 +97,6 @@ class WpTerm
         return $wpdb->get_var(
             $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'whitealbum_id', $id)
         );
-
     }
 
     /*

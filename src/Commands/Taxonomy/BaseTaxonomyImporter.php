@@ -81,7 +81,7 @@ class BaseTaxonomyImporter extends BaseCmd
             'taxonomy'   => $this->taxonomy,
             'hide_empty' => false,
             'number'     => 0
-        ]))->reject(function(\WP_Term $term){
+        ]))->reject(function (\WP_Term $term) {
             return str_contains(strtolower($term->name), 'uncategorized');
         })->reject(function (\WP_Term $term) {
             $externalTerm = call_user_func($this->getTermCallback, WpTerm::content_hub_id($term->term_id));
@@ -96,7 +96,7 @@ class BaseTaxonomyImporter extends BaseCmd
             WP_CLI::warning('A total of: ' . $terms->count() . ' will be removed');
             return $terms;
         })->each(function (\WP_Term $term) {
-            if($this->termImportHelper->deleteTerm($term)) {
+            if ($this->termImportHelper->deleteTerm($term)) {
                 WP_CLI::line(sprintf('Removed term: %s from taxonomy: %s', $term->name, $this->taxonomy));
             } else {
                 WP_CLI::warning(sprintf('Failed removing term: %s from taxonomy: %s', $term->name, $this->taxonomy));
