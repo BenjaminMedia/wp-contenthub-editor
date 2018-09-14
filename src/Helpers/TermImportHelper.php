@@ -31,7 +31,8 @@ class TermImportHelper
         return $termIdsByLocale;
     }
 
-    public function deleteTerm(\WP_Term $term){
+    public function deleteTerm(\WP_Term $term)
+    {
         $this->preparePostRedirects($term->term_id);
         $status = wp_delete_term($term->term_id, $term->taxonomy);
         $this->createPostRedirects();
