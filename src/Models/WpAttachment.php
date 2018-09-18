@@ -23,7 +23,7 @@ class WpAttachment
         add_filter('attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2);
         add_filter('attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2);
         // load existing value from caption field and pass to acf
-        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], null, 3);
+        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], 0, 3);
         add_action('admin_head', [__CLASS__, 'remove_caption_field']);
         add_filter('attachment_fields_to_save', [__CLASS__, 'save_caption_to_wordpress'], 0, 2);
 
