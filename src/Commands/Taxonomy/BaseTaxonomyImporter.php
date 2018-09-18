@@ -72,9 +72,13 @@ class BaseTaxonomyImporter extends BaseCmd
 
     protected function get_sites()
     {
-        return collect(ContenthubEditor::instance()->settings->get_languages())->pluck('locale')->map(function ($locale) {
-            return ContenthubEditor::instance()->settings->get_site($locale);
-        })->rejectNullValues();
+        return collect(ContenthubEditor::instance()->settings->get_languages())
+            ->pluck('locale')
+            ->map(function ($locale) {
+                return ContenthubEditor::instance()->settings->get_site($locale);
+            })->reject(function ($site) {
+                return is_null($site);
+            });
     }
 
     protected function get_site()

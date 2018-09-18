@@ -33,7 +33,7 @@ class Vocabularies extends BaseCmd
     public function import()
     {
         $vocabularies = collect();
-        $this->map_sites(function ($site) use ($vocabularies) {
+        $this->mapSites(function ($site) use ($vocabularies) {
             $this->map_vocabularies($site, function ($vocabulary) use ($vocabularies) {
                 $vocabularies[$vocabulary->content_hub_id] = $vocabulary;
                 WP_CLI::line('Importing: ' . $vocabulary->name);
