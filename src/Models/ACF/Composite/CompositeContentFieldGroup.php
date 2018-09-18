@@ -288,7 +288,7 @@ class CompositeContentFieldGroup
                                         ],
                                         'allow_null' => 0,
                                         'other_choice' => 0,
-                                        'default_value' => 'nofollow',
+                                        'default_value' => 'follow',
                                         'layout' => 'vertical',
                                         'return_format' => 'value',
                                         'save_other_choice' => 0,

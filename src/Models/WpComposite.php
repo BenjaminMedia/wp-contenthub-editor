@@ -137,29 +137,6 @@ class WpComposite
             $contentHubId = base64_encode(sprintf('COMPOSITES-%s-%s', $site->brand->brand_code, $postId));
             update_post_meta($postId, WpComposite::POST_META_CONTENTHUB_ID, $contentHubId);
         }
-
-        // Find images on the article and check that internal links have the relationship 'follow'
-        if (($acfFields = get_fields($postId)) && $compositeContent = $acfFields['composite_content'] ?? null) {
-            // Get a list of url hosts
-            $languageList = collect(LanguageProvider::getLanguageList())->map(function ($language) {
-                return parse_url($language->home_url, PHP_URL_HOST);
-            });
-            // Go throug all composite contents on the article.
-            $content = collect($compositeContent)->map(function ($widget) use ($languageList) {
-                // Check that the current widget is an image
-                // and that it has a link
-                if ($widget['acf_fc_layout'] === 'image' && $link = $widget['link']) {
-                    // If the host of the link is in the language list
-                    // it's an internal link and we'll force the rel
-                    if ($languageList->contains(parse_url($link, PHP_URL_HOST))) {
-                        $widget['rel'] = 'follow';
-                    }
-                }
-                return $widget;
-            })->toArray();
-            // Save the content
-            update_field('composite_content', $content, $postId);
-        }
     }
 
 
