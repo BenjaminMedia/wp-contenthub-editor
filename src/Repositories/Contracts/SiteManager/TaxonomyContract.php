@@ -7,5 +7,7 @@ interface TaxonomyContract
 
     public static function find_by_id($id);
 
+    public static function find_by_content_hub_id($id);
+
     public static function find_by_brand_id($id, $page = 1);
 }
