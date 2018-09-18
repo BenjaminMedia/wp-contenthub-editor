@@ -24,8 +24,8 @@ class WpTerm
         $whitealbumId
     ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
-            'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name),
+            'parent'      => $parentTermId,
+            'slug'        => SlugHelper::create_slug($name),
             'description' => $description
         ]);
 
@@ -54,9 +54,9 @@ class WpTerm
         $whitealbumId
     ) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
-            'name' => $name,
-            'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name),
+            'name'        => $name,
+            'parent'      => $parentTermId,
+            'slug'        => SlugHelper::create_slug($name),
             'description' => $description
         ]);
 
@@ -97,6 +97,16 @@ class WpTerm
         return $wpdb->get_var(
             $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'whitealbum_id', $id)
         );
+    }
+
+    /*
+    * @param $id integer wp_term->term_id
+    *
+    * @return null|string
+    */
+    public static function content_hub_id($id)
+    {
+        return get_term_meta($id, 'content_hub_id', true);
     }
 
     private static function log($type, $message)

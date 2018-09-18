@@ -35,6 +35,22 @@ class Tags extends BaseTaxonomyImporter
         WP_CLI::success('Done importing tags');
     }
 
+
+    /**
+     * Syncs local terms with site manager
+     *
+     * ## EXAMPLES
+     *
+     * wp contenthub editor tags sync
+     *
+     */
+    public function sync()
+    {
+        $this->triggerSync('post_tag', [TagRepository::class, 'find_by_content_hub_id']);
+
+        WP_CLI::success('Done syncing Tags');
+    }
+
     /**
      * Cleans failed tags imports
      *
