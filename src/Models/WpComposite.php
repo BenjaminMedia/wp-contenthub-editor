@@ -90,6 +90,7 @@ class WpComposite
 
     private static function register_acf_fields()
     {
+        AttachmentGroup::register();
         CompositeFieldGroup::register();
         MagazineFieldGroup::register();
         MetaFieldGroup::register();
