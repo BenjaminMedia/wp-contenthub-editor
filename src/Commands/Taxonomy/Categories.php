@@ -36,6 +36,21 @@ class Categories extends BaseTaxonomyImporter
     }
 
     /**
+     * Imports taxonomy from site-manager
+     *
+     * ## EXAMPLES
+     *
+     * wp contenthub editor categories sync
+     *
+     */
+    public function sync()
+    {
+        $this->triggerSync('category', [CategoryRepository::class, 'find_by_content_hub_id']);
+
+        WP_CLI::success('Done importing Categories');
+    }
+
+    /**
      * Cleans failed category imports
      *
      * ## OPTIONS
