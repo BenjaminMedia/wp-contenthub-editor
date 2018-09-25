@@ -100,11 +100,14 @@ class TermImportHelper
 
     protected function getWpTaxonomy($taxonomy)
     {
+        $customTaxonomies = WpTaxonomy::get_custom_taxonomies();
         $wpTaxonomy = collect([
             'category' => 'category',
             'tag' => 'post_tag',
             'post_tag' => 'post_tag'
-        ])->get($taxonomy);
+        ])->merge($customTaxonomies->isEmpty() ? [] : $customTaxonomies->pluck('machine_name')->keyBy(function($machineName){
+            return $machineName;
+        }))->get($taxonomy);
         if (!$wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }

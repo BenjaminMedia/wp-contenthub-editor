@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
+use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Repositories\SiteManager\TagRepository;
 use WP_CLI;
 
@@ -46,6 +47,9 @@ class Tags extends BaseTaxonomyImporter
      */
     public function sync()
     {
+        WpTaxonomy::get_custom_taxonomies()->each(function($customTaxonomy){
+            $this->triggerSync($customTaxonomy->machine_name, [TagRepository::class, 'find_by_content_hub_id']);
+        });
         $this->triggerSync('post_tag', [TagRepository::class, 'find_by_content_hub_id']);
 
         WP_CLI::success('Done syncing Tags');
