@@ -47,7 +47,7 @@ class Tags extends BaseTaxonomyImporter
      */
     public function sync()
     {
-        WpTaxonomy::get_custom_taxonomies()->each(function($customTaxonomy){
+        WpTaxonomy::get_custom_taxonomies()->each(function ($customTaxonomy) {
             $this->triggerSync($customTaxonomy->machine_name, [TagRepository::class, 'find_by_content_hub_id']);
         });
         $this->triggerSync('post_tag', [TagRepository::class, 'find_by_content_hub_id']);

@@ -105,7 +105,7 @@ class TermImportHelper
             'category' => 'category',
             'tag' => 'post_tag',
             'post_tag' => 'post_tag'
-        ])->merge($customTaxonomies->isEmpty() ? [] : $customTaxonomies->pluck('machine_name')->keyBy(function($machineName){
+        ])->merge($customTaxonomies->isEmpty() ? [] : $customTaxonomies->pluck('machine_name')->keyBy(function ($machineName) {
             return $machineName;
         }))->get($taxonomy);
         if (!$wpTaxonomy) {
