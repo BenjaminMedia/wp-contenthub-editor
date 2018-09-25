@@ -34,6 +34,7 @@ class CmdManager
             Categories::register();
             Vocabularies::register();
             WaContent::register();
+            WaRedirectResolver::register();
         }
     }
 }
