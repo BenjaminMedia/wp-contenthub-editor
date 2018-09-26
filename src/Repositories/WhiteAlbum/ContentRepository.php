@@ -21,11 +21,13 @@ class ContentRepository
     /**
      * ContentRepository constructor.
      */
-    public function __construct()
+    public function __construct($whiteAlbumEndpoint = null)
     {
-        $this->client = new \GuzzleHttp\Client([
-            'base_uri' => getenv('WHITEALBUM_ENDPOINT'),
-        ]);
+        $this->client = new \GuzzleHttp\Client(
+            [
+                'base_uri' => $whiteAlbumEndpoint ?: env('WHITEALBUM_ENDPOINT'),
+            ]
+        );
     }
 
     public function find_by_id($id, $resource = null)
@@ -34,7 +36,8 @@ class ContentRepository
             $resource = static::ARTICLE_RESOURCE;
         }
 
-        return $this->get($resource . $id, [
+        return $this->get(
+            $resource . $id, [
             'auth' => [
                 env('WHITEALBUM_USER'),
                 env('WHITEALBUM_PASSWORD'),
@@ -44,7 +47,8 @@ class ContentRepository
 
     public function get_all($page = 1, $perPage = 50)
     {
-        return $this->get(static::CONTENT_RESOURCE, [
+        return $this->get(
+            static::CONTENT_RESOURCE, [
             'query' => [
                 'page' => $page,
                 'per_page' => $perPage
@@ -55,16 +59,20 @@ class ContentRepository
     public function map_all($callback)
     {
         $contents = collect($this->get_all($page = 1));
-        while (! $contents->isEmpty()) {
-            collect($contents)->each(function ($content) use ($callback) {
-                $resource = collect([
-                    'Article' => static::ARTICLE_RESOURCE,
-                    'Gallery' => static::GALLERY_RESOURCE,
-                ])->get($content->type);
-                if ($contentFound = $this->find_by_id($content->id, $resource)) {
-                    $callback($contentFound);
+        while (!$contents->isEmpty()) {
+            collect($contents)->each(
+                function ($content) use ($callback) {
+                    $resource = collect(
+                        [
+                            'Article' => static::ARTICLE_RESOURCE,
+                            'Gallery' => static::GALLERY_RESOURCE,
+                        ]
+                    )->get($content->type);
+                    if ($contentFound = $this->find_by_id($content->id, $resource)) {
+                        $callback($contentFound);
+                    }
                 }
-            });
+            );
             $page++;
             $contents = collect($this->get_all($page));
         }
@@ -75,6 +83,7 @@ class ContentRepository
         try {
             $response = @$this->client->get($url, $options);
         } catch (Exception $e) {
+            \WP_CLI::error(sprintf('unable to fetch %s. %s', $url, $e->getMessage()));
             return null;
         }
         if ($response->getStatusCode() !== 200) {

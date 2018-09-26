@@ -12,6 +12,7 @@ use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Bonnier\WP\Redirect\Model\Post;
+use Codeception\Module\WPCLI;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -24,6 +25,8 @@ use WP_Post;
 class WaContent extends BaseCmd
 {
     const CMD_NAMESPACE = 'wa content';
+
+    private $repository = null;
 
     public static function register()
     {
@@ -56,15 +59,15 @@ class WaContent extends BaseCmd
         $this->disableHooks(); // Disable various hooks and filters during import
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
 
-        $repository = new ContentRepository();
+        $this->repository = new ContentRepository();
         if ($contentId = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
                 'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
-            $this->importComposite($repository->find_by_id($contentId, $resource));
+            $this->importComposite($this->repository->find_by_id($contentId, $resource));
         } else {
-            $repository->map_all(function ($waContent) {
+            $this->repository->map_all(function ($waContent) {
                 $this->importComposite($waContent);
             });
         }
@@ -72,6 +75,7 @@ class WaContent extends BaseCmd
 
     private function importComposite($waContent)
     {
+
         if (!$waContent) {
             return;
         }
@@ -125,6 +129,83 @@ class WaContent extends BaseCmd
     private function handleTranslation($postId, $waContent)
     {
         LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
+
+        //if this is not the master translation, just return
+        if (!$waContent->translation->is_master || !isset($waContent->translation)) {
+            return;
+        }
+
+        $postTranslations = collect($waContent->translation->translation_ids);
+
+        if (empty($postTranslations)) {
+            WP_CLI::warning('found no translations. returning.');
+            return;
+        }
+
+        WP_CLI::success(sprintf('found the following translations: %s', json_encode($postTranslations, JSON_PRETTY_PRINT)));
+        $translationPostIds = $postTranslations->map(
+            function ($translation_id, $locale) use ($waContent) {
+                if (null == ( env($endpoint = strtoupper('WHITEALBUM_ENDPOINT_'.$locale)))) {
+                    WP_CLI::warning(sprintf('%s has not been defined in your ENV file.', $endpoint));
+                    return;
+                }
+                $repository = new ContentRepository(env($endpoint));
+                $translation_post_id = null;
+                if ($translation_post_id = WpComposite::id_from_white_album_id($translation_id)) {
+                    WP_CLI::success(sprintf('found imported translation: %s', $translation_post_id));
+                } else {
+                    //if associated post isn't imported yet, check both articles and galleries
+                    $translation = collect(
+                        [
+                        'article' => ContentRepository::ARTICLE_RESOURCE,
+                        'gallery' => ContentRepository::GALLERY_RESOURCE,
+                        ]
+                    )->map(
+                        function ($endpoint, $contentType) use ($translation_id,$repository, $locale) {
+                            WP_CLI::line(sprintf('looking for a %s with the id: %s on %s ', $contentType, $translation_id, $locale));
+
+                            if ($translation  = $repository->find_by_id($translation_id, $endpoint)) {
+                                WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
+                                $this->importComposite($translation);
+                                $translationPostId = WpComposite::id_from_white_album_id($translation_id);
+                                return $translationPostId;
+                            }
+                            WP_CLI::line(sprintf('no translations for %s of type %s found.', $locale, $contentType));
+                        }
+                    )->reject(
+                        function ($item) {
+                            return empty($item);
+                        }
+                    );
+                    if (empty($translation)) {
+                        WP_CLI::line(sprintf('no translations for %s found.', $translation_id));
+                        return;
+                    }
+
+                    return $translation->first();
+
+                }
+                WP_CLI::line(sprintf('found post id: %s', $translation_post_id));
+                return $translation_post_id;
+            }
+        )->reject(
+            function ($item) {
+                return empty($item);
+            }
+        );
+        if ($translationPostIds->isEmpty()) {
+            WP_CLI::error('locale specific endpoints are missing', true);
+            return;
+        }
+
+        pll_save_post_translations($translationPostIds);
+        WP_CLI::success(
+            sprintf(
+                'attached the following translations %s to: %s',
+                $translationPostIds,
+                $waContent->widget_content->title
+            )
+        );
     }
 
     private function setMeta($postId, $waContent)
