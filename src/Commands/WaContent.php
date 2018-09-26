@@ -75,7 +75,6 @@ class WaContent extends BaseCmd
 
     private function importComposite($waContent)
     {
-
         if (!$waContent) {
             return;
         }
@@ -145,7 +144,7 @@ class WaContent extends BaseCmd
         WP_CLI::success(sprintf('found the following translations: %s', json_encode($postTranslations, JSON_PRETTY_PRINT)));
         $translationPostIds = $postTranslations->map(
             function ($translation_id, $locale) use ($waContent) {
-                if (null == ( env($endpoint = strtoupper('WHITEALBUM_ENDPOINT_'.$locale)))) {
+                if (null == (env($endpoint = strtoupper('WHITEALBUM_ENDPOINT_'.$locale)))) {
                     WP_CLI::warning(sprintf('%s has not been defined in your ENV file.', $endpoint));
                     return;
                 }
@@ -183,7 +182,6 @@ class WaContent extends BaseCmd
                     }
 
                     return $translation->first();
-
                 }
                 WP_CLI::line(sprintf('found post id: %s', $translation_post_id));
                 return $translation_post_id;
