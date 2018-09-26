@@ -187,7 +187,8 @@ class WaContent extends BaseCmd
         );
     }
 
-    private function findMatchingTranslation($whiteAlbumId, $repository) {
+    private function findMatchingTranslation($whiteAlbumId, $repository)
+    {
         if ($article = $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE)) {
             return $article;
         } elseif ($gallery = $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE)) {
@@ -196,8 +197,8 @@ class WaContent extends BaseCmd
         return null;
     }
 
-    private function lookUpTranslation($id, $repository){
-
+    private function lookUpTranslation($id, $repository)
+    {
         if ($translation  = $this->findMatchingTranslation($id, $repository)) {
             WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
             $this->importComposite($translation);
