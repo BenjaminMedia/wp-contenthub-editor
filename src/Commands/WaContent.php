@@ -136,7 +136,7 @@ class WaContent extends BaseCmd
 
         $postTranslations = collect($waContent->translation->translation_ids);
 
-        if (empty($postTranslations)) {
+        if ($postTranslations->isEmpty()) {
             WP_CLI::warning('found no translations. returning.');
             return;
         }
@@ -144,39 +144,20 @@ class WaContent extends BaseCmd
         WP_CLI::success(sprintf('found the following translations: %s', json_encode($postTranslations, JSON_PRETTY_PRINT)));
         $translationPostIds = $postTranslations->map(
             function ($translation_id, $locale) use ($waContent) {
-                if (null == (env($endpoint = strtoupper('WHITEALBUM_ENDPOINT_'.$locale)))) {
-                    WP_CLI::warning(sprintf('%s has not been defined in your ENV file.', $endpoint));
+                $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
+                if (!$endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
+                    WP_CLI::warning(sprintf('%s has not been defined in your ENV file.', $envKey));
                     return;
                 }
-                $repository = new ContentRepository(env($endpoint));
+                $repository = new ContentRepository($endpoint);
                 $translation_post_id = null;
                 if ($translation_post_id = WpComposite::id_from_white_album_id($translation_id)) {
                     WP_CLI::success(sprintf('found imported translation: %s', $translation_post_id));
                 } else {
-                    //if associated post isn't imported yet, check both articles and galleries
-                    $translation = collect(
-                        [
-                        'article' => ContentRepository::ARTICLE_RESOURCE,
-                        'gallery' => ContentRepository::GALLERY_RESOURCE,
-                        ]
-                    )->map(
-                        function ($endpoint, $contentType) use ($translation_id,$repository, $locale) {
-                            WP_CLI::line(sprintf('looking for a %s with the id: %s on %s ', $contentType, $translation_id, $locale));
+                    return $this->lookUpTranslation($translation_id, $repository);
 
-                            if ($translation  = $repository->find_by_id($translation_id, $endpoint)) {
-                                WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
-                                $this->importComposite($translation);
-                                $translationPostId = WpComposite::id_from_white_album_id($translation_id);
-                                return $translationPostId;
-                            }
-                            WP_CLI::line(sprintf('no translations for %s of type %s found.', $locale, $contentType));
-                        }
-                    )->reject(
-                        function ($item) {
-                            return empty($item);
-                        }
-                    );
-                    if (empty($translation)) {
+
+                    if ($translation->isEmpty()) {
                         WP_CLI::line(sprintf('no translations for %s found.', $translation_id));
                         return;
                     }
@@ -196,7 +177,7 @@ class WaContent extends BaseCmd
             return;
         }
 
-        pll_save_post_translations($translationPostIds);
+        LanguageProvider::savePostTranslations($translationPostIds->toArray());
         WP_CLI::success(
             sprintf(
                 'attached the following translations %s to: %s',
@@ -204,6 +185,25 @@ class WaContent extends BaseCmd
                 $waContent->widget_content->title
             )
         );
+    }
+
+    private function findMatchingTranslation($whiteAlbumId, $repository) {
+        if ($article = $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE)) {
+            return $article;
+        } elseif ($gallery = $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE)) {
+            return $gallery;
+        }
+        return null;
+    }
+
+    private function lookUpTranslation($id, $repository){
+
+        if ($translation  = $this->findMatchingTranslation($id, $repository)) {
+            WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
+            $this->importComposite($translation);
+            $translationPostId = WpComposite::id_from_white_album_id($id);
+            return $translationPostId;
+        }
     }
 
     private function setMeta($postId, $waContent)
@@ -240,19 +240,19 @@ class WaContent extends BaseCmd
                             'Widgets::InfoBox' => 'info_box',
                             'Widgets::Video' => 'video',
                         ])
-                        ->get($waWidget->type, null),
+                            ->get($waWidget->type, null),
                     ])
-                    ->merge($waWidget->properties) // merge properties
-                    ->merge($waWidget->image ?? null); // merge image
+                        ->merge($waWidget->properties) // merge properties
+                        ->merge($waWidget->image ?? null); // merge image
                 })
                 ->prepend(
                     $waContent->widget_content->lead_image ? // prepend lead image
-                    collect([
-                        'type'       => 'image',
-                        'lead_image' => true
-                    ])
-                    ->merge($waContent->widget_content->lead_image)
-                    : null
+                        collect([
+                            'type'       => 'image',
+                            'lead_image' => true
+                        ])
+                            ->merge($waContent->widget_content->lead_image)
+                        : null
                 )->itemsToObject()->map(function ($content) {
                     return $this->fixFaultyImageFormats($content);
                 });
@@ -532,15 +532,15 @@ class WaContent extends BaseCmd
     private function getVideoProvider($provider)
     {
         switch ($provider) {
-        case 'youtube':
-            return 'https://www.youtube.com/embed/';
-          break;
-        case 'vimeo':
-          return 'https://player.vimeo.com/video/';
-          break;
-        case 'video23':
-          return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
-          break;
-      }
+            case 'youtube':
+                return 'https://www.youtube.com/embed/';
+                break;
+            case 'vimeo':
+                return 'https://player.vimeo.com/video/';
+                break;
+            case 'video23':
+                return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
+                break;
+        }
     }
 }
