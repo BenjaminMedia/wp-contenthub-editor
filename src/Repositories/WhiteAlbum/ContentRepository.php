@@ -21,11 +21,18 @@ class ContentRepository
     /**
      * ContentRepository constructor.
      */
-    public function __construct($whiteAlbumEndpoint = null)
+    public function __construct($locale = null)
     {
+        $endpoint = null;
+        if ($locale) {
+            $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
+            if (!$endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
+                throw new Exception(sprintf('%s has not been defined in your ENV file.', $envKey));
+            }
+        }
         $this->client = new \GuzzleHttp\Client(
             [
-                'base_uri' => $whiteAlbumEndpoint ?: env('WHITEALBUM_ENDPOINT'),
+                'base_uri' => $endpoint ?: env('WHITEALBUM_ENDPOINT'),
             ]
         );
     }

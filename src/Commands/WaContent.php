@@ -134,77 +134,41 @@ class WaContent extends BaseCmd
             return;
         }
 
-        $postTranslations = collect($waContent->translation->translation_ids);
-
-        if ($postTranslations->isEmpty()) {
-            WP_CLI::warning('found no translations. returning.');
-            return;
-        }
-
-        WP_CLI::success(sprintf('found the following translations: %s', json_encode($postTranslations, JSON_PRETTY_PRINT)));
-        $translationPostIds = $postTranslations->map(
+        $translationPostIds = collect($waContent->translation->translation_ids)->map(
             function ($translation_id, $locale) use ($waContent) {
-                $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
-                if (!$endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
-                    WP_CLI::warning(sprintf('%s has not been defined in your ENV file.', $envKey));
-                    return;
-                }
-                $repository = new ContentRepository($endpoint);
-                $translation_post_id = null;
-                if ($translation_post_id = WpComposite::id_from_white_album_id($translation_id)) {
-                    WP_CLI::success(sprintf('found imported translation: %s', $translation_post_id));
-                } else {
-                    return $this->lookUpTranslation($translation_id, $repository);
 
-
-                    if ($translation->isEmpty()) {
-                        WP_CLI::line(sprintf('no translations for %s found.', $translation_id));
-                        return;
-                    }
-
-                    return $translation->first();
-                }
-                WP_CLI::line(sprintf('found post id: %s', $translation_post_id));
-                return $translation_post_id;
+                return WpComposite::id_from_white_album_id($translation_id) ?:
+                    $this->lookUpTranslation($translation_id, $locale);
             }
-        )->reject(
-            function ($item) {
-                return empty($item);
-            }
-        );
-        if ($translationPostIds->isEmpty()) {
-            WP_CLI::error('locale specific endpoints are missing', true);
-            return;
-        }
-
+        )->rejectNullValues();
         LanguageProvider::savePostTranslations($translationPostIds->toArray());
-        WP_CLI::success(
-            sprintf(
-                'attached the following translations %s to: %s',
-                $translationPostIds,
-                $waContent->widget_content->title
-            )
-        );
-    }
-
-    private function findMatchingTranslation($whiteAlbumId, $repository)
-    {
-        if ($article = $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE)) {
-            return $article;
-        } elseif ($gallery = $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE)) {
-            return $gallery;
+        if (!$translationPostIds->isEmpty()) {
+            WP_CLI::success(
+                sprintf(
+                    'attached the following translations %s to: %s',
+                    $translationPostIds,
+                    $waContent->widget_content->title
+                )
+            );
         }
-        return null;
     }
 
-    private function lookUpTranslation($id, $repository)
+    private function findMatchingTranslation($whiteAlbumId, $locale)
     {
-        if ($translation  = $this->findMatchingTranslation($id, $repository)) {
+        $repository = new ContentRepository($locale);
+        return $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
+            $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
+    }
+
+    private function lookUpTranslation($id, $locale)
+    {
+        if ($translation  = $this->findMatchingTranslation($id, $locale)) {
             WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
             $this->importComposite($translation);
-            $translationPostId = WpComposite::id_from_white_album_id($id);
-            return $translationPostId;
+            return WpComposite::id_from_white_album_id($id);
         }
+        WP_CLI::warning(sprintf('no translations for %s found.', $id));
+        return null;
     }
 
     private function setMeta($postId, $waContent)
