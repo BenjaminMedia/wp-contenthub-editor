@@ -83,7 +83,7 @@ class ContentRepository
         try {
             $response = @$this->client->get($url, $options);
         } catch (Exception $e) {
-            \WP_CLI::error(sprintf('unable to fetch %s. %s', $url, $e->getMessage()));
+            \WP_CLI::error(sprintf('unable to fetch %s. %s', $url, $e->getMessage()), false);
             return null;
         }
         if ($response->getStatusCode() !== 200) {
