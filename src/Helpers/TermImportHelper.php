@@ -25,7 +25,7 @@ class TermImportHelper
             if (!collect(LanguageProvider::getSimpleLanguageList())->contains($languageCode)) {
                 return null;
             }
-            return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
+            return [$languageCode, $this->importTerm($name, $languageCode, $externalTerm)];
             // Creates an associative array with language code as key and term id as value
         })->toAssoc()->rejectNullValues()->toArray();
         LanguageProvider::saveTermTranslations($termIdsByLocale);
@@ -34,10 +34,21 @@ class TermImportHelper
 
     public function deleteTerm(\WP_Term $term)
     {
+        $termLink = get_term_link($term->term_id, $this->taxonomy);
         $this->preparePostRedirects($term->term_id);
-        $status = wp_delete_term($term->term_id, $term->taxonomy);
+        $result = wp_delete_term($term->term_id, $this->taxonomy);
         $this->createPostRedirects();
-        return is_wp_error($status) ? false : true;
+        if (! is_wp_error($result)) {
+            BonnierRedirect::addRedirect(
+                parse_url($termLink, PHP_URL_PATH),
+                '/', // Redirect deleted term to front page
+                LanguageProvider::getTermLanguage($term->term_id),
+                'term-delete',
+                $term->term_id
+            );
+            return true;
+        }
+        return false;
     }
 
     protected function importTerm($name, $languageCode, $externalTerm)
@@ -79,7 +90,7 @@ class TermImportHelper
 
     protected function getParentTermId($languageCode, $externalCategory)
     {
-        if (!isset($externalCategory->name->{$languageCode})) {
+        if (! isset($externalCategory->name->{$languageCode})) {
             // Make sure we only create the parent term if a translation exists for the language of the child term
             return null;
         }
@@ -94,9 +105,10 @@ class TermImportHelper
     {
         collect($externalTerm->content_hub_ids)->each(function ($contentHubId) {
             if ($wpTermId = WpTerm::id_from_contenthub_id($contentHubId) ?? null) {
-                $this->preparePostRedirects($wpTermId);
-                wp_delete_term($wpTermId, $this->taxonomy);
-                $this->createPostRedirects();
+                $wpTerm = get_term($wpTermId);
+                if ($wpTerm instanceof \WP_Term) {
+                    $this->deleteTerm($wpTerm);
+                }
             }
         });
     }
@@ -105,10 +117,10 @@ class TermImportHelper
     {
         $wpTaxonomy = collect([
             'category' => 'category',
-            'tag' => 'post_tag',
+            'tag'      => 'post_tag',
             'post_tag' => 'post_tag'
         ])->get($taxonomy);
-        if (!$wpTaxonomy) {
+        if (! $wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
         return $wpTaxonomy;
@@ -124,8 +136,8 @@ class TermImportHelper
                 'tax_query' => [
                     [
                         'taxonomy' => $this->taxonomy,
-                        'field' => 'id',
-                        'terms' => $existingTermId
+                        'field'    => 'id',
+                        'terms'    => $existingTermId
                     ]
                 ]
             ]))->reduce(function ($out, \WP_Post $post) {
