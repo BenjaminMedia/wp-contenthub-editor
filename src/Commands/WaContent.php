@@ -12,6 +12,7 @@ use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Bonnier\WP\Redirect\Model\Post;
+use Codeception\Module\WPCLI;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -24,6 +25,8 @@ use WP_Post;
 class WaContent extends BaseCmd
 {
     const CMD_NAMESPACE = 'wa content';
+
+    private $repository = null;
 
     public static function register()
     {
@@ -56,15 +59,15 @@ class WaContent extends BaseCmd
         $this->disableHooks(); // Disable various hooks and filters during import
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
 
-        $repository = new ContentRepository();
+        $this->repository = new ContentRepository();
         if ($contentId = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
                 'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
-            $this->importComposite($repository->find_by_id($contentId, $resource));
+            $this->importComposite($this->repository->find_by_id($contentId, $resource));
         } else {
-            $repository->map_all(function ($waContent) {
+            $this->repository->map_all(function ($waContent) {
                 $this->importComposite($waContent);
             });
         }
@@ -125,6 +128,46 @@ class WaContent extends BaseCmd
     private function handleTranslation($postId, $waContent)
     {
         LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
+
+        //if this is not the master translation, just return
+        if (!$waContent->translation->is_master || !isset($waContent->translation)) {
+            return;
+        }
+
+        $translationPostIds = collect($waContent->translation->translation_ids)->map(
+            function ($translation_id, $locale) use ($waContent) {
+                return WpComposite::id_from_white_album_id($translation_id) ?:
+                    $this->lookUpTranslation($translation_id, $locale);
+            }
+        )->rejectNullValues();
+        LanguageProvider::savePostTranslations($translationPostIds->toArray());
+        if (!$translationPostIds->isEmpty()) {
+            WP_CLI::success(
+                sprintf(
+                    'attached the following translations %s to: %s',
+                    $translationPostIds,
+                    $waContent->widget_content->title
+                )
+            );
+        }
+    }
+
+    private function findMatchingTranslation($whiteAlbumId, $locale)
+    {
+        $repository = new ContentRepository($locale);
+        return $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
+            $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
+    }
+
+    private function lookUpTranslation($id, $locale)
+    {
+        if ($translation  = $this->findMatchingTranslation($id, $locale)) {
+            WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
+            $this->importComposite($translation);
+            return WpComposite::id_from_white_album_id($id);
+        }
+        WP_CLI::warning(sprintf('no translations for %s found.', $id));
+        return null;
     }
 
     private function setMeta($postId, $waContent)
@@ -161,19 +204,19 @@ class WaContent extends BaseCmd
                             'Widgets::InfoBox' => 'info_box',
                             'Widgets::Video' => 'video',
                         ])
-                        ->get($waWidget->type, null),
+                            ->get($waWidget->type, null),
                     ])
-                    ->merge($waWidget->properties) // merge properties
-                    ->merge($waWidget->image ?? null); // merge image
+                        ->merge($waWidget->properties) // merge properties
+                        ->merge($waWidget->image ?? null); // merge image
                 })
                 ->prepend(
                     $waContent->widget_content->lead_image ? // prepend lead image
-                    collect([
-                        'type'       => 'image',
-                        'lead_image' => true
-                    ])
-                    ->merge($waContent->widget_content->lead_image)
-                    : null
+                        collect([
+                            'type'       => 'image',
+                            'lead_image' => true
+                        ])
+                            ->merge($waContent->widget_content->lead_image)
+                        : null
                 )->itemsToObject()->map(function ($content) {
                     return $this->fixFaultyImageFormats($content);
                 });
@@ -453,15 +496,15 @@ class WaContent extends BaseCmd
     private function getVideoProvider($provider)
     {
         switch ($provider) {
-        case 'youtube':
-            return 'https://www.youtube.com/embed/';
-          break;
-        case 'vimeo':
-          return 'https://player.vimeo.com/video/';
-          break;
-        case 'video23':
-          return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
-          break;
-      }
+            case 'youtube':
+                return 'https://www.youtube.com/embed/';
+                break;
+            case 'vimeo':
+                return 'https://player.vimeo.com/video/';
+                break;
+            case 'video23':
+                return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
+                break;
+        }
     }
 }
