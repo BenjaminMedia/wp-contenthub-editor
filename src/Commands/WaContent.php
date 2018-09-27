@@ -136,7 +136,6 @@ class WaContent extends BaseCmd
 
         $translationPostIds = collect($waContent->translation->translation_ids)->map(
             function ($translation_id, $locale) use ($waContent) {
-
                 return WpComposite::id_from_white_album_id($translation_id) ?:
                     $this->lookUpTranslation($translation_id, $locale);
             }
