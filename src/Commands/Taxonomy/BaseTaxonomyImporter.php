@@ -32,7 +32,7 @@ class BaseTaxonomyImporter extends BaseCmd
         $this->taxonomy = $taxonomy;
         $this->termImporter = new TermImportHelper($taxonomy);
         $this->getTermCallback = $getTermCallback;
-        $this->mapTerms($this->get_site(), function ($externalTag) {
+        $this->mapTerms($this->getSite(), function ($externalTag) {
             $this->termImporter->importTermAndLinkTranslations($externalTag);
         });
     }
