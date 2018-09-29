@@ -24,7 +24,7 @@ class TermImportHelper
             if (!collect(pll_languages_list())->contains($languageCode)) {
                 return null;
             }
-            return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
+            return [$languageCode, $this->importTerm($name, $languageCode, $externalTerm)];
             // Creates an associative array with language code as key and term id as value
         })->toAssoc()->rejectNullValues()->toArray();
         pll_save_term_translations($termIdsByLocale);
@@ -33,15 +33,29 @@ class TermImportHelper
 
     public function deleteTerm(\WP_Term $term)
     {
+        $termLink = get_term_link($term->term_id, $this->taxonomy);
+        if($this->taxonomy === 'category')
+            $termLink = str_replace('/category', '', $termLink);
         $this->preparePostRedirects($term->term_id);
-        $status = wp_delete_term($term->term_id, $term->taxonomy);
+        $result = wp_delete_term($term->term_id, $this->taxonomy);
         $this->createPostRedirects();
-        return is_wp_error($status) ? false : true;
+        if (! is_wp_error($result)) {
+            BonnierRedirect::addRedirect(
+                parse_url($termLink, PHP_URL_PATH),
+                '/', // Redirect deleted term to front page
+                pll_get_term_language($term->term_id),
+                'term-delete',
+                $term->term_id
+            );
+            return true;
+        }
+        return false;
     }
 
     protected function importTerm($name, $languageCode, $externalTerm)
     {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
+        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode} ?? null;
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
@@ -63,7 +77,8 @@ class TermImportHelper
                 $taxonomy,
                 $parentTermId,
                 $description,
-                $internal
+                $internal,
+                $whitealbumId
             )) {
                 $this->createPostRedirects();
                 return true;
@@ -71,12 +86,12 @@ class TermImportHelper
             return false;
         }
         // Create new term
-        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
+        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal, $whitealbumId);
     }
 
     protected function getParentTermId($languageCode, $externalCategory)
     {
-        if (!isset($externalCategory->name->{$languageCode})) {
+        if (! isset($externalCategory->name->{$languageCode})) {
             // Make sure we only create the parent term if a translation exists for the language of the child term
             return null;
         }
@@ -91,24 +106,22 @@ class TermImportHelper
     {
         collect($externalTerm->content_hub_ids)->each(function ($contentHubId) {
             if ($wpTermId = WpTerm::id_from_contenthub_id($contentHubId) ?? null) {
-                $this->preparePostRedirects($wpTermId);
-                wp_delete_term($wpTermId, $this->taxonomy);
-                $this->createPostRedirects();
+                $wpTerm = get_term($wpTermId);
+                if ($wpTerm instanceof \WP_Term) {
+                    $this->deleteTerm($wpTerm);
+                }
             }
         });
     }
 
     protected function getWpTaxonomy($taxonomy)
     {
-        $customTaxonomies = WpTaxonomy::get_custom_taxonomies();
         $wpTaxonomy = collect([
             'category' => 'category',
-            'tag' => 'post_tag',
+            'tag'      => 'post_tag',
             'post_tag' => 'post_tag'
-        ])->merge($customTaxonomies->isEmpty() ? [] : $customTaxonomies->pluck('machine_name')->keyBy(function ($machineName) {
-            return $machineName;
-        }))->get($taxonomy);
-        if (!$wpTaxonomy) {
+        ])->get($taxonomy);
+        if (! $wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
         return $wpTaxonomy;
@@ -118,14 +131,14 @@ class TermImportHelper
     {
         if ($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
             $this->permalinksToRedirect = collect(get_posts([
-                'posts_per_page' => 0,
+                'posts_per_page' => -1, // Get all posts that match our query
                 'post_status' => 'publish',
                 'post_type' => WpComposite::POST_TYPE,
                 'tax_query' => [
                     [
                         'taxonomy' => $this->taxonomy,
-                        'field' => 'id',
-                        'terms' => $existingTermId
+                        'field'    => 'id',
+                        'terms'    => $existingTermId
                     ]
                 ]
             ]))->reduce(function ($out, \WP_Post $post) {
@@ -140,8 +153,10 @@ class TermImportHelper
     private function createPostRedirects()
     {
         $this->permalinksToRedirect->each(function ($oldPermalink, $postId) {
+            // Leave name to avoid hitting term cache
             if (($oldParsedUrl = parse_url($oldPermalink)) &&
-                $newPermalink = get_post_permalink($postId, $leaveName = true)) { // Leave name to avoid hitting term cache
+                $newPermalink = get_post_permalink($postId, $leaveName = true)
+            ) {
                 // Since we left the post_name we need to replace it in the permalink.
                 $newPermalink = str_replace('%postname%', get_post($postId)->post_name, $newPermalink);
                 if ($oldPermalink !== $newPermalink) {
