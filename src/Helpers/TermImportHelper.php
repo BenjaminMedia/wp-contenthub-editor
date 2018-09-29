@@ -34,8 +34,9 @@ class TermImportHelper
     public function deleteTerm(\WP_Term $term)
     {
         $termLink = get_term_link($term->term_id, $this->taxonomy);
-        if($this->taxonomy === 'category')
+        if ($this->taxonomy === 'category') {
             $termLink = str_replace('/category', '', $termLink);
+        }
         $this->preparePostRedirects($term->term_id);
         $result = wp_delete_term($term->term_id, $this->taxonomy);
         $this->createPostRedirects();
