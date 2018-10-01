@@ -113,7 +113,7 @@ class TermImportHelper
         });
     }
 
-     protected function getWpTaxonomy($taxonomy)
+    protected function getWpTaxonomy($taxonomy)
     {
         $wpTaxonomy = collect([
             'category' => 'category',
