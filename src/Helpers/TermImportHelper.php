@@ -122,7 +122,7 @@ class TermImportHelper
             'tag'      => 'post_tag',
             'post_tag' => 'post_tag'
         ])
-            ->merge(collect(WpTaxonomy::get_custom_taxonomies()->pluck('machine_name')->keyBy(function($value){
+            ->merge(collect(WpTaxonomy::get_custom_taxonomies()->pluck('machine_name')->keyBy(function ($value) {
                 return $value;
             })))
             ->get($taxonomy);
