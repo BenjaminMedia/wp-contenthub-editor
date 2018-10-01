@@ -113,13 +113,18 @@ class TermImportHelper
         });
     }
 
-    protected function getWpTaxonomy($taxonomy)
+     protected function getWpTaxonomy($taxonomy)
     {
         $wpTaxonomy = collect([
             'category' => 'category',
             'tag'      => 'post_tag',
             'post_tag' => 'post_tag'
-        ])->get($taxonomy);
+        ])
+            ->merge(collect(WpTaxonomy::get_custom_taxonomies()->pluck('machine_name')->keyBy(function ($value) {
+                return $value;
+            })))
+            ->get($taxonomy);
+
         if (! $wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
