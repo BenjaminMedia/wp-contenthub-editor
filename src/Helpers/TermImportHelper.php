@@ -121,13 +121,18 @@ class TermImportHelper
             'category' => 'category',
             'tag'      => 'post_tag',
             'post_tag' => 'post_tag'
-        ])->get($taxonomy);
+        ])
+            ->merge(collect(WpTaxonomy::get_custom_taxonomies()->pluck('machine_name')->keyBy(function ($value) {
+                return $value;
+            })))
+            ->get($taxonomy);
+
         if (! $wpTaxonomy) {
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
         return $wpTaxonomy;
     }
-
+    
     private function preparePostRedirects($existingTermId)
     {
         if ($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
