@@ -183,7 +183,7 @@ class MarkdownEditor extends acf_field
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
             ['acf-input', 'marked-js'],
-            self::VERSION_NUMBER
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/markdown-editor.js')
         );
 
         //ContentHub composite fields validation
@@ -193,7 +193,7 @@ class MarkdownEditor extends acf_field
                 'acf-composite-validation',
                 ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/composite-validation.js',
                 ['acf-input'],
-                self::VERSION_NUMBER
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/composite-validation.js')
             );
         }
 
