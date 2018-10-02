@@ -174,7 +174,7 @@ class MarkdownEditor extends acf_field
             'acf-input-simple-mde',
             ContenthubEditor::instance()->pluginUrl . 'js/simplemde.min.js',
             ['acf-input'],
-            ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js'
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
         );
         wp_enqueue_script('acf-input-simple-mde', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js'));
 
