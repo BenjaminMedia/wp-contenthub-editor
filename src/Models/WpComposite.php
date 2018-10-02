@@ -148,6 +148,7 @@ class WpComposite
      */
     public static function on_save_slug_change($postId, WP_Post $post)
     {
+        remove_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         if (static::post_type_match_and_not_auto_draft($post)) {
             $oldLink = get_permalink();
             if ($oldLink && acf_validate_save_post()) {  // Validate acf input and get old link
@@ -158,6 +159,7 @@ class WpComposite
                 }
             }
         }
+        add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
     }
 
     public static function map_all($callback)
