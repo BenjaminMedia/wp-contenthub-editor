@@ -21,13 +21,6 @@
     return marked(parseCite(parseLink(plaintext)));
   }
 
-  function quote(editor) {
-    var cm = editor.codemirror;
-    var selectedText = cm.getSelection();
-    var text = selectedText || '';
-    cm.replaceSelection('~' + text + '~');
-  }
-
   function createSimpleMde(textArea, options) {
     var mdeOptions = {
       element: textArea,
@@ -42,13 +35,6 @@
       toolbar: [
         "bold",
         "italic",
-        "quote",
-        {
-          name: "cite",
-          action: quote,
-          className: "fa fa-star",
-          title: "Citation",
-        },
         "heading-2",
         "heading-3",
         "|",

@@ -9,7 +9,6 @@ use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
 class MarkdownEditor extends acf_field
 {
-    const VERSION_NUMBER = '3.0.3';
     /*
     *  __construct
     *
@@ -175,15 +174,15 @@ class MarkdownEditor extends acf_field
             'acf-input-simple-mde',
             ContenthubEditor::instance()->pluginUrl . 'js/simplemde.min.js',
             ['acf-input'],
-            self::VERSION_NUMBER
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
         );
-        wp_enqueue_script('acf-input-simple-mde', '', [], self::VERSION_NUMBER);
+        wp_enqueue_script('acf-input-simple-mde', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js'));
 
         wp_enqueue_script(
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
             ['acf-input', 'marked-js'],
-            self::VERSION_NUMBER
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/markdown-editor.js')
         );
 
         //ContentHub composite fields validation
@@ -193,7 +192,7 @@ class MarkdownEditor extends acf_field
                 'acf-composite-validation',
                 ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/composite-validation.js',
                 ['acf-input'],
-                self::VERSION_NUMBER
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/composite-validation.js')
             );
         }
 
@@ -204,16 +203,22 @@ class MarkdownEditor extends acf_field
             $language = $_GET['new_lang'];
         }
         if ($language) {
-            wp_localize_script('acf-input-markdown-editor', 'dictionary', [
-                'dic' => parse_url(
-                    ContenthubEditor::instance()->pluginUrl,
-                    PHP_URL_PATH
-                ) . 'js/lang/' . $language . '.dic.txt?ver=' . self::VERSION_NUMBER,
-                'aff' => parse_url(
-                    ContenthubEditor::instance()->pluginUrl,
-                    PHP_URL_PATH
-                ) . 'js/lang/' . $language . '.aff.txt?ver=' . self::VERSION_NUMBER
-            ]);
+            wp_localize_script(
+                'acf-input-markdown-editor', 'dictionary', [
+                    'dic' => parse_url(
+                            ContenthubEditor::instance()->pluginUrl,
+                            PHP_URL_PATH
+                        ) . 'js/lang/' . $language . '.dic.txt?ver=' . filemtime(
+                            ContenthubEditor::instance()->pluginDir . 'js/lang/' . $language . '.dic.txt'
+                        ),
+                    'aff' => parse_url(
+                            ContenthubEditor::instance()->pluginUrl,
+                            PHP_URL_PATH
+                        ) . 'js/lang/' . $language . '.aff.txt?ver=' . filemtime(
+                            ContenthubEditor::instance()->pluginDir . 'js/lang/' . $language . '.aff.txt'
+                        )
+                ]
+            );
         }
 
         // register & include CSS
@@ -221,9 +226,9 @@ class MarkdownEditor extends acf_field
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'css/simplemde.min.css',
             ['acf-input'],
-            self::VERSION_NUMBER
+            filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
         );
-        wp_enqueue_style('acf-input-markdown-editor', '', [], self::VERSION_NUMBER);
+        wp_enqueue_style('acf-input-markdown-editor', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css'));
     }
 
     /*
