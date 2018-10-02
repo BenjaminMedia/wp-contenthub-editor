@@ -9,7 +9,7 @@ use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
 class MarkdownEditor extends acf_field
 {
-    const VERSION_NUMBER = '3.0.3';
+    const VERSION_NUMBER = '3.3.0';
     /*
     *  __construct
     *
