@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor;
 
+use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
@@ -10,6 +11,7 @@ use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
 use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
+use Bonnier\WP\ContentHub\Editor\Models\WpPage;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Models\WpUserProfile;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
@@ -77,6 +79,7 @@ class ContenthubEditor
 
         // Register custom post type
         WpTaxonomy::register();
+        WpPage::register();
         WpComposite::register();
         WpAttachment::register();
         WpUserProfile::register();

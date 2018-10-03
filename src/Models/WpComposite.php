@@ -13,6 +13,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\TeaserList;
 use WP_Post;
 
 /**
