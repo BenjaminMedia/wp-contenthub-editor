@@ -14,7 +14,7 @@ class AcfName
     const FIELD_TAG = 'tag';
     const FIELD_TITLE = 'title';
     const FIELD_DESCRIPTION = 'description';
-    const FIELD_BACKGROUND_IMAGE = 'background_image';
+    const FIELD_IMAGE = 'image';
     const FIELD_LINK = 'link';
     const FIELD_DISPLAY_HINT = 'display_hint';
 

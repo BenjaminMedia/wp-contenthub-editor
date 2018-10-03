@@ -23,7 +23,7 @@ class TeaserList extends BaseWidget
                 $this->getSettingsTab(),
                 $this->getTitleField(),
                 $this->getDescriptionField(),
-                $this->getBackgroundImageField(),
+                $this->getImageField(),
                 $this->getLinkField(),
                 $this->getDisplayHintField(),
             ], $this->getSortByFields()),
@@ -98,12 +98,12 @@ class TeaserList extends BaseWidget
         ];
     }
 
-    private function getBackgroundImageField()
+    private function getImageField()
     {
         return [
             'key' => 'field_5bb31a7d1d391',
-            'label' => 'Background Image',
-            'name' => AcfName::FIELD_BACKGROUND_IMAGE,
+            'label' => 'Image',
+            'name' => AcfName::FIELD_IMAGE,
             'type' => 'image',
             'instructions' => '',
             'required' => 0,
