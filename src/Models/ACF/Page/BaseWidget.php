@@ -2,8 +2,10 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page;
 
+use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Helpers\SortBy;
+use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 
 class BaseWidget
@@ -99,12 +101,7 @@ class BaseWidget
                     [
                         'field' => $this->sortByField,
                         'operator' => '!=',
-                        'value' => 'manual',
-                    ],
-                    [
-                        'field' => $this->sortByField,
-                        'operator' => '!=',
-                        'value' => 'purchased',
+                        'value' => SortBy::MANUAL,
                     ],
                 ],
             ],
@@ -129,7 +126,7 @@ class BaseWidget
             'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_LIST),
             'label' => 'Teasers',
             'name' => AcfName::FIELD_TEASER_LIST,
-            'type' => 'custom_relationship',
+            'type' => CustomRelationship::NAME,
             'instructions' => '',
             'required' => 1,
             'conditional_logic' => [
@@ -137,7 +134,7 @@ class BaseWidget
                     [
                         'field' => $this->sortByField,
                         'operator' => '==',
-                        'value' => 'manual',
+                        'value' => SortBy::MANUAL,
                     ],
                 ],
             ],
@@ -147,7 +144,7 @@ class BaseWidget
                 'id' => '',
             ],
             'post_type' => [
-                0 => 'contenthub_composite',
+                0 => WpComposite::POST_TYPE,
             ],
             'taxonomy' => '',
             'post_tag' => '',
@@ -177,14 +174,14 @@ class BaseWidget
                     [
                         'field' => $this->sortByField,
                         'operator' => '==',
-                        'value' => 'custom',
+                        'value' => SortBy::CUSTOM,
                     ],
                 ],
                 [
                     [
                         'field' => $this->sortByField,
                         'operator' => '==',
-                        'value' => 'popular',
+                        'value' => SortBy::POPULAR,
                     ],
                 ],
             ],
@@ -218,14 +215,14 @@ class BaseWidget
                     [
                         'field' => $this->sortByField,
                         'operator' => '==',
-                        'value' => 'custom',
+                        'value' => SortBy::CUSTOM,
                     ],
                 ],
                 [
                     [
                         'field' => $this->sortByField,
                         'operator' => '==',
-                        'value' => 'popular',
+                        'value' => SortBy::POPULAR,
                     ],
                 ],
             ],
@@ -260,7 +257,7 @@ class BaseWidget
                         [
                             'field' => $this->sortByField,
                             'operator' => '==',
-                            'value' => 'custom',
+                            'value' => SortBy::CUSTOM,
                         ],
                     ]
                 ],

@@ -17,7 +17,6 @@ class WpPage
     {
         if (function_exists('acf_add_local_field_group')) {
             CustomRelationship::register();
-            $teaserList = new TeaserList();
 
             acf_add_local_field_group([
                 'key' => 'group_5bb31817b40e4',
@@ -37,7 +36,7 @@ class WpPage
                             'id' => '',
                         ],
                         'layouts' => [
-                            $teaserList->getLayout(),
+                            with(new TeaserList)->getLayout(),
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',

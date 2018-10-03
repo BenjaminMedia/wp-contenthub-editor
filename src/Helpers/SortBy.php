@@ -31,20 +31,15 @@ class SortBy
     public static function getComposites(array $acfWidget): ?Collection
     {
         self::$acfWidget = $acfWidget;
-        $sortByOption = self::$acfWidget[AcfName::FIELD_SORT_BY] ?? null;
 
-        switch ($sortByOption) {
-            case self::MANUAL:
-                return self::getManualComposites();
-            case self::CUSTOM:
-                return self::getCompositesByTaxonomy();
-            case self::POPULAR:
-                return self::getPopularComposites();
-            case self::RECENTLY_VIEWED:
-                return self::getRecentlyViewedComposites();
-            default:
-                return null;
-        }
+        $method = collect([
+            self::MANUAL => 'getManualComposites',
+            self::CUSTOM => 'getCompositesByTaxonomy',
+            self::POPULAR => 'getPopularComposites',
+            self::RECENTLY_VIEWED => 'getRecentlyViewedComposites',
+        ])->get(self::$acfWidget[AcfName::FIELD_SORT_BY] ?? null);
+
+        return $method ? self::$method() : null;
     }
 
     /**
@@ -52,7 +47,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    private static function getManualComposites(): ?Collection
+    protected static function getManualComposites(): ?Collection
     {
         if ($teasers = self::$acfWidget['teaser_list'] ?? null) {
             return collect($teasers)->map(function (\WP_Post $teaser) {
@@ -69,7 +64,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    private static function getCompositesByTaxonomy(): ?Collection
+    protected static function getCompositesByTaxonomy(): ?Collection
     {
         $args = [
             'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
@@ -82,36 +77,28 @@ class SortBy
             'cache_results' => false,
             'lang' => LanguageProvider::getCurrentLanguage(),
             'fields' => 'ids',
-            'tax_query' => []
         ];
 
-        if (self::isWpTerm(self::$acfWidget[AcfName::FIELD_CATEGORY] ?? null)) {
-            $args['category_name'] = self::$acfWidget[AcfName::FIELD_CATEGORY]->slug;
-        }
+        /** @var Collection $taxonomies */
+        $taxonomies = collect([
+            self::isWpTerm(self::$acfWidget[AcfName::FIELD_CATEGORY]) ? self::$acfWidget[AcfName::FIELD_CATEGORY] :null,
+            self::isWpTerm(self::$acfWidget[AcfName::FIELD_TAG]) ? self::$acfWidget[AcfName::FIELD_TAG] : null,
+        ])->rejectNullValues();
 
-        if (self::isWpTerm(self::$acfWidget[AcfName::FIELD_TAG] ?? null)) {
-            $args['tax_query'][] = [
-                'taxonomy' => 'post_tag',
-                'field' => 'term_id',
-                'terms' => self::$acfWidget[AcfName::FIELD_TAG]->term_id,
-            ];
-        }
-
-        $taxonomyQuery = WpTaxonomy::get_custom_taxonomies()->map(function ($taxonomy) {
-            if ($term = self::$acfWidget[$taxonomy->machine_name] ?? null) {
-                return [
-                    'taxonomy' => $term->taxonomy,
-                    'field' => 'term_id',
-                    'terms' => $term->term_id
-                ];
+        $customTaxonomies = WpTaxonomy::get_custom_taxonomies()->map(function ($taxonomy) {
+            if (($term = self::$acfWidget[$taxonomy->machine_name] ?? null) && self::isWpTerm($term)) {
+                return $term;
             }
             return null;
-        })->reject(function ($taxonomy) {
-            return is_null($taxonomy);
+        })->rejectNullValues();
+
+        $args['tax_query'] = $taxonomies->merge($customTaxonomies)->map(function (\WP_Term $term) {
+            return [
+                'taxonomy' => $term->taxonomy,
+                'field' => 'term_id',
+                'terms' => $term->term_id,
+            ];
         })->values()->toArray();
-        if (!empty($taxonomyQuery)) {
-            $args['tax_query'] = array_merge($args['tax_query'], $taxonomyQuery);
-        }
 
         $teaserQuery = new \WP_Query($args);
 
@@ -121,9 +108,7 @@ class SortBy
                     return new Composite(new CompositeAdapter($composite));
                 }
                 return null;
-            })->reject(function ($composite) {
-                return !$composite;
-            });
+            })->rejectNullValues();
         }
 
         return null;
@@ -135,7 +120,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    private static function getPopularComposites(): ?Collection
+    protected static function getPopularComposites(): ?Collection
     {
         $query = WidgetDocumentQuery::make()->byPopular();
         if (self::isWpTerm(self::$acfWidget[AcfName::FIELD_CATEGORY] ?? null)) {
@@ -156,7 +141,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    private static function getRecentlyViewedComposites(): ?Collection
+    protected static function getRecentlyViewedComposites(): ?Collection
     {
         $result = WidgetDocumentQuery::make()->byRecentlyViewed()->get();
 
@@ -171,11 +156,7 @@ class SortBy
      */
     private static function isWpTerm($term)
     {
-        if (!is_null($term) && $term instanceof \WP_Term) {
-            return true;
-        }
-
-        return false;
+        return !is_null($term) && $term instanceof \WP_Term;
     }
 
     /**
@@ -212,8 +193,6 @@ class SortBy
                 return new Composite(new CompositeAdapter($post));
             }
             return null;
-        })->reject(function ($content) {
-            return is_null($content);
-        });
+        })->rejectNullValues();
     }
 }

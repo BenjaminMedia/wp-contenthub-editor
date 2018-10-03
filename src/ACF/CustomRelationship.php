@@ -6,6 +6,8 @@ use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
 class CustomRelationship extends \acf_field
 {
+    const NAME = 'custom_relationship';
+
     public static function register()
     {
         acf_register_field_type(new self());
@@ -26,7 +28,7 @@ class CustomRelationship extends \acf_field
     public function __construct()
     {
         // vars
-        $this->name = 'custom_relationship';
+        $this->name = self::NAME;
         $this->label = "Custom Relationship";
         $this->category = 'relational';
         $this->defaults = array(
