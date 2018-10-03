@@ -562,8 +562,8 @@ class CustomRelationship extends \acf_field
                                 'post_type'    => $field['post_type']
                             ));
 
-                            // set choices
-                            if (!empty($posts)) :
+        // set choices
+        if (!empty($posts)) :
                                 foreach (array_keys($posts) as $i) :
                                     // vars
                                     $post = acf_extract_var($posts, $i); ?><li>
@@ -578,9 +578,8 @@ class CustomRelationship extends \acf_field
                                     </li>
                                     <?php
                                 endforeach;
-                            endif;
-                        endif;
-?>
+        endif;
+        endif; ?>
                     </ul>
                 </div>
             </div>
