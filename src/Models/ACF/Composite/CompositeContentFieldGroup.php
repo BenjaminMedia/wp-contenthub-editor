@@ -11,8 +11,8 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class CompositeContentFieldGroup
 {
-    const ContentField = 'field_58aae476809c6';
-    const VideoTeaserImageField = 'field_5a8d7ae021e44';
+    const CONTENT_FIELD = 'field_58aae476809c6';
+    const VIDEO_TEASER_IMAGE_FIELD = 'field_5a8d7ae021e44';
 
     public static function register()
     {
@@ -48,7 +48,10 @@ class CompositeContentFieldGroup
                         'label' => 'Locked Content',
                         'name' => 'locked_content',
                         'type' => 'true_false',
-                        'instructions' => 'Check this box if you want parts of the content to be locked. Please note that you should mark each content item that you want to be locked by checking the "Locked Content" checkbox.',
+                        'instructions' =>
+                            'Check this box if you want parts of the content to be locked.
+                            Please note that you should mark each content item that you want to be locked,
+                            by checking the "Locked Content" checkbox.',
                         'required' => 0,
                         'conditional_logic' => 0,
                         'wrapper' => [
@@ -346,7 +349,9 @@ class CompositeContentFieldGroup
                                         'label' => 'Image',
                                         'name' => 'image',
                                         'type' => 'image',
-                                        'instructions' => 'picture shown on audio of the audio file. If not set, it\'ll default to the lead image.',
+                                        'instructions' =>
+                                            'picture shown on audio of the audio file.
+                                            If not set, it\'ll default to the lead image.',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -515,11 +520,13 @@ class CompositeContentFieldGroup
                                 'display' => 'block',
                                 'sub_fields' => [
                                     [
-                                        'key' => static::VideoTeaserImageField,
+                                        'key' => static::VIDEO_TEASER_IMAGE_FIELD,
                                         'label' => 'Teaser Image',
                                         'name' => 'video_teaser_image',
                                         'type' => 'true_false',
-                                        'instructions' => 'This will generate an image from the video and set it as a <b>teaser image</b> for the article.',
+                                        'instructions' =>
+                                            'This will generate an image from the video
+                                            and set it as a <b>teaser image</b> for the article.',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -538,7 +545,9 @@ class CompositeContentFieldGroup
                                         'label' => 'Embed Url',
                                         'name' => 'embed_url',
                                         'type' => 'text',
-                                        'instructions' => 'Paste the embed url from your video provider, supported providers are: Vimeo, YouTube, 23Video',
+                                        'instructions' =>
+                                            'Paste the embed url from your video provider, supported providers are:
+                                            Vimeo, YouTube, 23Video',
                                         'required' => 1,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -970,6 +979,208 @@ class CompositeContentFieldGroup
                                         'ui' => 0,
                                         'ui_on_text' => '',
                                         'ui_off_text' => '',
+                                    ],
+                                ],
+                                'min' => '',
+                                'max' => '',
+                            ],
+                            [
+                                'key' => 'layout_5bb4bd1afd048',
+                                'name' => 'paragraph_list',
+                                'label' => 'Paragraph List',
+                                'display' => 'block',
+                                'sub_fields' => [
+                                    [
+                                        'key' => 'field_5bb4bd2ffd049',
+                                        'label' => 'Title',
+                                        'name' => 'title',
+                                        'type' => 'text',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'default_value' => '',
+                                        'placeholder' => '',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'maxlength' => '',
+                                    ],
+                                    [
+                                        'key' => 'field_5bb4bd38fd04a',
+                                        'label' => 'Description',
+                                        'name' => 'description',
+                                        'type' => 'markdown-editor',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'simple_mde_config' => 'simple',
+                                        'font_size' => 14,
+                                    ],
+                                    [
+                                        'key' => 'field_5bb4bd65fd04b',
+                                        'label' => 'Image',
+                                        'name' => 'image',
+                                        'type' => 'image',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'return_format' => 'id',
+                                        'preview_size' => 'thumbnail',
+                                        'library' => 'all',
+                                        'min_width' => '',
+                                        'min_height' => '',
+                                        'min_size' => '',
+                                        'max_width' => '',
+                                        'max_height' => '',
+                                        'max_size' => '',
+                                        'mime_types' => '',
+                                    ],
+                                    [
+                                        'key' => 'field_5bb4bd75fd04c',
+                                        'label' => 'Display Format',
+                                        'name' => 'display_hint',
+                                        'type' => 'radio',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'choices' => [
+                                            'ordered' => 'Number List',
+                                            'unordered' => 'Bullet List',
+                                            'image' => 'Image List',
+                                            'custom' => 'Custom List',
+                                        ],
+                                        'allow_null' => 0,
+                                        'other_choice' => 0,
+                                        'default_value' => 'ordered',
+                                        'layout' => 'vertical',
+                                        'return_format' => 'value',
+                                        'save_other_choice' => 0,
+                                    ],
+                                    [
+                                        'key' => 'field_5bb4be68fd04d',
+                                        'label' => 'Items',
+                                        'name' => 'items',
+                                        'type' => 'repeater',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'collapsed' => '',
+                                        'min' => 0,
+                                        'max' => 0,
+                                        'layout' => 'row',
+                                        'button_label' => 'Add item',
+                                        'sub_fields' => [
+                                            [
+                                                'key' => 'field_5bb4c1bb8cdbc',
+                                                'label' => 'Custom Bullet',
+                                                'name' => 'custom_bullet',
+                                                'type' => 'text',
+                                                'instructions' => '',
+                                                'required' => 1,
+                                                'conditional_logic' => [
+                                                    [
+                                                        [
+                                                            'field' => 'field_5bb4bd75fd04c',
+                                                            'operator' => '==',
+                                                            'value' => 'custom',
+                                                        ],
+                                                    ],
+                                                ],
+                                                'wrapper' => [
+                                                    'width' => '',
+                                                    'class' => '',
+                                                    'id' => '',
+                                                ],
+                                                'default_value' => '',
+                                                'placeholder' => '',
+                                                'prepend' => '',
+                                                'append' => '',
+                                                'maxlength' => '',
+                                            ],
+                                            [
+                                                'key' => 'field_5bb4be86fd04e',
+                                                'label' => 'Title',
+                                                'name' => 'title',
+                                                'type' => 'text',
+                                                'instructions' => '',
+                                                'required' => 1,
+                                                'conditional_logic' => 0,
+                                                'wrapper' => [
+                                                    'width' => '',
+                                                    'class' => '',
+                                                    'id' => '',
+                                                ],
+                                                'default_value' => '',
+                                                'placeholder' => '',
+                                                'prepend' => '',
+                                                'append' => '',
+                                                'maxlength' => '',
+                                            ],
+                                            [
+                                                'key' => 'field_5bb4be91fd04f',
+                                                'label' => 'Description',
+                                                'name' => 'description',
+                                                'type' => 'markdown-editor',
+                                                'instructions' => '',
+                                                'required' => 1,
+                                                'conditional_logic' => 0,
+                                                'wrapper' => [
+                                                    'width' => '',
+                                                    'class' => '',
+                                                    'id' => '',
+                                                ],
+                                                'simple_mde_config' => 'simple',
+                                                'font_size' => 14,
+                                            ],
+                                            [
+                                                'key' => 'field_5bb4bea5fd050',
+                                                'label' => 'Image',
+                                                'name' => 'image',
+                                                'type' => 'image',
+                                                'instructions' => '',
+                                                'required' => 0,
+                                                'conditional_logic' => 0,
+                                                'wrapper' => [
+                                                    'width' => '',
+                                                    'class' => '',
+                                                    'id' => '',
+                                                ],
+                                                'return_format' => 'id',
+                                                'preview_size' => 'thumbnail',
+                                                'library' => 'all',
+                                                'min_width' => '',
+                                                'min_height' => '',
+                                                'min_size' => '',
+                                                'max_width' => '',
+                                                'max_height' => '',
+                                                'max_size' => '',
+                                                'mime_types' => '',
+                                            ],
+                                        ],
                                     ],
                                 ],
                                 'min' => '',
