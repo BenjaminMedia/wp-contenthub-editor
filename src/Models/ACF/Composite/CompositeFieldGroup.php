@@ -11,6 +11,8 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class CompositeFieldGroup
 {
+    const AUTHOR_KEY = 'field_5af9888b4b7a1';
+
     public static function register()
     {
         static::create_acf_field_group();
@@ -74,7 +76,7 @@ class CompositeFieldGroup
                         'disabled' => 0,
                     ],
                     [
-                        'key' => 'field_5af9888b4b7a1',
+                        'key' => self::AUTHOR_KEY,
                         'label' => 'Author',
                         'name' => 'author',
                         'type' => 'user',
@@ -181,10 +183,10 @@ class CompositeFieldGroup
 
     private static function register_author_hooks()
     {
-        add_filter('acf/load_value/name=author', function ($value) {
+        add_filter('acf/load_value/key=' . self::AUTHOR_KEY, function ($value) {
             return get_post()->post_author ?: wp_get_current_user()->ID;
         }, 10, 1);
-        add_filter('acf/update_value/name=author', function ($newAuthor) {
+        add_filter('acf/update_value/key=' . self::AUTHOR_KEY, function ($newAuthor) {
             $post = get_post();
             $oldAuthor = $post->post_author;
             if (intval($newAuthor) !== intval($oldAuthor)) {
