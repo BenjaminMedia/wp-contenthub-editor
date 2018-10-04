@@ -1,4 +1,4 @@
-(function () {
+(function ($) {
 
   var activeFocalPoint = null;
 
@@ -11,18 +11,18 @@
   });
 
   function attachClickEventToButtons(el) {
-    jQuery(el).find('.edit-hotspot-image').each(function () {
-      if (jQuery(this).is(":visible")) { // Only render visible elements
-        jQuery(this).click(function(e) {
-          toggleFocalPoint(this, jQuery(this).data('input-id'));
+    $(el).find('.edit-hotspot-image').each(function () {
+      if ($(this).is(":visible")) { // Only render visible elements
+        $(this).click(function(e) {
+          toggleFocalPoint(this, $(this).data('input-id'));
         })
       }
     })
   }
 
   function toggleFocalPoint(editBtn, inputId) {
-    var image = jQuery(editBtn).parents('div.layout').find('img');
-    var input = jQuery('#'+inputId);
+    var image = $(editBtn).parents('div.layout').find('img');
+    var input = $('#'+inputId);
 
     if(image.attr('src') === 'undefined') {
       alert('You must select a image first')
