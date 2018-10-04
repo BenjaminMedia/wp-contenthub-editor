@@ -104,7 +104,7 @@ class MarkdownEditor extends acf_field
         acf_render_field_setting($field, array(
             'label' => __('Simple MDE Configuration', 'acf-markdown-editor'),
             'instructions' => __('Write', 'acf-markdown-editor'),
-            'type' => 'textarea',
+            'type' => 'radio',
             'name' => 'simple_mde_config',
             'required' => 0,
             'conditional_logic' => 0,

@@ -2,7 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor;
 
-use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
+use Bonnier\WP\ContentHub\Editor\ACF\ImageHotSpotCoordinates;
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
@@ -75,6 +75,7 @@ class ContenthubEditor
         $this->settings = new SettingsPage();
         CollectionHelper::register(); // Extends Collection with extra methods
         new MarkdownEditor;
+        new ImageHotSpotCoordinates();
         new CompositeHelper;
 
         // Register custom post type
