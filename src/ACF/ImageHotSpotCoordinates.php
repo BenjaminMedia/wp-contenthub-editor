@@ -97,8 +97,6 @@ class ImageHotSpotCoordinates extends acf_field
         *  More than one setting can be added by copy/paste the above code.
         *  Please note that you must also have a matching $defaults value for the field name (font_size)
         */
-
-
     }
 
     /*
@@ -117,8 +115,7 @@ class ImageHotSpotCoordinates extends acf_field
     */
     public function render_field($field)
     {
-        $inputId = uniqid('edit-hotspot-image-input-');
-        ?>
+        $inputId = uniqid('edit-hotspot-image-input-'); ?>
         <button type="button" class="edit-hotspot-image" data-input-id="<?php echo $inputId ?>">
             Edit Hotspot
         </button>
