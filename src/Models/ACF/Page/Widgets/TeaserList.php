@@ -22,9 +22,11 @@ class TeaserList extends BaseWidget
             'sub_fields' => array_merge([
                 $this->getSettingsTab(),
                 $this->getTitleField(),
+                $this->getLabelField(),
                 $this->getDescriptionField(),
                 $this->getImageField(),
                 $this->getLinkField(),
+                $this->getLinkLabelField(),
                 $this->getDisplayHintField(),
             ], $this->getSortByFields()),
             'min' => '',
@@ -61,6 +63,29 @@ class TeaserList extends BaseWidget
             'type' => 'text',
             'instructions' => '',
             'required' => 1,
+            'conditional_logic' => 0,
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ];
+    }
+
+    private function getLabelField()
+    {
+        return [
+            'key' => 'field_5bb759ce606a7',
+            'label' => 'Label',
+            'name' => AcfName::FIELD_LABEL,
+            'type' => 'text',
+            'instructions' => '',
+            'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
@@ -146,6 +171,36 @@ class TeaserList extends BaseWidget
         ];
     }
 
+    private function getLinkLabelField()
+    {
+        return [
+            'key' => 'field_5bb759f880c92',
+            'label' => 'Link Label',
+            'name' => AcfName::FIELD_LINK_LABEL,
+            'type' => 'text',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => 'field_5bb31a9c1d392',
+                        'operator' => '!=empty',
+                    ],
+                ],
+            ],
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ];
+    }
+
     private function getDisplayHintField()
     {
         return [
@@ -164,6 +219,10 @@ class TeaserList extends BaseWidget
             'choices' => [
                 AcfName::DISPLAY_HINT_DEFAULT => 'Standard',
                 AcfName::DISPLAY_HINT_PRESENTATION => 'Presentation',
+                AcfName::DISPLAY_HINT_ORDERED_LIST => 'Ordered List',
+                AcfName::DISPLAY_HINT_MAGAZINE_ISSUE => 'Magazine Issue',
+                AcfName::DISPLAY_HINT_SLIDER => 'Slider',
+                AcfName::DISPLAY_HINT_FEATURED_WITH_RELATED => 'Featured with Related',
             ],
             'allow_null' => 0,
             'other_choice' => 0,
