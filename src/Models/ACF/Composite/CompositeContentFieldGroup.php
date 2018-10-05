@@ -1451,7 +1451,7 @@ class CompositeContentFieldGroup
                                         ],
                                         'return_format' => 'array',
                                         'preview_size' => 'large',
-                                        'library' => 'uploadedTo',
+                                        'library' => 'all',
                                         'min_width' => '',
                                         'min_height' => '',
                                         'min_size' => '',
