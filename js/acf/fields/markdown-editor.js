@@ -76,20 +76,20 @@
   };
 
   acf.add_action('append', function (el) {
-    var textArea = jQuery(el).find('.acf-field-simple-mde');
-    if (typeof textArea[0] !== 'undefined' && textArea.is(':visible'))
-      createSimpleMde(textArea[0], textArea.data('simple-mde-config'));
+    window.setTimeout(function(){ // Add slight delay to allow fields to render before initi
+      initMarkdownFields(el);
+    }, 100)
   });
 
-  acf.add_action('ready', function (el) {
+  acf.add_action('ready', initMarkdownFields);
 
+  function initMarkdownFields(el) {
     jQuery(el).find('.acf-field-simple-mde').each(function () {
       if (jQuery(this).is(":visible")) { // Only render visible elements
         createSimpleMde(this, jQuery(this).data('simple-mde-config'));
       }
     })
-
-  });
+  }
 
   function createLinkModal(editor) {
     var cm = editor.codemirror;

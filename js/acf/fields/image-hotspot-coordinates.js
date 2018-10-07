@@ -2,6 +2,13 @@
 
   var activeFocalPoint = null;
 
+  acf.add_action('remove', function (el) {
+    if($.contains(el, '.edit-hotspot-image') && activeFocalPoint instanceof FocalPoint) {
+      activeFocalPoint.destroy();
+      activeFocalPoint = null;
+    }
+  });
+
   acf.add_action('append', function (el) {
     attachClickEventToButtons(el);
   });
