@@ -40,15 +40,17 @@ class WaContent extends BaseCmd
      * [--id=<id>]
      * : The id of a single composite to import.
      *
-     *
      * [--type=<type>]
      * : The type of the single composite used together with id, can be article|gallery.
+     *
+     * [--locale=<locale>]
+     * : The locale to fetch from used in conjunction with --id
      *
      * [--source=<source_code>]
      * : The the source code to fetch content from
      *
      * ## EXAMPLES
-     * wp contenthub editor wa content import <domain>
+     * wp contenthub editor wa content import
      *
      * @param $args
      * @param $assocArgs
@@ -58,7 +60,7 @@ class WaContent extends BaseCmd
         $this->disableHooks(); // Disable various hooks and filters during import
         $this->fixNonceErrors();
 
-        $this->repository = new ContentRepository();
+        $this->repository = new ContentRepository($assocArgs['locale'] ?? null);
         if ($contentId = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
@@ -129,16 +131,19 @@ class WaContent extends BaseCmd
         LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
 
         //if this is not the master translation, just return
-        if (!$waContent->translation->is_master || !isset($waContent->translation)) {
+        if (!isset($waContent->translation)) {
             return;
         }
 
         $translationPostIds = collect($waContent->translation->translation_ids)->map(
-            function ($translation_id, $locale) use ($waContent) {
-                return WpComposite::id_from_white_album_id($translation_id) ?:
-                    $this->lookUpTranslation($translation_id, $locale);
+            function ($translationId, $locale) use ($waContent) {
+                return $waContent->translation->is_master ? // Only import the translations when import master locale
+                    $this->importTranslation($translationId, $locale) :
+                    WpComposite::id_from_white_album_id($translationId);
             }
-        )->rejectNullValues();
+        )->merge([
+            $waContent->translation->locale ?? 'da'  => $postId, // always push current locale
+        ])->rejectNullValues();
         LanguageProvider::savePostTranslations($translationPostIds->toArray());
         if (!$translationPostIds->isEmpty()) {
             WP_CLI::success(
@@ -158,14 +163,14 @@ class WaContent extends BaseCmd
             $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
     }
 
-    private function lookUpTranslation($id, $locale)
+    private function importTranslation($translationId, $locale)
     {
-        if ($translation  = $this->findMatchingTranslation($id, $locale)) {
-            WP_CLI::line(sprintf('found translation: %s', $translation->widget_content->title));
+        if ($translation = $this->findMatchingTranslation($translationId, $locale)) {
+            WP_CLI::line(sprintf('found translation: %s in locale: %s', $translation->widget_content->title, $locale));
             $this->importComposite($translation);
-            return WpComposite::id_from_white_album_id($id);
+            return WpComposite::id_from_white_album_id($translationId);
         }
-        WP_CLI::warning(sprintf('no translations for %s found.', $id));
+        WP_CLI::warning(sprintf('no translations for %s found.', $translationId));
         return null;
     }
 

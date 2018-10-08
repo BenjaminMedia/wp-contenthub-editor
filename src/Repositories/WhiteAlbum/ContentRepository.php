@@ -20,6 +20,10 @@ class ContentRepository
 
     /**
      * ContentRepository constructor.
+     *
+     * @param null $locale Override default locale
+     *
+     * @throws \Exception
      */
     public function __construct($locale = null)
     {
@@ -75,6 +79,15 @@ class ContentRepository
                             'Gallery' => static::GALLERY_RESOURCE,
                         ]
                     )->get($content->type);
+                    if (! $resource) {
+                        \WP_CLI::warning(sprintf(
+                            'Unsupported type: %s, skipping content: %s in locale: %s',
+                            $content->type,
+                            $content->title,
+                            $content->locale
+                        ));
+                        return;
+                    }
                     if ($contentFound = $this->find_by_id($content->id, $resource)) {
                         $callback($contentFound);
                     }
