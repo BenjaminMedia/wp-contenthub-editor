@@ -7,6 +7,7 @@ use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Helpers\SortBy;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
+use Illuminate\Support\Collection;
 
 class BaseWidget
 {
@@ -14,6 +15,16 @@ class BaseWidget
     protected $sortByField;
     protected $config;
 
+    /**
+     * BaseWidget constructor.
+     * Configuretion options are:
+     * 'minTeasers' - Minimum number of teasers to select
+     * 'maxTeasers' - Maximum number of teasers to select
+     * 'teaserCountDefault' - Default number of teasers selected.
+     *
+     * @param string $widgetName
+     * @param array $config
+     */
     public function __construct(string $widgetName, array $config = [])
     {
         $this->widgetName = $widgetName;
@@ -26,14 +37,17 @@ class BaseWidget
      */
     protected function getSortByFields()
     {
-        return array_merge([
+        /** @var Collection $fields */
+        $fields = collect([
             $this->getSortByTab(),
             $this->getSortByOptions(),
             $this->getTeaserAmount(),
             $this->getTeaserList(),
             $this->getCategoryField(),
             $this->getTagField(),
-        ], $this->getCustomTaxonomyFields());
+        ])->rejectNullValues();
+
+        return $fields->merge($this->getCustomTaxonomyFields())->toArray();
     }
 
     private function getSortByTab()
@@ -88,36 +102,40 @@ class BaseWidget
 
     private function getTeaserAmount()
     {
-        return [
-            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_AMOUNT),
-            'label' => 'Amount of Teasers to display',
-            'name' => AcfName::FIELD_TEASER_AMOUNT,
-            'type' => 'number',
-            'instructions' =>
-                'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.',
-            'required' => 1,
-            'conditional_logic' => [
-                [
+        if ($this->getMaxTeasers() > 1) {
+            return [
+                'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_AMOUNT),
+                'label' => 'Amount of Teasers to display',
+                'name' => AcfName::FIELD_TEASER_AMOUNT,
+                'type' => 'number',
+                'instructions' =>
+                    'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.',
+                'required' => 1,
+                'conditional_logic' => [
                     [
-                        'field' => $this->sortByField,
-                        'operator' => '!=',
-                        'value' => SortBy::MANUAL,
+                        [
+                            'field' => $this->sortByField,
+                            'operator' => '!=',
+                            'value' => SortBy::MANUAL,
+                        ],
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => $this->config['teaserCountDefault'] ?? 4,
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'min' => $this->config['minTeasers'] ?? 1,
-            'max' => $this->config['maxTeasers'] ?? 12,
-            'step' => '',
-        ];
+                'wrapper' => [
+                    'width' => '',
+                    'class' => '',
+                    'id' => '',
+                ],
+                'default_value' => $this->getDefaultTeaserAmount(),
+                'placeholder' => '',
+                'prepend' => '',
+                'append' => '',
+                'min' => $this->getMinTeasers(),
+                'max' => $this->getMaxTeasers(),
+                'step' => '',
+            ];
+        }
+
+        return null;
     }
 
     private function getTeaserList()
@@ -154,8 +172,8 @@ class BaseWidget
                 2 => 'post_tag',
             ],
             'elements' => '',
-            'min' => $this->config['minTeasers'] ?? 1,
-            'max' => $this->config['maxTeasers'] ?? 12,
+            'min' => $this->getMinTeasers(),
+            'max' => $this->getMaxTeasers(),
             'return_format' => 'object',
         ];
     }
@@ -275,6 +293,21 @@ class BaseWidget
                 'return_format' => 'object',
                 'multiple' => 0,
             ];
-        })->toArray();
+        });
+    }
+
+    private function getMinTeasers()
+    {
+        return array_get($this->config, 'minTeasers', 1);
+    }
+
+    private function getMaxTeasers()
+    {
+        return array_get($this->config, 'minTeasers', 12);
+    }
+
+    private function getDefaultTeaserAmount()
+    {
+        return array_get($this->config, 'teaserCountDefault', 4);
     }
 }
