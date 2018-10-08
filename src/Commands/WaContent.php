@@ -12,7 +12,6 @@ use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Bonnier\WP\Redirect\Model\Post;
-use Codeception\Module\WPCLI;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -57,7 +56,7 @@ class WaContent extends BaseCmd
     public function import($args, $assocArgs)
     {
         $this->disableHooks(); // Disable various hooks and filters during import
-        wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
+        $this->fixNonceErrors();
 
         $this->repository = new ContentRepository();
         if ($contentId = $assocArgs['id'] ?? null) {
@@ -304,7 +303,7 @@ class WaContent extends BaseCmd
                 }
                 if ($compositeContent->type === 'video') {
                     return [
-                        'embed_url' => $this->getVideoProvider($compositeContent->video_site) . $compositeContent->video_id,
+                        'embed_url' => $this->getVideoEmbed($compositeContent->video_site, $compositeContent->video_id),
                         'locked_content' => false,
                         'acf_fc_layout' => $compositeContent->type
                     ];
@@ -493,18 +492,21 @@ class WaContent extends BaseCmd
         return $content;
     }
 
-    private function getVideoProvider($provider)
+    private function getVideoEmbed($provider, $videoId)
     {
-        switch ($provider) {
-            case 'youtube':
-                return 'https://www.youtube.com/embed/';
-                break;
-            case 'vimeo':
-                return 'https://player.vimeo.com/video/';
-                break;
-            case 'video23':
-                return '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=';;
-                break;
-        }
+        $vendor = collect([
+            'youtube' => 'https://www.youtube.com/embed/',
+            'vimeo' => 'https://player.vimeo.com/video/',
+            'vimeo' => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
+        ])->get($provider);
+        return $vendor ? $vendor . $videoId : null;
+    }
+
+    private function fixNonceErrors()
+    {
+        wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
+        add_action('check_admin_referer', function ($action, &$result) {
+            $result = 1; // Force valid nonce
+        }, 10, 2);
     }
 }
