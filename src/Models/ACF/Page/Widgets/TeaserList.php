@@ -16,7 +16,7 @@ class TeaserList extends BaseWidget
     {
         return [
             'key' => '5bb3190811fdf',
-            'name' => 'teaser_list',
+            'name' => AcfName::WIDGET_TEASER_LIST,
             'label' => 'Teaser List',
             'display' => 'block',
             'sub_fields' => array_merge([
