@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\BaseWidget;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class FeaturedContent extends BaseWidget
 {
@@ -15,7 +16,7 @@ class FeaturedContent extends BaseWidget
         parent::__construct(AcfName::WIDGET_FEATURED_CONTENT, $config);
     }
 
-    public function getLayout()
+    public function getLayout(): array
     {
         return [
             'key' => '5bbb23424c064',

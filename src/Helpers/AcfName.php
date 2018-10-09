@@ -26,9 +26,11 @@ class AcfName
     const FIELD_TITLE = 'title';
     const FIELD_VIDEO = 'video';
 
+    const WIDGET_BANNER_PLACEMENT = 'banner_placement';
     const WIDGET_FEATURED_CONTENT = 'featured_content';
-    const WIDGET_TEASER_LIST = 'teaser_list';
+    const WIDGET_NEWSLETTER = 'newsletter';
     const WIDGET_SEO_TEXT = 'seo_text';
+    const WIDGET_TEASER_LIST = 'teaser_list';
 
     const GROUP_PAGE_WIDGETS = 'page_widgets';
 }
