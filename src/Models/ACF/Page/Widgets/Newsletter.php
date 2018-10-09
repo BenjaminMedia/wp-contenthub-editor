@@ -7,7 +7,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Newsletter implements WidgetContract
 {
-
     public function getLayout(): array
     {
         return [
