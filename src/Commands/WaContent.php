@@ -450,7 +450,8 @@ class WaContent extends BaseCmd
 
         // Disable on save hook to prevent call to content hub, Cxense and Bonnier Cache Manager
         remove_action('save_post', [WpComposite::class, 'on_save'], 10);
-        remove_action('save_post', [BonnierCachePost::class, 'update_post'], 10);
+        remove_action('publish_to_publish', [BonnierCachePost::class, 'update_post'], 10);
+        remove_action('draft_to_publish', [BonnierCachePost::class, 'publishPost'], 10);
         remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10);
         remove_action('save_post', [Post::class, 'save'], 5);
     }
