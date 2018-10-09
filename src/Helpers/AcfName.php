@@ -28,6 +28,7 @@ class AcfName
 
     const WIDGET_FEATURED_CONTENT = 'featured_content';
     const WIDGET_TEASER_LIST = 'teaser_list';
+    const WIDGET_SEO_TEXT = 'seo_text';
 
     const GROUP_PAGE_WIDGETS = 'page_widgets';
 }

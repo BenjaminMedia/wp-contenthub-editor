@@ -5,6 +5,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\SeoText;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TeaserList;
 
 class WpPage
@@ -39,6 +40,7 @@ class WpPage
                         'layouts' => [
                             with(new FeaturedContent)->getLayout(),
                             with(new TeaserList)->getLayout(),
+                            with(new SeoText)->getLayout(),
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',
