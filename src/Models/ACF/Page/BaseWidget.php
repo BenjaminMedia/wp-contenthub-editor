@@ -5,11 +5,12 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page;
 use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Helpers\SortBy;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Illuminate\Support\Collection;
 
-class BaseWidget
+abstract class BaseWidget implements WidgetContract
 {
     protected $widgetName;
     protected $sortByField;

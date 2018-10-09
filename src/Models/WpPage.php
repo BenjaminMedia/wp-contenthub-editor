@@ -4,7 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\BannerPlacement;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\Newsletter;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\SeoText;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TeaserList;
 
@@ -41,6 +43,8 @@ class WpPage
                             with(new FeaturedContent)->getLayout(),
                             with(new TeaserList)->getLayout(),
                             with(new SeoText)->getLayout(),
+                            with(new Newsletter)->getLayout(),
+                            with(new BannerPlacement)->getLayout(),
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',

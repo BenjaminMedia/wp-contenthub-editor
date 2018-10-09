@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\BaseWidget;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class TeaserList extends BaseWidget
 {
@@ -12,7 +13,7 @@ class TeaserList extends BaseWidget
         parent::__construct(AcfName::WIDGET_TEASER_LIST, $config);
     }
 
-    public function getLayout()
+    public function getLayout(): array
     {
         return [
             'key' => '5bb3190811fdf',

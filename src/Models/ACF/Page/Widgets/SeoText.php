@@ -12,7 +12,7 @@ class SeoText extends BaseWidget
         parent::__construct(AcfName::WIDGET_SEO_TEXT, $config);
     }
 
-    public function getLayout()
+    public function getLayout(): array
     {
         return [
             'key' => '5bbc5200c758b',
