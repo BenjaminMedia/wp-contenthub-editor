@@ -130,9 +130,9 @@ class WaRedirectResolver extends BaseCmd
 
     private function getWhiteAlbumPath(int $whiteAlbumID)
     {
-        if ($article = $this->repository->find_by_id($whiteAlbumID, ContentRepository::ARTICLE_RESOURCE)) {
+        if ($article = $this->repository->findById($whiteAlbumID, ContentRepository::ARTICLE_RESOURCE)) {
             return $article->widget_content->path ?? null;
-        } elseif ($gallery = $this->repository->find_by_id($whiteAlbumID, ContentRepository::GALLERY_RESOURCE)) {
+        } elseif ($gallery = $this->repository->findById($whiteAlbumID, ContentRepository::GALLERY_RESOURCE)) {
             return $gallery->widget_content->path ?? null;
         }
 

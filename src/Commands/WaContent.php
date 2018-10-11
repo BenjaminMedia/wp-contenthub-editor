@@ -46,14 +46,19 @@ class WaContent extends BaseCmd
      * [--locale=<locale>]
      * : The locale to fetch from used in conjunction with --id
      *
-     * [--source=<source_code>]
-     * : The the source code to fetch content from
+     * [--page=<page>]
+     * : The page to start importing from
+     *
+     * [--skip-existing]
+     * : wether to skip alredy imported articles
      *
      * ## EXAMPLES
      * wp contenthub editor wa content import
      *
      * @param $args
      * @param $assocArgs
+     *
+     * @throws \Exception
      */
     public function import($args, $assocArgs)
     {
@@ -66,11 +71,11 @@ class WaContent extends BaseCmd
                 'article' => ContentRepository::ARTICLE_RESOURCE,
                 'gallery' => ContentRepository::GALLERY_RESOURCE,
             ])->get($assocArgs['type'] ?? 'article');
-            $this->importComposite($this->repository->find_by_id($contentId, $resource));
+            $this->importComposite($this->repository->findById($contentId, $resource));
         } else {
-            $this->repository->map_all(function ($waContent) {
+            $this->repository->mapAll(function ($waContent) {
                 $this->importComposite($waContent);
-            });
+            }, $assocArgs['page'] ?? 1, $assocArgs['skip-existing'] ?? false);
         }
     }
 
@@ -159,8 +164,8 @@ class WaContent extends BaseCmd
     private function findMatchingTranslation($whiteAlbumId, $locale)
     {
         $repository = new ContentRepository($locale);
-        return $repository->find_by_id($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
-            $repository->find_by_id($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
+        return $repository->findById($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
+            $repository->findById($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
     }
 
     private function importTranslation($translationId, $locale)
