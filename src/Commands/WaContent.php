@@ -81,7 +81,7 @@ class WaContent extends BaseCmd
 
     private function importComposite($waContent)
     {
-        if (!$waContent) {
+        if (! $waContent) {
             return;
         }
 
@@ -102,7 +102,7 @@ class WaContent extends BaseCmd
         $this->saveCategories($postId, $waContent);
         $this->saveTags($postId, $waContent);
 
-        WP_CLI::success('imported: ' . $waContent->widget_content->title  . ' id: ' . $postId);
+        WP_CLI::success('imported: ' . $waContent->widget_content->title . ' id: ' . $postId);
     }
 
     private function createPost($waContent)
@@ -117,15 +117,15 @@ class WaContent extends BaseCmd
         $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
 
         return wp_insert_post([
-            'ID' => $existingId,
-            'post_title' => $waContent->widget_content->title,
-            'post_name' => $waContent->slug,
-            'post_status' => $waContent->widget_content->live ? 'publish' : 'draft',
-            'post_type' => WpComposite::POST_TYPE,
-            'post_date' => $waContent->widget_content->publish_at,
+            'ID'            => $existingId,
+            'post_title'    => $waContent->widget_content->title,
+            'post_name'     => $waContent->slug,
+            'post_status'   => $waContent->widget_content->live ? 'publish' : 'draft',
+            'post_type'     => WpComposite::POST_TYPE,
+            'post_date'     => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
-            'post_author' => $this->getAuthor($waContent),
-            'meta_input' => [
+            'post_author'   => $this->getAuthor($waContent),
+            'meta_input'    => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
             ],
         ]);
@@ -136,7 +136,7 @@ class WaContent extends BaseCmd
         LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
 
         //if this is not the master translation, just return
-        if (!isset($waContent->translation)) {
+        if (! isset($waContent->translation)) {
             return;
         }
 
@@ -147,10 +147,10 @@ class WaContent extends BaseCmd
                     WpComposite::id_from_white_album_id($translationId);
             }
         )->merge([
-            $waContent->translation->locale ?? 'da'  => $postId, // always push current locale
+            $waContent->translation->locale ?? 'da' => $postId, // always push current locale
         ])->rejectNullValues();
         LanguageProvider::savePostTranslations($translationPostIds->toArray());
-        if (!$translationPostIds->isEmpty()) {
+        if (! $translationPostIds->isEmpty()) {
             WP_CLI::success(
                 sprintf(
                     'attached the following translations %s to: %s',
@@ -210,12 +210,12 @@ class WaContent extends BaseCmd
                             'Widgets::Text'         => 'text_item',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
-                            'Widgets::InfoBox' => 'info_box',
-                            'Widgets::Video' => 'video',
+                            'Widgets::InfoBox'      => 'info_box',
+                            'Widgets::Video'        => 'video',
                         ])
                             ->get($waWidget->type, null),
                     ])
-                        ->merge($waWidget->properties) // merge properties
+                        ->merge($waWidget->properties)// merge properties
                         ->merge($waWidget->image ?? null); // merge image
                 })
                 ->prepend(
@@ -258,17 +258,17 @@ class WaContent extends BaseCmd
             ->map(function ($compositeContent) use ($postId) {
                 if ($compositeContent->type === 'text_item') {
                     return [
-                        'body' => HtmlToMarkdown::parseHtml($compositeContent->text),
+                        'body'           => HtmlToMarkdown::parseHtml($compositeContent->text),
                         'locked_content' => false,
-                        'acf_fc_layout' => $compositeContent->type
+                        'acf_fc_layout'  => $compositeContent->type
                     ];
                 }
                 if ($compositeContent->type === 'image') {
                     return [
-                        'lead_image' => $compositeContent->lead_image ?? false,
-                        'file' => WpAttachment::upload_attachment($postId, $compositeContent),
+                        'lead_image'     => $compositeContent->lead_image ?? false,
+                        'file'           => WpAttachment::upload_attachment($postId, $compositeContent),
                         'locked_content' => false,
-                        'acf_fc_layout' => $compositeContent->type
+                        'acf_fc_layout'  => $compositeContent->type
                     ];
                 }
                 if ($compositeContent->type === 'file') {
@@ -287,35 +287,35 @@ class WaContent extends BaseCmd
                 }
                 if ($compositeContent->type === 'inserted_code') {
                     return [
-                        'code' => $compositeContent->code,
+                        'code'           => $compositeContent->code,
                         'locked_content' => false,
-                        'acf_fc_layout' => $compositeContent->type
+                        'acf_fc_layout'  => $compositeContent->type
                     ];
                 }
                 if ($compositeContent->type === 'gallery') {
                     return [
-                        'images' => $compositeContent->images->map(function ($waImage) use ($postId) {
+                        'images'         => $compositeContent->images->map(function ($waImage) use ($postId) {
                             $description = HtmlToMarkdown::parseHtml(
                                 sprintf('<h3>%s</h3> %s', $waImage->title, $waImage->description)
                             );
                             // Unset description from image as it will be imported to gallery
                             $waImage->description = null;
                             return [
-                                'image' => WpAttachment::upload_attachment($postId, $waImage),
+                                'image'       => WpAttachment::upload_attachment($postId, $waImage),
                                 // Prepend title to description as we do not support titles per image
                                 'description' => $description
                             ];
                         }),
-                        'display_hint' => $compositeContent->display_hint,
+                        'display_hint'   => $compositeContent->display_hint,
                         'locked_content' => false,
-                        'acf_fc_layout' => $compositeContent->type
+                        'acf_fc_layout'  => $compositeContent->type
                     ];
                 }
                 if ($compositeContent->type === 'video') {
                     return [
-                        'embed_url' => $this->getVideoEmbed($compositeContent->video_site, $compositeContent->video_id),
+                        'embed_url'      => $this->getVideoEmbed($compositeContent->video_site, $compositeContent->video_id),
                         'locked_content' => false,
-                        'acf_fc_layout' => $compositeContent->type
+                        'acf_fc_layout'  => $compositeContent->type
                     ];
                 }
                 return null;
@@ -367,7 +367,7 @@ class WaContent extends BaseCmd
     private function remove_if_orphaned(WP_Post $post)
     {
         $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if ($compositeId && !CompositeRepository::findById($compositeId)) {
+        if ($compositeId && ! CompositeRepository::findById($compositeId)) {
             // Delete attachments on composite
             collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
                 if ($content['acf_fc_layout'] === 'file') {
@@ -423,7 +423,6 @@ class WaContent extends BaseCmd
             ->rejectNullValues();
 
 
-
         $newFileIds = $compositeContents
             ->map(function ($compositeContent) {
                 if ($compositeContent->type === 'image') {
@@ -476,10 +475,10 @@ class WaContent extends BaseCmd
         );
 
         $userId = wp_insert_user([
-            'ID' => $existingId ?: null,
-            'user_login' => sanitize_user($waContent->author),
+            'ID'           => $existingId ?: null,
+            'user_login'   => sanitize_user($waContent->author),
             'display_name' => $waContent->author,
-            'user_pass' => md5(rand(1, 32)),
+            'user_pass'    => md5(rand(1, 32)),
         ]);
 
         if (is_wp_error($userId)) {
@@ -507,8 +506,8 @@ class WaContent extends BaseCmd
     {
         $vendor = collect([
             'youtube' => 'https://www.youtube.com/embed/',
-            'vimeo' => 'https://player.vimeo.com/video/',
-            'vimeo' => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
+            'vimeo'   => 'https://player.vimeo.com/video/',
+            'vimeo'   => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
         ])->get($provider);
         return $vendor ? $vendor . $videoId : null;
     }
