@@ -7,7 +7,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Link implements WidgetContract
 {
-
     const KEY = '590b1798c8768';
     const URL_KEY = 'field_590b17c4c876a';
     const BUTTON_LABEL_KEY = 'field_590b179fc8769';
