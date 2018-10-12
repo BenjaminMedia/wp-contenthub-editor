@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -15,20 +16,15 @@ class Video implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'video',
-            'label' => 'Video',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTeaserImage(),
-                $this->getUrl(),
-                $this->getCaption(),
-                $this->getLockedContent(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $video = new ACFLayout(self::KEY);
+        $video->setName('video')
+            ->setLabel('Video')
+            ->addSubField($this->getTeaserImage())
+            ->addSubField($this->getUrl())
+            ->addSubField($this->getCaption())
+            ->addSubField($this->getLockedContent());
+
+        return $video->toArray();
     }
 
     private function getTeaserImage()
@@ -40,7 +36,7 @@ class Video implements WidgetContract
             'type' => 'true_false',
             'instructions' =>
                 'This will generate an image from the video
-                                            and set it as a <b>teaser image</b> for the article.',
+                                        and set it as a <b>teaser image</b> for the article.',
             'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [
@@ -65,7 +61,7 @@ class Video implements WidgetContract
             'type' => 'text',
             'instructions' =>
                 'Paste the embed url from your video provider, supported providers are:
-                                            Vimeo, YouTube, 23Video',
+                                        Vimeo, YouTube, 23Video',
             'required' => 1,
             'conditional_logic' => 0,
             'wrapper' => [

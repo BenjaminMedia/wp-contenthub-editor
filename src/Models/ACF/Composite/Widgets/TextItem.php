@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class TextItem implements WidgetContract
@@ -11,17 +12,12 @@ class TextItem implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'text_item',
-            'label' => 'Text',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getBody(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $textItem = new ACFLayout(self::KEY);
+        $textItem->setName('text_item')
+            ->setLabel('Text')
+            ->addSubField($this->getBody());
+
+        return $textItem->toArray();
     }
 
     private function getBody()

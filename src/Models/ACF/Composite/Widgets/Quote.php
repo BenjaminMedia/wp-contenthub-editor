@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Quote implements WidgetContract
@@ -12,18 +13,13 @@ class Quote implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'quote',
-            'label' => 'Quote',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getQuote(),
-                $this->getAuthor(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $quote = new ACFLayout(self::KEY);
+        $quote->setName('quote')
+            ->setLabel('Quote')
+            ->addSubField($this->getQuote())
+            ->addSubField($this->getAuthor());
+
+        return $quote->toArray();
     }
 
     private function getQuote()

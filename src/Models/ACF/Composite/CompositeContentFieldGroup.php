@@ -37,41 +37,46 @@ class CompositeContentFieldGroup
         static::createACFFieldGroup();
     }
 
-    private static function createACFFieldGroup()
+    public static function createACFFieldGroup()
     {
         if (function_exists('acf_add_local_field_group')) {
-            acf_add_local_field_group([
-                'key' => self::KEY,
-                'title' => 'Article Content',
-                'fields' => [
-                    self::getArticleContent(),
-                    self::getLockedContent(),
-                    self::getRequiredUserRole(),
-                    self::getWidgets(),
-                ],
-                'location' => [
+            acf_add_local_field_group(self::getFieldGroup());
+        }
+    }
+
+    public static function getFieldGroup()
+    {
+        return [
+            'key' => self::KEY,
+            'title' => 'Article Content',
+            'fields' => [
+                self::getArticleContent(),
+                self::getLockedContent(),
+                self::getRequiredUserRole(),
+                self::getWidgets(),
+            ],
+            'location' => [
+                [
                     [
-                        [
-                            'param' => 'post_type',
-                            'operator' => '==',
-                            'value' => WpComposite::POST_TYPE,
-                        ],
+                        'param' => 'post_type',
+                        'operator' => '==',
+                        'value' => WpComposite::POST_TYPE,
                     ],
                 ],
-                'menu_order' => 2,
-                'position' => 'acf_after_title',
-                'style' => 'seamless',
-                'label_placement' => 'top',
-                'instruction_placement' => 'label',
-                'hide_on_screen' => [
-                    'slug',
-                    'categories',
-                    'author',
-                ],
-                'active' => 1,
-                'description' => '',
-            ]);
-        }
+            ],
+            'menu_order' => 2,
+            'position' => 'acf_after_title',
+            'style' => 'seamless',
+            'label_placement' => 'top',
+            'instruction_placement' => 'label',
+            'hide_on_screen' => [
+                'slug',
+                'categories',
+                'author',
+            ],
+            'active' => 1,
+            'description' => '',
+        ];
     }
 
     private static function getArticleContent()
@@ -104,8 +109,8 @@ class CompositeContentFieldGroup
             'type' => 'true_false',
             'instructions' =>
                 'Check this box if you want parts of the content to be locked.
-                            Please note that you should mark each content item that you want to be locked,
-                            by checking the "Locked Content" checkbox.',
+                        Please note that you should mark each content item that you want to be locked,
+                        by checking the "Locked Content" checkbox.',
             'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [

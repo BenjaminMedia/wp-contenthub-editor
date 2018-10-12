@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -13,18 +14,13 @@ class InsertedCode implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'inserted_code',
-            'label' => 'Inserted Code',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getCode(),
-                $this->getLockedContent(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $insertedCode = new ACFLayout(self::KEY);
+        $insertedCode->setName('inserted_code')
+            ->setLabel('Inserted Code')
+            ->addSubField($this->getCode())
+            ->addSubField($this->getLockedContent());
+
+        return $insertedCode->toArray();
     }
 
     private function getCode()

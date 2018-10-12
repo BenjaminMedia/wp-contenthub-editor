@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class LeadParagraph implements WidgetContract
@@ -13,19 +14,14 @@ class LeadParagraph implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'lead_paragraph',
-            'label' => 'Lead Paragraph',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getDescription(),
-                $this->getDisplayHint(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $leadParagraph = new ACFLayout(self::KEY);
+        $leadParagraph->setName('lead_paragraph')
+            ->setLabel('Lead Paragraph')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getDescription())
+            ->addSubField($this->getDisplayHint());
+
+        return $leadParagraph->toArray();
     }
 
     private function getTitle()

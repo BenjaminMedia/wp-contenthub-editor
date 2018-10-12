@@ -2,8 +2,15 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Image;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Repeater;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Textarea;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\File as FileField;
 
 class File implements WidgetContract
 {
@@ -17,105 +24,54 @@ class File implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'file',
-            'label' => 'File',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getCaption(),
-                $this->getFile(),
-                $this->getImages(),
-                $this->getLockedContent(),
-                $this->getLabel(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $file = new ACFLayout(self::KEY);
+        $file->setName('file')
+            ->setLabel('File')
+            ->addSubField($this->getCaption())
+            ->addSubField($this->getFile())
+            ->addSubField($this->getImages())
+            ->addSubField($this->getLockedContent())
+            ->addSubField($this->getLabel());
+
+        return $file->toArray();
     }
 
     private function getCaption()
     {
-        return [
-            'key' => self::CAPTION_KEY,
-            'label' => 'Caption',
-            'name' => 'caption',
-            'type' => 'textarea',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'maxlength' => '',
-            'rows' => '',
-            'new_lines' => '',
-        ];
+        $caption = new Textarea(self::CAPTION_KEY);
+        $caption->setLabel('Caption')
+            ->setName('caption');
+
+        return $caption->toArray();
     }
 
     private function getFile()
     {
-        return [
-            'key' => self::FILE_KEY,
-            'label' => 'File',
-            'name' => 'file',
-            'type' => 'file',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'array',
-            'library' => 'all',
-            'min_size' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $file = new FileField(self::FILE_KEY);
+        $file->setReturnFormat('array')
+            ->setLabel('File')
+            ->setName('file');
+        return $file->toArray();
     }
 
     private function getImages()
     {
-        return [
-            'key' => self::IMAGES_KEY,
-            'label' => 'Images',
-            'name' => 'images',
-            'type' => 'repeater',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'collapsed' => '',
-            'min' => 0,
-            'max' => 0,
-            'layout' => 'table',
-            'button_label' => 'Add Image',
-            'sub_fields' => [
-                $this->getImage(),
-            ],
-        ];
+        $images = new Repeater(self::IMAGES_KEY);
+        $images->setButtonLabel('Add Image')
+            ->addSubField($this->getImage())
+            ->setLabel('Images')
+            ->setName('images')
+            ->setRequired(1);
+
+        return $images->toArray();
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -123,68 +79,28 @@ class File implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked->toArray();
     }
 
     private function getLabel()
     {
-        return [
-            'key' => self::LABEL_KEY,
-            'label' => 'Download Button Text (Optional]',
-            'name' => 'download_button_text',
-            'type' => 'text',
-            'instructions' => 'This will override the default button text.',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $label = new Text(self::LABEL_KEY);
+        $label->setLabel('Download Button Text (Optional)')
+            ->setName('download_button_text')
+            ->setInstructions('This will override the default button text.');
+
+        return $label->toArray();
     }
 
     private function getImage()
     {
-        return [
-            'key' => self::IMAGE_KEY,
-            'label' => 'File',
-            'name' => 'file',
-            'type' => 'image',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $image = new Image(self::IMAGE_KEY);
+        $image->setLabel('File')
+            ->setName('file')
+            ->setRequired(1);
+
+        return $image->toArray();
     }
 }

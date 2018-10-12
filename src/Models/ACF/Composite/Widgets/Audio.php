@@ -2,6 +2,10 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\File;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Image;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Audio implements WidgetContract
@@ -13,94 +17,43 @@ class Audio implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'audio',
-            'label' => 'Audio',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getFile(),
-                $this->getTitle(),
-                $this->getImage(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $audio = new ACFLayout(self::KEY);
+        $audio->setName('audio')
+            ->setLabel('Audio')
+            ->addSubField($this->getFile())
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getImage());
+
+        return $audio->toArray();
     }
 
     private function getFile()
     {
-        return [
-            'key' => self::FILE_KEY,
-            'label' => 'File',
-            'name' => 'file',
-            'type' => 'file',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'library' => 'all',
-            'min_size' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $file = new File(self::FILE_KEY);
+        $file->setLabel('File')
+            ->setName('file')
+            ->setRequired(1);
+
+        return $file->toArray();
     }
 
     private function getTitle()
     {
-        return [
-            'key' => self::TITLE_KEY,
-            'label' => 'Title',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $title = new Text(self::TITLE_KEY);
+        $title->setLabel('Title')
+            ->setName('title');
+
+        return $title->toArray();
     }
 
     private function getImage()
     {
-        return [
-            'key' => self::IMAGE_KEY,
-            'label' => 'Image',
-            'name' => 'image',
-            'type' => 'image',
-            'instructions' =>
-                'picture shown on audio of the audio file.
-                                            If not set, it\'ll default to the lead image.',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $image = new Image(self::IMAGE_KEY);
+        $image->setLabel('Image')
+            ->setName('image')
+            ->setInstructions('picture shown on audio of the audio file.
+                                        If not set, it\'ll default to the lead image.');
+
+        return $image->toArray();
     }
 }

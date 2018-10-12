@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -14,19 +15,14 @@ class Infobox implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'infobox',
-            'label' => 'Infobox',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getBody(),
-                $this->getLockedContent(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $infobox = new ACFLayout(self::KEY);
+        $infobox->setName('infobox')
+            ->setLabel('Infobox')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getBody())
+            ->addSubField($this->getLockedContent());
+
+        return $infobox->toArray();
     }
 
     private function getTitle()

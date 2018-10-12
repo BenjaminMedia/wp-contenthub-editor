@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -15,20 +16,15 @@ class Link implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'link',
-            'label' => 'Link',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getUrl(),
-                $this->getButtonLabel(),
-                $this->getTarget(),
-                $this->getLockedContent(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $link = new ACFLayout(self::KEY);
+        $link->setName('link')
+            ->setLabel('Link')
+            ->addSubField($this->getUrl())
+            ->addSubField($this->getButtonLabel())
+            ->addSubField($this->getTarget())
+            ->addSubField($this->getLockedContent());
+
+        return $link->toArray();
     }
 
     private function getUrl()

@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Image implements WidgetContract
@@ -17,23 +18,18 @@ class Image implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'image',
-            'label' => 'Image',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getLeadImage(),
-                $this->getFile(),
-                $this->getLockedContent(),
-                $this->getLink(),
-                $this->getTarget(),
-                $this->getRelationship(),
-                $this->getDisplayHint(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $image = new ACFLayout(self::KEY);
+        $image->setName('image')
+            ->setLabel('Image')
+            ->addSubField($this->getLeadImage())
+            ->addSubField($this->getFile())
+            ->addSubField($this->getLockedContent())
+            ->addSubField($this->getLink())
+            ->addSubField($this->getTarget())
+            ->addSubField($this->getRelationship())
+            ->addSubField($this->getDisplayHint());
+
+        return $image->toArray();
     }
 
     private function getLeadImage()

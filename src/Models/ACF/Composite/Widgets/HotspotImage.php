@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\Partials\Hotspots;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -15,19 +16,16 @@ class HotspotImage implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'hotspot_image',
-            'label' => 'Hotspot Image',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getDescription(),
-                $this->getImage(),
-                $this->getDisplayHint(),
-                with(new Hotspots)->getLayout(),
-            ],
-        ];
+        $hotspotImage = new ACFLayout(self::KEY);
+        $hotspotImage->setName('hotspot_image')
+            ->setLabel('Hotspot Image')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getDescription())
+            ->addSubField($this->getImage())
+            ->addSubField($this->getDisplayHint())
+            ->addSubField(with(new Hotspots)->getLayout());
+
+        return $hotspotImage->toArray();
     }
 
     private function getTitle()

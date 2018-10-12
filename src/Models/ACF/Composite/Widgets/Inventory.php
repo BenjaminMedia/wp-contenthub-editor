@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
@@ -16,19 +17,14 @@ class Inventory implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'inventory',
-            'label' => 'Inventory',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getInventory(),
-                $this->getLockedContent(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $inventory = new ACFLayout(self::KEY);
+        $inventory->setName('inventory')
+            ->setLabel('Inventory')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getInventory())
+            ->addSubField($this->getLockedContent());
+
+        return $inventory->toArray();
     }
 
     private function getTitle()

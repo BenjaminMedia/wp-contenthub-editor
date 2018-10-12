@@ -2,9 +2,15 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Image;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\MarkdownEditor;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Radio;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Repeater;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
-use PHPUnit\Framework\Constraint\Composite;
 
 class Gallery implements WidgetContract
 {
@@ -20,175 +26,85 @@ class Gallery implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'gallery',
-            'label' => 'Gallery',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getDescription(),
-                $this->getImages(),
-                $this->getLockedContent(),
-                $this->getDisplayHint(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $gallery = new ACFLayout(self::KEY);
+        $gallery->setName('gallery')
+            ->setLabel('Gallery')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getDescription())
+            ->addSubField($this->getImages())
+            ->addSubField($this->getLockedContent())
+            ->addSubField($this->getDisplayHint());
+
+        return $gallery->toArray();
     }
 
     private function getTitle()
     {
-        return [
-            'key' => self::TITLE_KEY,
-            'label' => 'Title',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $title = new Text(self::TITLE_KEY);
+        $title->setLabel('Title')
+            ->setName('title');
+
+        return $title->toArray();
     }
 
     private function getDescription()
     {
-        return [
-            'key' => self::DESCRIPTION_KEY,
-            'label' => 'Description',
-            'name' => 'description',
-            'type' => 'markdown-editor',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'simple_mde_config' => 'standard',
-            'font_size' => 14,
-        ];
+        $description = new MarkdownEditor(self::DESCRIPTION_KEY);
+        $description->setLabel('Description')
+            ->setName('description');
+
+        return $description->toArray();
     }
 
     private function getImages()
     {
-        return [
-            'key' => self::IMAGES_KEY,
-            'label' => 'Images',
-            'name' => 'images',
-            'type' => 'repeater',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'collapsed' => '',
-            'min' => 0,
-            'max' => 0,
-            'layout' => 'block',
-            'button_label' => 'Add Image to Gallery',
-            'sub_fields' => [
-                $this->getImage(),
-                $this->getImageTitle(),
-                $this->getImageDescription(),
-            ],
-        ];
+        $images = new Repeater(self::IMAGES_KEY);
+        $images->setLayout('block')
+            ->setButtonLabel('Add Image to Gallery')
+            ->addSubField($this->getImage())
+            ->addSubField($this->getImageTitle())
+            ->addSubField($this->getImageDescription())
+            ->setLabel('Images')
+            ->setName('images')
+            ->setRequired(1);
+
+        return $images->toArray();
     }
 
     private function getImage()
     {
-        return [
-            'key' => self::IMAGE_KEY,
-            'label' => 'Image',
-            'name' => 'image',
-            'type' => 'image',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $image = new Image(self::IMAGE_KEY);
+        $image->setLabel('Image')
+            ->setName('image')
+            ->setRequired(1);
+
+        return $image->toArray();
     }
 
     private function getImageTitle()
     {
-        return [
-            'key' => self::IMAGE_TITLE_KEY,
-            'label' => 'Title',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $title = new Text(self::IMAGE_TITLE_KEY);
+        $title->setLabel('Title')
+            ->setName('title');
+
+        return $title->toArray();
     }
 
     private function getImageDescription()
     {
-        return [
-            'key' => self::IMAGE_DESCRIPTION_KEY,
-            'label' => 'Description',
-            'name' => 'description',
-            'type' => 'markdown-editor',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'simple_mde_config' => 'standard',
-            'font_size' => 14,
-        ];
+        $description = new MarkdownEditor(self::IMAGE_DESCRIPTION_KEY);
+        $description->setLabel('Description')
+            ->setName('description');
+
+        return $description->toArray();
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -196,45 +112,22 @@ class Gallery implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked->toArray();
     }
 
     private function getDisplayHint()
     {
-        return [
-            'key' => self::DISPLAY_HINT_KEY,
-            'label' => 'Display Format',
-            'name' => 'display_hint',
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
+        $displayHint = new Radio(self::DISPLAY_HINT_KEY);
+        $displayHint->setChoices([
                 'default' => 'Default',
                 'inline' => 'Inline',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'save_other_choice' => 0,
-            'default_value' => 'default',
-            'layout' => 'vertical',
-            'return_format' => 'value',
-        ];
+            ])
+            ->setDefaultValue('default')
+            ->setLabel('Display Format')
+            ->setName('display_hint');
+
+        return $displayHint->toArray();
     }
 }

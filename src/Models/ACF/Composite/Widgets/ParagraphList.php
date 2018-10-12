@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class ParagraphList implements WidgetContract
@@ -19,21 +20,16 @@ class ParagraphList implements WidgetContract
 
     public function getLayout(): array
     {
-        return [
-            'key' => self::KEY,
-            'name' => 'paragraph_list',
-            'label' => 'Paragraph List',
-            'display' => 'block',
-            'sub_fields' => [
-                $this->getTitle(),
-                $this->getDescription(),
-                $this->getImage(),
-                $this->getDisplayHint(),
-                $this->getItems(),
-            ],
-            'min' => '',
-            'max' => '',
-        ];
+        $paragraphList = new ACFLayout(self::KEY);
+        $paragraphList->setName('paragraph_list')
+            ->setLabel('Paragraph List')
+            ->addSubField($this->getTitle())
+            ->addSubField($this->getDescription())
+            ->addSubField($this->getImage())
+            ->addSubField($this->getDisplayHint())
+            ->addSubField($this->getItems());
+
+        return $paragraphList->toArray();
     }
 
     private function getTitle()
