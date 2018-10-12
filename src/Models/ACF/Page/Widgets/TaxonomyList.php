@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 
 class TaxonomyList implements WidgetContract
 {
-
     public function getLayout(): array
     {
         return [
