@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum;
 
+use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Exception;
 
 /**
@@ -30,7 +31,7 @@ class ContentRepository
         $endpoint = null;
         if ($locale) {
             $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
-            if (!$endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
+            if (! $endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
                 throw new Exception(sprintf('%s has not been defined in your ENV file.', $envKey));
             }
         }
@@ -41,38 +42,57 @@ class ContentRepository
         );
     }
 
-    public function find_by_id($id, $resource = null)
+    /**
+     * @param      $whitealbumId
+     * @param null $resource
+     *
+     * @return array|mixed|null|object
+     */
+    public function findById($whitealbumId, $resource = null)
     {
-        if (!$resource) {
+        if (! $resource) {
             $resource = static::ARTICLE_RESOURCE;
         }
 
         return $this->get(
-            $resource . $id, [
-            'auth' => [
-                env('WHITEALBUM_USER'),
-                env('WHITEALBUM_PASSWORD'),
+            $resource . $whitealbumId,
+            [
+                'auth' => [
+                    env('WHITEALBUM_USER'),
+                    env('WHITEALBUM_PASSWORD'),
+                ]
             ]
-        ]);
+        );
     }
 
-    public function get_all($page = 1, $perPage = 50)
+    public function getAll($page = 1, $perPage = 50)
     {
         return $this->get(
-            static::CONTENT_RESOURCE, [
-            'query' => [
-                'page' => $page,
-                'per_page' => $perPage
+            static::CONTENT_RESOURCE,
+            [
+                'query' => [
+                    'page'     => $page,
+                    'per_page' => $perPage
+                ]
             ]
-        ]);
+        );
     }
 
-    public function map_all($callback)
+    /**
+     * @param      $callback
+     * @param int  $page
+     * @param bool $skipExisting
+     */
+    public function mapAll($callback, $page = 1, $skipExisting = false)
     {
-        $contents = collect($this->get_all($page = 1));
-        while (!$contents->isEmpty()) {
+        if ($skipExisting) {
+            \WP_CLI::line('Skipping already imported content');
+        }
+        $contents = collect($this->getAll($page));
+        while (! $contents->isEmpty()) {
+            \WP_CLI::line(sprintf('Begining import of page: %d', $page));
             collect($contents)->each(
-                function ($content) use ($callback) {
+                function ($content) use ($callback, $skipExisting) {
                     $resource = collect(
                         [
                             'Article' => static::ARTICLE_RESOURCE,
@@ -88,13 +108,23 @@ class ContentRepository
                         ));
                         return;
                     }
-                    if ($contentFound = $this->find_by_id($content->id, $resource)) {
-                        $callback($contentFound);
+                    if ($skipExisting && WpComposite::id_from_white_album_id($content->id)) {
+                        \WP_CLI::line(
+                            sprintf(
+                                '%s %s already exist, skipping import',
+                                $content->type,
+                                $content->id
+                            )
+                        );
+                        return;
+                    }
+                    if ($waContent = $this->findById($content->id, $resource)) {
+                        $callback($waContent);
                     }
                 }
             );
             $page++;
-            $contents = collect($this->get_all($page));
+            $contents = collect($this->getAll($page));
         }
     }
 
