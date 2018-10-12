@@ -63,7 +63,6 @@ class WaContent extends BaseCmd
     public function import($args, $assocArgs)
     {
         $this->disableHooks(); // Disable various hooks and filters during import
-        $this->fixNonceErrors();
 
         $this->repository = new ContentRepository($assocArgs['locale'] ?? null);
         if ($contentId = $assocArgs['id'] ?? null) {
@@ -81,6 +80,8 @@ class WaContent extends BaseCmd
 
     private function importComposite($waContent)
     {
+        $this->fixNonceErrors();
+
         if (! $waContent) {
             return;
         }
@@ -515,8 +516,6 @@ class WaContent extends BaseCmd
     private function fixNonceErrors()
     {
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
-        add_action('check_admin_referer', function ($action, &$result) {
-            $result = 1; // Force valid nonce
-        }, 10, 2);
+        $_REQUEST['_pll_nonce'] = wp_create_nonce('pll_language');
     }
 }
