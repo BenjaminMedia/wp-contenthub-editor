@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\Video;
+
 /**
  * Class MetaFieldGroup
  *
@@ -13,14 +15,14 @@ class TeaserFieldGroup
 
     public static function register()
     {
-        static::create_acf_field_group();
+        static::createACFFieldGroup();
         add_filter(
             'acf/validate_value/key=' . TeaserFieldGroup::TEASER_IMAGE_FIELD,
             [__CLASS__, 'validateTeaserImageField']
         );
     }
 
-    private static function create_acf_field_group()
+    private static function createACFFieldGroup()
     {
         if (function_exists('acf_add_local_field_group')) {
             acf_add_local_field_group([
@@ -373,6 +375,6 @@ class TeaserFieldGroup
         // If not valid and a Video-Widget with Teaser-Image checked exists
         return $valid ?:
             collect($_POST['acf'][CompositeContentFieldGroup::CONTENT_FIELD])
-                ->contains(CompositeContentFieldGroup::VIDEO_TEASER_IMAGE_FIELD, '1');
+                ->contains(Video::VIDEO_TEASER_IMAGE_FIELD, '1');
     }
 }
