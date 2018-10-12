@@ -8,6 +8,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\BannerPlacement;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\Newsletter;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\SeoText;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TaxonomyList;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TeaserList;
 
 class WpPage
@@ -43,6 +44,7 @@ class WpPage
                             with(new FeaturedContent)->getLayout(),
                             with(new TeaserList)->getLayout(),
                             with(new SeoText)->getLayout(),
+                            with(new TaxonomyList)->getLayout(),
                             with(new Newsletter)->getLayout(),
                             with(new BannerPlacement)->getLayout(),
                         ],
