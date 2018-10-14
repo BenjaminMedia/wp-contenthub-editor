@@ -15,7 +15,7 @@ class Audio implements WidgetContract
     const TITLE_KEY = 'field_5b6bf0163e57d';
     const IMAGE_KEY = 'field_5b716358c2e60';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $audio = new ACFLayout(self::KEY);
         $audio->setName('audio')
@@ -24,7 +24,7 @@ class Audio implements WidgetContract
             ->addSubField($this->getTitle())
             ->addSubField($this->getImage());
 
-        return $audio->toArray();
+        return $audio;
     }
 
     private function getFile()
@@ -34,7 +34,7 @@ class Audio implements WidgetContract
             ->setName('file')
             ->setRequired(1);
 
-        return $file->toArray();
+        return $file;
     }
 
     private function getTitle()
@@ -43,7 +43,7 @@ class Audio implements WidgetContract
         $title->setLabel('Title')
             ->setName('title');
 
-        return $title->toArray();
+        return $title;
     }
 
     private function getImage()
@@ -54,6 +54,6 @@ class Audio implements WidgetContract
             ->setInstructions('picture shown on audio of the audio file.
                                         If not set, it\'ll default to the lead image.');
 
-        return $image->toArray();
+        return $image;
     }
 }

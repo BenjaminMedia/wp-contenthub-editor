@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Fields;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Illuminate\Support\Collection;
 
 class Repeater extends AbstractField
@@ -139,10 +140,10 @@ class Repeater extends AbstractField
     }
 
     /**
-     * @param array $field
+     * @param AbstractField $field
      * @return Repeater
      */
-    public function addSubField(array $field): Repeater
+    public function addSubField(AbstractField $field): Repeater
     {
         $this->subFields->push($field);
         return $this;
@@ -156,7 +157,9 @@ class Repeater extends AbstractField
             'max' => $this->max,
             'layout' => $this->layout,
             'button_label' => $this->buttonLabel,
-            'sub_fields' => $this->subFields->toArray(),
+            'sub_fields' => $this->subFields->map(function (AbstractField $field) {
+                return $field->toArray();
+            })->toArray(),
         ]);
     }
 }

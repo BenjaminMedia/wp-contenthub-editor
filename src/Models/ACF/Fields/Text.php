@@ -4,11 +4,20 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Fields;
 
 class Text extends AbstractField
 {
+    /** @var string */
     protected $defaultValue;
+    /** @var string */
     protected $placeholder;
+    /** @var string */
     protected $prepend;
+    /** @var string */
     protected $append;
+    /** @var string|int */
     protected $maxLength;
+    /** @var int */
+    protected $readOnly;
+    /** @var int */
+    protected $disabled;
 
     public function __construct(string $key)
     {
@@ -18,6 +27,8 @@ class Text extends AbstractField
         $this->prepend = '';
         $this->append = '';
         $this->maxLength = '';
+        $this->readOnly = 0;
+        $this->disabled = 0;
     }
 
     /**
@@ -110,6 +121,42 @@ class Text extends AbstractField
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getReadOnly(): int
+    {
+        return $this->readOnly;
+    }
+
+    /**
+     * @param int $readOnly
+     * @return Text
+     */
+    public function setReadOnly(int $readOnly): Text
+    {
+        $this->readOnly = $readOnly;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDisabled(): int
+    {
+        return $this->disabled;
+    }
+
+    /**
+     * @param int $disabled
+     * @return Text
+     */
+    public function setDisabled(int $disabled): Text
+    {
+        $this->disabled = $disabled;
+        return $this;
+    }
+
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
@@ -118,6 +165,8 @@ class Text extends AbstractField
             'prepend' => $this->prepend,
             'append' => $this->append,
             'maxlength' => $this->maxLength,
+            'readonly' => $this->readOnly,
+            'disabled' => $this->disabled
         ]);
     }
 }

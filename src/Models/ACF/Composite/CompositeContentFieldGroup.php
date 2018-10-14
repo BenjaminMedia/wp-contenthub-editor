@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\AssociatedComposite;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\Audio;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\File;
@@ -17,6 +18,10 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\ParagraphList;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\Quote;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\TextItem;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets\Video;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\FlexibleContent;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Message;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Select;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -44,18 +49,15 @@ class CompositeContentFieldGroup
         }
     }
 
-    public static function getFieldGroup()
+    public static function getFieldGroup(): array
     {
-        return [
-            'key' => self::KEY,
-            'title' => 'Article Content',
-            'fields' => [
-                self::getArticleContent(),
-                self::getLockedContent(),
-                self::getRequiredUserRole(),
-                self::getWidgets(),
-            ],
-            'location' => [
+        $fieldGroup = new ACFGroup(self::KEY);
+        $fieldGroup->setTitle('Article Content')
+            ->addField(self::getArticleContent())
+            ->addField(self::getLockedContent())
+            ->addField(self::getRequiredUserRole())
+            ->addField(self::getWidgets())
+            ->setLocation([
                 [
                     [
                         'param' => 'post_type',
@@ -63,79 +65,50 @@ class CompositeContentFieldGroup
                         'value' => WpComposite::POST_TYPE,
                     ],
                 ],
-            ],
-            'menu_order' => 2,
-            'position' => 'acf_after_title',
-            'style' => 'seamless',
-            'label_placement' => 'top',
-            'instruction_placement' => 'label',
-            'hide_on_screen' => [
-                'slug',
-                'categories',
-                'author',
-            ],
-            'active' => 1,
-            'description' => '',
-        ];
+            ])
+            ->setMenuOrder(2)
+            ->setPosition('acf_after_title')
+            ->setStyle('seamless')
+            ->setHideOnScreen(['slug', 'categories', 'author'])
+            ->setActive(1);
+
+        return $fieldGroup->toArray();
     }
 
-    private static function getArticleContent()
+    private static function getArticleContent(): Message
     {
-        return [
-            'key' => self::ARTICLE_CONTENT_KEY,
-            'label' => 'Article Content',
-            'name' => '',
-            'type' => 'message',
-            'instructions' => 'Click the add widget button to add content',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '<hr>',
-            'new_lines' => 'wpautop',
-            'esc_html' => 0,
-        ];
+        $content = new Message(self::ARTICLE_CONTENT_KEY);
+        $content->setMessage('<hr>')
+            ->setNewLines('wpautop')
+            ->setLabel('Article Content')
+            ->setInstructions('Click the add widget button to add content');
+
+        return $content;
     }
 
-    private static function getLockedContent()
+    private static function getLockedContent(): Checkbox
     {
-        return [
-            'key' => self::LOCKED_CONTENT_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' =>
-                'Check this box if you want parts of the content to be locked.
+        $locked = new Checkbox(self::LOCKED_CONTENT_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setInstructions('Check this box if you want parts of the content to be locked.
                         Please note that you should mark each content item that you want to be locked,
-                        by checking the "Locked Content" checkbox.',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+                        by checking the "Locked Content" checkbox.');
+
+        return $locked;
     }
 
-    private static function getRequiredUserRole()
+    private static function getRequiredUserRole(): Select
     {
-        return [
-            'key' => self::REQUIRED_ROLE_KEY,
-            'label' => 'Required User Role',
-            'name' => 'required_user_role',
-            'type' => 'select',
-            'instructions' => 'Select the role required to access the locked parts of the content',
-            'required' => 0,
-            'conditional_logic' => [
+        $requiredUserRole = new Select(self::REQUIRED_ROLE_KEY);
+        $requiredUserRole->setChoices([
+                'RegUser' => 'Registered User',
+                'Subscriber' => 'Subscriber',
+            ])
+            ->setLabel('Required User Role')
+            ->setName('required_user_role')
+            ->setInstructions('Select the role required to access the locked parts of the content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => self::LOCKED_CONTENT_KEY,
@@ -143,62 +116,34 @@ class CompositeContentFieldGroup
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
-                'RegUser' => 'Registered User',
-                'Subscriber' => 'Subscriber',
-            ],
-            'default_value' => [
-            ],
-            'allow_null' => 0,
-            'multiple' => 0,
-            'ui' => 0,
-            'ajax' => 0,
-            'return_format' => 'value',
-            'placeholder' => '',
-        ];
+            ]);
+
+        return $requiredUserRole;
     }
 
-    private static function getWidgets()
+    private static function getWidgets(): FlexibleContent
     {
-        return [
-            'key' => self::CONTENT_FIELD,
-            'label' => 'Content (Widgets]',
-            'name' => 'composite_content',
-            'type' => 'flexible_content',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'button_label' => 'Add Widget',
-            'min' => '',
-            'max' => '',
-            'layouts' => [
-                with(new TextItem)->getLayout(),
-                with(new Image)->getLayout(),
-                with(new Audio)->getLayout(),
-                with(new File)->getLayout(),
-                with(new Video)->getLayout(),
-                with(new Link)->getLayout(),
-                with(new Gallery)->getLayout(),
-                with(new InsertedCode)->getLayout(),
-                with(new Infobox)->getLayout(),
-                with(new LeadParagraph)->getLayout(),
-                with(new ParagraphList)->getLayout(),
-                with(new AssociatedComposite)->getLayout(),
-                with(new Inventory)->getLayout(),
-                with(new HotspotImage)->getLayout(),
-                with(new Quote)->getLayout(),
-            ],
-        ];
+        $widgets = new FlexibleContent(self::CONTENT_FIELD);
+        $widgets->setButtonLabel('Add Widget')
+            ->addLayout(new TextItem)
+            ->addLayout(new Image)
+            ->addLayout(new Audio)
+            ->addLayout(new File)
+            ->addLayout(new Video)
+            ->addLayout(new Link)
+            ->addLayout(new Gallery)
+            ->addLayout(new InsertedCode)
+            ->addLayout(new Infobox)
+            ->addLayout(new LeadParagraph)
+            ->addLayout(new ParagraphList)
+            ->addLayout(new AssociatedComposite)
+            ->addLayout(new Inventory)
+            ->addLayout(new HotspotImage)
+            ->addLayout(new Quote)
+            ->setLabel('Content (Widgets)')
+            ->setName('composite_content')
+            ->setRequired(1);
+
+        return $widgets;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\AbstractField;
 use Illuminate\Support\Collection;
 
 class ACFLayout
@@ -102,7 +103,7 @@ class ACFLayout
         return $this;
     }
 
-    public function addSubField(array $field): ACFLayout
+    public function addSubField(AbstractField $field): ACFLayout
     {
         $this->subFields->push($field);
         return $this;
@@ -151,7 +152,9 @@ class ACFLayout
             'name' => $this->name,
             'label' => $this->label,
             'display' => $this->display,
-            'sub_fields' => $this->subFields->toArray(),
+            'sub_fields' => $this->subFields->map(function (AbstractField $field) {
+                return $field->toArray();
+            })->toArray(),
             'min' => $this->min,
             'max' => $this->max,
         ];

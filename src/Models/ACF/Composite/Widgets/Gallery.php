@@ -24,7 +24,7 @@ class Gallery implements WidgetContract
     const LOCKED_KEY = 'field_5a4f4e5f17462';
     const DISPLAY_HINT_KEY = 'field_5af2a198b1028';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $gallery = new ACFLayout(self::KEY);
         $gallery->setName('gallery')
@@ -35,7 +35,7 @@ class Gallery implements WidgetContract
             ->addSubField($this->getLockedContent())
             ->addSubField($this->getDisplayHint());
 
-        return $gallery->toArray();
+        return $gallery;
     }
 
     private function getTitle()
@@ -44,7 +44,7 @@ class Gallery implements WidgetContract
         $title->setLabel('Title')
             ->setName('title');
 
-        return $title->toArray();
+        return $title;
     }
 
     private function getDescription()
@@ -53,7 +53,7 @@ class Gallery implements WidgetContract
         $description->setLabel('Description')
             ->setName('description');
 
-        return $description->toArray();
+        return $description;
     }
 
     private function getImages()
@@ -68,7 +68,7 @@ class Gallery implements WidgetContract
             ->setName('images')
             ->setRequired(1);
 
-        return $images->toArray();
+        return $images;
     }
 
     private function getImage()
@@ -78,7 +78,7 @@ class Gallery implements WidgetContract
             ->setName('image')
             ->setRequired(1);
 
-        return $image->toArray();
+        return $image;
     }
 
     private function getImageTitle()
@@ -87,7 +87,7 @@ class Gallery implements WidgetContract
         $title->setLabel('Title')
             ->setName('title');
 
-        return $title->toArray();
+        return $title;
     }
 
     private function getImageDescription()
@@ -96,7 +96,7 @@ class Gallery implements WidgetContract
         $description->setLabel('Description')
             ->setName('description');
 
-        return $description->toArray();
+        return $description;
     }
 
     private function getLockedContent()
@@ -114,7 +114,7 @@ class Gallery implements WidgetContract
                 ],
             ]);
 
-        return $locked->toArray();
+        return $locked;
     }
 
     private function getDisplayHint()
@@ -128,6 +128,6 @@ class Gallery implements WidgetContract
             ->setLabel('Display Format')
             ->setName('display_hint');
 
-        return $displayHint->toArray();
+        return $displayHint;
     }
 }

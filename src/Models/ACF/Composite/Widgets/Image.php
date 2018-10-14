@@ -3,6 +3,10 @@
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Image as ImageField;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Radio;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\URL;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Image implements WidgetContract
@@ -16,7 +20,7 @@ class Image implements WidgetContract
     const RELATIONSHIP_KEY = 'field_5ba0c574e9e61';
     const DISPLAY_HINT_KEY = 'field_5bb4a00b2aa05';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $image = new ACFLayout(self::KEY);
         $image->setName('image')
@@ -29,70 +33,34 @@ class Image implements WidgetContract
             ->addSubField($this->getRelationship())
             ->addSubField($this->getDisplayHint());
 
-        return $image->toArray();
+        return $image;
     }
 
     private function getLeadImage()
     {
-        return [
-            'key' => self::LEAD_IMAGE_KEY,
-            'label' => 'Lead Image',
-            'name' => 'lead_image',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+        $leadImage = new Checkbox(self::LEAD_IMAGE_KEY);
+        $leadImage->setLabel('Lead Image')
+            ->setName('lead_image');
+
+        return $leadImage;
     }
 
     private function getFile()
     {
-        return [
-            'key' => self::FILE_KEY,
-            'label' => 'File',
-            'name' => 'file',
-            'type' => 'image',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $image = new ImageField(self::FILE_KEY);
+        $image->setLabel('File')
+            ->setName('file')
+            ->setRequired(1);
+
+        return $image;
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => 'field_5921f0c676974',
@@ -100,135 +68,75 @@ class Image implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked;
     }
 
     private function getLink()
     {
-        return [
-            'key' => self::LINK_KEY,
-            'label' => 'Link',
-            'name' => 'link',
-            'type' => 'url',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-        ];
+        $link = new URL(self::LINK_KEY);
+        $link->setLabel('Link')
+            ->setName('link');
+
+        return $link;
     }
 
     private function getTarget()
     {
-        return [
-            'key' => self::TARGET_KEY,
-            'label' => 'Open in',
-            'name' => 'target',
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $target = new Radio(self::TARGET_KEY);
+        $target->setChoices([
+                '_self' => 'Same window',
+                '_blank' => 'New window'
+            ])
+            ->setDefaultValue('_self')
+            ->setLabel('Open in')
+            ->setName('target')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => self::LINK_KEY,
                         'operator' => '!=empty',
-                    ],
-                ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
-                '_self' => 'Same window',
-                '_blank' => 'New window',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'default_value' => '_self',
-            'layout' => 'vertical',
-            'return_format' => 'value',
-            'save_other_choice' => 0,
-        ];
+                    ]
+                ]
+            ]);
+
+        return $target;
     }
 
     private function getRelationship()
     {
-        return [
-            'key' => self::RELATIONSHIP_KEY,
-            'label' => 'Relationship (Follow / No Follow)',
-            'name' => 'rel',
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $relationship = new Radio(self::RELATIONSHIP_KEY);
+        $relationship->setChoices([
+                'follow' => 'Follow',
+                'nofollow' => 'No Follow',
+            ])
+            ->setDefaultValue('follow')
+            ->setLabel('Relationship (Follow / No Follow)')
+            ->setName('rel')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => self::LINK_KEY,
                         'operator' => '!=empty',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
-                'follow' => 'Follow',
-                'nofollow' => 'No Follow',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'default_value' => 'follow',
-            'layout' => 'vertical',
-            'return_format' => 'value',
-            'save_other_choice' => 0,
-        ];
+            ]);
+
+        return $relationship;
     }
 
     private function getDisplayHint()
     {
-        return [
-            'key' => self::DISPLAY_HINT_KEY,
-            'label' => 'Display Format',
-            'name' => 'display_hint',
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
+        $displayHint = new Radio(self::DISPLAY_HINT_KEY);
+        $displayHint->setChoices([
                 'default' => 'Default',
                 'inline' => 'Inline',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'save_other_choice' => 0,
-            'default_value' => 'default',
-            'layout' => 'vertical',
-            'return_format' => 'value',
-        ];
+            ])
+            ->setDefaultValue('default')
+            ->setLabel('Display Format')
+            ->setName('display_hint');
+
+        return $displayHint;
     }
 }

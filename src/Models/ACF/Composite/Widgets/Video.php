@@ -4,6 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Textarea;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Video implements WidgetContract
@@ -14,7 +17,7 @@ class Video implements WidgetContract
     const CAPTION_KEY = 'field_58aaeb26b12d4';
     const LOCKED_KEY = 'field_5922be0e5cda4';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $video = new ACFLayout(self::KEY);
         $video->setName('video')
@@ -24,92 +27,47 @@ class Video implements WidgetContract
             ->addSubField($this->getCaption())
             ->addSubField($this->getLockedContent());
 
-        return $video->toArray();
+        return $video;
     }
 
     private function getTeaserImage()
     {
-        return [
-            'key' => static::VIDEO_TEASER_IMAGE_FIELD,
-            'label' => 'Teaser Image',
-            'name' => 'video_teaser_image',
-            'type' => 'true_false',
-            'instructions' =>
-                'This will generate an image from the video
-                                        and set it as a <b>teaser image</b> for the article.',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+        $teaserImage = new Checkbox(self::VIDEO_TEASER_IMAGE_FIELD);
+        $teaserImage->setLabel('Teaser Image')
+            ->setName('video_teaser_image')
+            ->setInstructions('This will generate an image from the video
+                                        and set it as a <b>teaser image</b> for the article.');
+
+        return $teaserImage;
     }
 
     private function getUrl()
     {
-        return [
-            'key' => self::URL_KEY,
-            'label' => 'Embed Url',
-            'name' => 'embed_url',
-            'type' => 'text',
-            'instructions' =>
-                'Paste the embed url from your video provider, supported providers are:
-                                        Vimeo, YouTube, 23Video',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $url = new Text(self::URL_KEY);
+        $url->setLabel('Embed Url')
+            ->setName('embed_url')
+            ->setInstructions('Paste the embed url from your video provider, supported providers are:
+                                        Vimeo, YouTube, 23Video')
+            ->setRequired(1);
+
+        return $url;
     }
 
     private function getCaption()
     {
-        return [
-            'key' => self::CAPTION_KEY,
-            'label' => 'Caption',
-            'name' => 'caption',
-            'type' => 'textarea',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'maxlength' => '',
-            'rows' => '',
-            'new_lines' => '',
-        ];
+        $caption = new Textarea(self::CAPTION_KEY);
+        $caption->setLabel('Caption')
+            ->setName('caption');
+
+        return $caption;
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -117,17 +75,8 @@ class Video implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked;
     }
 }

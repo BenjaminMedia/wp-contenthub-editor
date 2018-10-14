@@ -15,7 +15,7 @@ class AssociatedComposite implements WidgetContract
     const COMPOSITE_KEY = 'field_58e393e0128b4';
     const LOCKED_KEY = 'field_5922be585cda6';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $associatedContent = new ACFLayout(self::KEY);
         $associatedContent->setName('associated_composite')
@@ -23,7 +23,7 @@ class AssociatedComposite implements WidgetContract
             ->addSubField($this->getComposite())
             ->addSubField($this->getLockedContent());
 
-        return $associatedContent->toArray();
+        return $associatedContent;
     }
 
     private function getComposite()
@@ -37,7 +37,7 @@ class AssociatedComposite implements WidgetContract
             ->setLabel('Content')
             ->setName('composite');
 
-        return $composite->toArray();
+        return $composite;
     }
 
     private function getLockedContent()
@@ -54,6 +54,6 @@ class AssociatedComposite implements WidgetContract
                     ],
                 ],
             ]);
-        return $lockedContent->toArray();
+        return $lockedContent;
     }
 }

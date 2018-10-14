@@ -4,10 +4,15 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Fields;
 
 class Textarea extends AbstractField
 {
+    /** @var string */
     protected $defaultValue;
+    /** @var string */
     protected $placeholder;
+    /** @var string|int */
     protected $maxLength;
+    /** @var string|int */
     protected $rows;
+    /** @var string */
     protected $newLines;
 
     public function __construct(string $key)
@@ -57,36 +62,36 @@ class Textarea extends AbstractField
     }
 
     /**
-     * @return string
+     * @return int|string
      */
-    public function getMaxLength(): string
+    public function getMaxLength()
     {
         return $this->maxLength;
     }
 
     /**
-     * @param string $maxLength
+     * @param int|string $maxLength
      * @return Textarea
      */
-    public function setMaxLength(string $maxLength): Textarea
+    public function setMaxLength($maxLength)
     {
         $this->maxLength = $maxLength;
         return $this;
     }
 
     /**
-     * @return string
+     * @return int|string
      */
-    public function getRows(): string
+    public function getRows()
     {
         return $this->rows;
     }
 
     /**
-     * @param string $rows
+     * @param int|string $rows
      * @return Textarea
      */
-    public function setRows(string $rows): Textarea
+    public function setRows($rows)
     {
         $this->rows = $rows;
         return $this;

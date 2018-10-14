@@ -4,6 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\MarkdownEditor;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Infobox implements WidgetContract
@@ -13,7 +16,7 @@ class Infobox implements WidgetContract
     const BODY_KEY = 'field_58aae4d4809c8';
     const LOCKED_KEY = 'field_5922bdd55cda2';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $infobox = new ACFLayout(self::KEY);
         $infobox->setName('infobox')
@@ -22,62 +25,36 @@ class Infobox implements WidgetContract
             ->addSubField($this->getBody())
             ->addSubField($this->getLockedContent());
 
-        return $infobox->toArray();
+        return $infobox;
     }
 
     private function getTitle()
     {
-        return [
-            'key' => self::TITLE_KEY,
-            'label' => 'Title',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $title = new Text(self::TITLE_KEY);
+        $title->setLabel('Title')
+            ->setName('title')
+            ->setRequired(1);
+
+        return $title;
     }
 
     private function getBody()
     {
-        return [
-            'key' => self::BODY_KEY,
-            'label' => 'Body',
-            'name' => 'body',
-            'type' => 'markdown-editor',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'simple_mde_config' => 'simple',
-            'font_size' => 14,
-        ];
+        $body = new MarkdownEditor(self::BODY_KEY);
+        $body->setConfig('simple')
+            ->setLabel('Body')
+            ->setName('body')
+            ->setRequired(1);
+
+        return $body;
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -85,17 +62,8 @@ class Infobox implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked;
     }
 }

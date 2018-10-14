@@ -4,6 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Select;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Link implements WidgetContract
@@ -14,7 +17,7 @@ class Link implements WidgetContract
     const TARGET_KEY = 'field_590b17d4c876b';
     const LOCKED_KEY = 'field_5922be3e5cda5';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $link = new ACFLayout(self::KEY);
         $link->setName('link')
@@ -24,98 +27,50 @@ class Link implements WidgetContract
             ->addSubField($this->getTarget())
             ->addSubField($this->getLockedContent());
 
-        return $link->toArray();
+        return $link;
     }
 
     private function getUrl()
     {
-        return [
-            'key' => self::URL_KEY,
-            'label' => 'URL',
-            'name' => 'url',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $url = new Text(self::URL_KEY);
+        $url->setLabel('URL')
+            ->setName('url')
+            ->setRequired(1);
+
+        return $url;
     }
 
     private function getButtonLabel()
     {
-        return [
-            'key' => self::BUTTON_LABEL_KEY,
-            'label' => 'Button text',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $label = new Text(self::BUTTON_LABEL_KEY);
+        $label->setLabel('Button text')
+            ->setName('title');
+
+        return $label;
     }
 
     private function getTarget()
     {
-        return [
-            'key' => self::TARGET_KEY,
-            'label' => 'Target',
-            'name' => 'target',
-            'type' => 'select',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
+        $target = new Select(self::TARGET_KEY);
+        $target->setChoices([
                 'Default' => 'Default For the Site',
                 'Self' => 'Open in same window/tab',
                 'Blank' => 'Open in a new tab',
                 'Download' => 'Force download a file',
-            ],
-            'default_value' => [
-                0 => 'Default',
-            ],
-            'allow_null' => 0,
-            'multiple' => 0,
-            'ui' => 0,
-            'ajax' => 0,
-            'return_format' => 'value',
-            'placeholder' => '',
-        ];
+            ])
+            ->setDefaultValue(['Default'])
+            ->setLabel('Target')
+            ->setName('target');
+
+        return $target;
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -123,17 +78,8 @@ class Link implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked;
     }
 }

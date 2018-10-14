@@ -4,6 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Checkbox;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Repeater;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Inventory implements WidgetContract
@@ -15,7 +18,7 @@ class Inventory implements WidgetContract
     const VALUE_KEY = 'field_58aeae4ccbe62';
     const LOCKED_KEY = 'field_5922be6d5cda7';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $inventory = new ACFLayout(self::KEY);
         $inventory->setName('inventory')
@@ -24,121 +27,56 @@ class Inventory implements WidgetContract
             ->addSubField($this->getInventory())
             ->addSubField($this->getLockedContent());
 
-        return $inventory->toArray();
+        return $inventory;
     }
 
     private function getTitle()
     {
-        return [
-            'key' => self::TITLE_KEY,
-            'label' => 'Title',
-            'name' => 'title',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-            'readonly' => 0,
-            'disabled' => 0,
-        ];
+        $title = new Text(self::TITLE_KEY);
+        $title->setLabel('Title')
+            ->setName('title')
+            ->setRequired(1);
+
+        return $title;
     }
 
     private function getInventory()
     {
-        return [
-            'key' => self::INVENTORY_KEY,
-            'label' => 'Inventory Items',
-            'name' => 'inventory_items',
-            'type' => 'repeater',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'collapsed' => '',
-            'min' => 0,
-            'max' => 0,
-            'layout' => 'table',
-            'button_label' => 'Add Row',
-            'sub_fields' => [
-                $this->getName(),
-                $this->getValue(),
-            ],
-        ];
+        $inventory = new Repeater(self::INVENTORY_KEY);
+        $inventory->setButtonLabel('Add Row')
+            ->addSubField($this->getName())
+            ->addSubField($this->getValue())
+            ->setLabel('Inventory Items')
+            ->setName('inventory_items');
+
+        return $inventory;
     }
 
     private function getName()
     {
-        return [
-            'key' => self::NAME_KEY,
-            'label' => 'Name',
-            'name' => 'name',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-            'readonly' => 0,
-            'disabled' => 0,
-        ];
+        $name = new Text(self::NAME_KEY);
+        $name->setLabel('Name')
+            ->setName('name')
+            ->setRequired(1);
+
+        return $name;
     }
 
     private function getValue()
     {
-        return [
-            'key' => self::VALUE_KEY,
-            'label' => 'Value',
-            'name' => 'value',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-            'readonly' => 0,
-            'disabled' => 0,
-        ];
+        $value = new Text(self::VALUE_KEY);
+        $value->setLabel('Value')
+            ->setName('value');
+
+        return $value;
     }
 
     private function getLockedContent()
     {
-        return [
-            'key' => self::LOCKED_KEY,
-            'label' => 'Locked Content',
-            'name' => 'locked_content',
-            'type' => 'true_false',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $locked = new Checkbox(self::LOCKED_KEY);
+        $locked->setLabel('Locked Content')
+            ->setName('locked_content')
+            ->setConditionalLogic([
                 [
                     [
                         'field' => CompositeContentFieldGroup::LOCKED_CONTENT_KEY,
@@ -146,17 +84,8 @@ class Inventory implements WidgetContract
                         'value' => '1',
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'message' => '',
-            'default_value' => 0,
-            'ui' => 0,
-            'ui_on_text' => '',
-            'ui_off_text' => '',
-        ];
+            ]);
+
+        return $locked;
     }
 }

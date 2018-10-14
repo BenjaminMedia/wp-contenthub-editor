@@ -22,7 +22,7 @@ class File implements WidgetContract
     const IMAGE_KEY = 'field_5921e94c3f4eb';
     const LABEL_KEY = 'field_59e49490911cf';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $file = new ACFLayout(self::KEY);
         $file->setName('file')
@@ -33,7 +33,7 @@ class File implements WidgetContract
             ->addSubField($this->getLockedContent())
             ->addSubField($this->getLabel());
 
-        return $file->toArray();
+        return $file;
     }
 
     private function getCaption()
@@ -42,7 +42,7 @@ class File implements WidgetContract
         $caption->setLabel('Caption')
             ->setName('caption');
 
-        return $caption->toArray();
+        return $caption;
     }
 
     private function getFile()
@@ -51,7 +51,8 @@ class File implements WidgetContract
         $file->setReturnFormat('array')
             ->setLabel('File')
             ->setName('file');
-        return $file->toArray();
+
+        return $file;
     }
 
     private function getImages()
@@ -63,7 +64,7 @@ class File implements WidgetContract
             ->setName('images')
             ->setRequired(1);
 
-        return $images->toArray();
+        return $images;
     }
 
     private function getLockedContent()
@@ -81,7 +82,7 @@ class File implements WidgetContract
                 ],
             ]);
 
-        return $locked->toArray();
+        return $locked;
     }
 
     private function getLabel()
@@ -91,7 +92,7 @@ class File implements WidgetContract
             ->setName('download_button_text')
             ->setInstructions('This will override the default button text.');
 
-        return $label->toArray();
+        return $label;
     }
 
     private function getImage()
@@ -101,6 +102,6 @@ class File implements WidgetContract
             ->setName('file')
             ->setRequired(1);
 
-        return $image->toArray();
+        return $image;
     }
 }

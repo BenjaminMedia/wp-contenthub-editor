@@ -3,6 +3,8 @@
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Text;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Textarea;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Quote implements WidgetContract
@@ -11,7 +13,7 @@ class Quote implements WidgetContract
     const QUOTE_KEY = 'field_5bb315248c73c';
     const AUTHOR_KEY = 'field_5bb315e38c73d';
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
         $quote = new ACFLayout(self::KEY);
         $quote->setName('quote')
@@ -19,52 +21,26 @@ class Quote implements WidgetContract
             ->addSubField($this->getQuote())
             ->addSubField($this->getAuthor());
 
-        return $quote->toArray();
+        return $quote;
     }
 
     private function getQuote()
     {
-        return [
-            'key' => self::QUOTE_KEY,
-            'label' => 'Quote',
-            'name' => 'quote',
-            'type' => 'textarea',
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'maxlength' => '',
-            'rows' => 2,
-            'new_lines' => '',
-        ];
+        $quote = new Textarea(self::QUOTE_KEY);
+        $quote->setRows(2)
+            ->setLabel('Quote')
+            ->setName('quote')
+            ->setRequired(1);
+
+        return $quote;
     }
 
     private function getAuthor()
     {
-        return [
-            'key' => self::AUTHOR_KEY,
-            'label' => 'Author',
-            'name' => 'author',
-            'type' => 'text',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'default_value' => '',
-            'placeholder' => '',
-            'prepend' => '',
-            'append' => '',
-            'maxlength' => '',
-        ];
+        $author = new Text(self::AUTHOR_KEY);
+        $author->setLabel('Author')
+            ->setName('author');
+
+        return $author;
     }
 }

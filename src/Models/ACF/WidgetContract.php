@@ -4,5 +4,5 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF;
 
 interface WidgetContract
 {
-    public function getLayout(): array;
+    public function getLayout(): ACFLayout;
 }
