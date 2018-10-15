@@ -25,7 +25,7 @@ class ACFGroup
     protected $labelPlacement;
     /** @var string */
     protected $instructionPlacement;
-    /** @var array */
+    /** @var string|array */
     protected $hideOnScreen;
     /** @var int */
     protected $active;
@@ -43,7 +43,7 @@ class ACFGroup
         $this->style = '';
         $this->labelPlacement = 'top';
         $this->instructionPlacement = 'label';
-        $this->hideOnScreen = [];
+        $this->hideOnScreen = '';
         $this->active = 0;
         $this->description = '';
     }

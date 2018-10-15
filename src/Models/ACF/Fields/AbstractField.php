@@ -25,6 +25,7 @@ abstract class AbstractField
     {
         $this->key = $key;
         $this->type = $type;
+        $this->label = '';
         $this->name = '';
         $this->instructions = '';
         $this->required = 0;

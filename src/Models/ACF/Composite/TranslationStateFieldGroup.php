@@ -2,6 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Composite;
 
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFGroup;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Datepicker;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Select;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 
 /**
@@ -11,6 +14,10 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class TranslationStateFieldGroup
 {
+    const KEY = 'group_5940debee7ae2';
+    const STATE_KEY = 'field_5940df2d4eff9';
+    const DEADLINE_KEY = 'field_59885bce3d421';
+
     const TRANSLATION_STATES = [
         'ready' => 'Ready For Translation',
         'progress' => 'In Progress',
@@ -25,69 +32,53 @@ class TranslationStateFieldGroup
     private static function register_field_group()
     {
         if (function_exists('acf_add_local_field_group')) {
-            acf_add_local_field_group([
-                'key' => 'group_5940debee7ae2',
-                'title' => 'Translation State',
-                'fields' => [
-                    [
-                        'key' => 'field_5940df2d4eff9',
-                        'label' => '',
-                        'name' => 'translation_state',
-                        'type' => 'select',
-                        'instructions' => '',
-                        'required' => 0,
-                        'conditional_logic' => 0,
-                        'wrapper' => [
-                            'width' => '',
-                            'class' => '',
-                            'id' => '',
-                        ],
-                        'choices' => static::TRANSLATION_STATES,
-                        'default_value' => [
-                        ],
-                        'allow_null' => 1,
-                        'multiple' => 0,
-                        'ui' => 0,
-                        'ajax' => 0,
-                        'return_format' => 'value',
-                        'placeholder' => '',
-                    ],
-                    [
-                        'key' => 'field_59885bce3d421',
-                        'label' => 'Translation deadline',
-                        'name' => 'translation_deadline',
-                        'type' => 'date_picker',
-                        'instructions' => '',
-                        'required' => 0,
-                        'conditional_logic' => 0,
-                        'wrapper' => [
-                            'width' => '',
-                            'class' => '',
-                            'id' => '',
-                        ],
-                        'display_format' => 'F j, Y',
-                        'return_format' => 'Y-m-d',
-                        'first_day' => 1,
-                    ],
-                ],
-                'location' => [
-                    [
-                        [
-                            'param' => 'post_type',
-                            'operator' => '==',
-                            'value' => WpComposite::POST_TYPE,
-                        ],
-                    ],
-                ],
-                'menu_order' => 0,
-                'position' => 'side',
-                'style' => 'default',
-                'label_placement' => 'top',
-                'instruction_placement' => 'label',
-                'hide_on_screen' => '',
-                'active' => 1,
-                'description' => '',
-            ]);
+            acf_add_local_field_group(self::getFieldGroup());
         }
+    }
+
+    public static function getFieldGroup()
+    {
+        $fieldGroup = new ACFGroup(self::KEY);
+        $fieldGroup->setTitle('Translation State')
+            ->addField(self::getTranslationState())
+            ->addField(self::getTranslationDeadline())
+            ->setLocation([
+                [
+                    [
+                        'param' => 'post_type',
+                        'operator' => '==',
+                        'value' => WpComposite::POST_TYPE,
+                    ],
+                ],
+            ])
+            ->setPosition('side')
+            ->setStyle('default')
+            ->setActive(1);
+
+        return $fieldGroup->toArray();
+    }
+
+    private static function getTranslationState()
+    {
+        $state = new Select(self::STATE_KEY);
+        $state->setChoices([
+                'ready' => 'Ready For Translation',
+                'progress' => 'In Progress',
+                'translated' => 'Translated',
+            ])
+            ->setAllowNull(1)
+            ->setName('translation_state');
+
+        return $state;
+    }
+
+    private static function getTranslationDeadline()
+    {
+        $deadline = new Datepicker(self::DEADLINE_KEY);
+        $deadline->setFirstDay(1)
+            ->setLabel('Translation deadline')
+            ->setName('translation_deadline');
+
+        return $deadline;
     }
 }
