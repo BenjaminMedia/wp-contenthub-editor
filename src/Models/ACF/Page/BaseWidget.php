@@ -50,7 +50,9 @@ abstract class BaseWidget implements WidgetContract
             $this->getTeaserList(),
             $this->getCategoryField(),
             $this->getTagField(),
-        ])->rejectNullValues();
+        ])->reject(function ($field) {
+            return is_null($field);
+        });
 
         return $fields->merge($this->getCustomTaxonomyFields());
     }

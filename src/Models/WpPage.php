@@ -57,7 +57,7 @@ class WpPage
             ])
             ->setActive(1);
 
-        return $pageGroup;
+        return $pageGroup->toArray();
     }
 
     public static function getPageWidgets()

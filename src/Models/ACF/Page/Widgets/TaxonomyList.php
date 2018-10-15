@@ -42,7 +42,7 @@ class TaxonomyList implements WidgetContract
             ->setName(AcfName::WIDGET_TAXONOMY_TEASER_LIST)
             ->setSubFields($fields);
 
-        return $fields;
+        return $layout;
     }
 
     private function getTitle()
