@@ -3,11 +3,22 @@
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\File;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Image;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Radio;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Tab;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\BaseWidget;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class FeaturedContent extends BaseWidget
 {
+    const KEY = '5bbb23424c064';
+    const SETTINGS_KEY = 'field_5bbb4363c6cc8';
+    const IMAGE_KEY = 'field_5bbb41245b291';
+    const VIDEO_KEY = 'field_5bbb41625b292';
+    const DISPLAY_HINT_KEY = 'field_5bbb417a5b293';
+
     public function __construct(array $config = [])
     {
         $config['minTeasers'] = 1;
@@ -16,120 +27,61 @@ class FeaturedContent extends BaseWidget
         parent::__construct(AcfName::WIDGET_FEATURED_CONTENT, $config);
     }
 
-    public function getLayout(): array
+    public function getLayout(): ACFLayout
     {
-        return [
-            'key' => '5bbb23424c064',
-            'name' => AcfName::WIDGET_FEATURED_CONTENT,
-            'label' => 'Featured Content',
-            'display' => 'block',
-            'sub_fields' => array_merge([
-                $this->getSettingsTab(),
-                $this->getImage(),
-                $this->getVideo(),
-                $this->getDisplayHint(),
-            ], $this->getSortByFields()),
-            'min' => '',
-            'max' => '',
-        ];
+        $fields = collect([
+            $this->getSettingsTab(),
+            $this->getImage(),
+            $this->getVideo(),
+            $this->getDisplayHint()
+        ])->merge($this->getSortByFields());
+
+        $layout = new ACFLayout(self::KEY);
+        $layout->setName(AcfName::WIDGET_FEATURED_CONTENT)
+            ->setLabel('Featured Content')
+            ->setSubFields($fields);
+
+        return $layout;
     }
 
     private function getSettingsTab()
     {
-        return [
-            'key' => 'field_5bbb4363c6cc8',
-            'label' => 'Settings',
-            'name' => '',
-            'type' => 'tab',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'placement' => 'top',
-            'endpoint' => 0,
-        ];
+        $tab = new Tab(self::SETTINGS_KEY);
+        $tab->setLabel('Settings');
+
+        return $tab;
     }
 
     private function getImage()
     {
-        return [
-            'key' => 'field_5bbb41245b291',
-            'label' => 'Image',
-            'name' => AcfName::FIELD_IMAGE,
-            'type' => 'image',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'preview_size' => 'thumbnail',
-            'library' => 'all',
-            'min_width' => '',
-            'min_height' => '',
-            'min_size' => '',
-            'max_width' => '',
-            'max_height' => '',
-            'max_size' => '',
-            'mime_types' => '',
-        ];
+        $image = new Image(self::IMAGE_KEY);
+        $image->setLabel('Image')
+            ->setName(AcfName::FIELD_IMAGE);
+
+        return $image;
     }
 
     public function getVideo()
     {
-        return [
-            'key' => 'field_5bbb41625b292',
-            'label' => 'Video',
-            'name' => AcfName::FIELD_VIDEO,
-            'type' => 'file',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'return_format' => 'id',
-            'library' => 'all',
-            'min_size' => '',
-            'max_size' => '',
-            'mime_types' => 'mp4',
-        ];
+        $video = new File(self::VIDEO_KEY);
+        $video->setMimeTypes('mp4')
+            ->setLabel('Video')
+            ->setName(AcfName::FIELD_VIDEO);
+
+        return $video;
     }
 
     private function getDisplayHint()
     {
-        return [
-            'key' => 'field_5bbb417a5b293',
-            'label' => 'Display Format',
-            'name' => AcfName::FIELD_DISPLAY_HINT,
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
+        $displayHint = new Radio(self::DISPLAY_HINT_KEY);
+        $displayHint->setChoices([
                 AcfName::DISPLAY_HINT_DEFAULT => 'Default',
-                AcfName::DISPLAY_HINT_LEAD => 'Lead',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'default_value' => AcfName::DISPLAY_HINT_DEFAULT,
-            'layout' => 'vertical',
-            'return_format' => 'value',
-            'save_other_choice' => 0,
-        ];
+                AcfName::DISPLAY_HINT_LEAD => 'Lead'
+            ])
+            ->setDefaultValue(AcfName::DISPLAY_HINT_DEFAULT)
+            ->setLabel('Display Format')
+            ->setName(AcfName::FIELD_DISPLAY_HINT);
+
+        return $displayHint;
     }
 }

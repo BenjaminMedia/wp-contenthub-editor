@@ -38,6 +38,7 @@ class ACFGroup
         $this->title = '';
         $this->fields = new Collection();
         $this->location = 0;
+        $this->menuOrder = 0;
         $this->position = '';
         $this->style = '';
         $this->labelPlacement = 'top';

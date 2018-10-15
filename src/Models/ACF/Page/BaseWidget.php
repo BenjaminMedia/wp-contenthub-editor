@@ -2,9 +2,13 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page;
 
-use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Helpers\SortBy;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\CustomRelationship;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Number;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Radio;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Tab;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Fields\Taxonomy;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
@@ -34,7 +38,7 @@ abstract class BaseWidget implements WidgetContract
     }
 
     /**
-     * @return array
+     * @return Collection
      */
     protected function getSortByFields()
     {
@@ -48,71 +52,48 @@ abstract class BaseWidget implements WidgetContract
             $this->getTagField(),
         ])->rejectNullValues();
 
-        return $fields->merge($this->getCustomTaxonomyFields())->toArray();
+        return $fields->merge($this->getCustomTaxonomyFields());
     }
 
     private function getSortByTab()
     {
-        return [
-            'key' => 'field_' . hash('md5', $this->widgetName . 'sort by tab'),
-            'label' => 'Sort by',
-            'name' => '',
-            'type' => 'tab',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'placement' => 'left',
-            'endpoint' => 0,
-        ];
+        $sortBy = new Tab('field_' . hash('md5', $this->widgetName . 'sort by tab'));
+        $sortBy->setPlacement('left')
+            ->setLabel('Sort by');
+
+        return $sortBy;
     }
 
     private function getSortByOptions()
     {
-        return [
-            'key' => $this->sortByField,
-            'label' => 'Sort by',
-            'name' => AcfName::FIELD_SORT_BY,
-            'type' => 'radio',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'choices' => [
+        $options = new Radio($this->sortByField);
+        $options->setChoices([
                 SortBy::POPULAR => 'Popular (Cxense)',
                 SortBy::RECENTLY_VIEWED => 'Recently Viewed by User (Cxense)',
                 SortBy::CUSTOM => 'Taxonomy (WordPress)',
                 SortBy::MANUAL => 'Manual (WordPress)',
-            ],
-            'allow_null' => 0,
-            'other_choice' => 0,
-            'save_other_choice' => 0,
-            'default_value' => SortBy::POPULAR,
-            'layout' => 'vertical',
-            'return_format' => 'value',
-        ];
+            ])
+            ->setDefaultValue(SortBy::POPULAR)
+            ->setLabel('Sort by')
+            ->setName(AcfName::FIELD_SORT_BY);
+
+        return $options;
     }
 
     private function getTeaserAmount()
     {
         if ($this->getMaxTeasers() > 1) {
-            return [
-                'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_AMOUNT),
-                'label' => 'Amount of Teasers to display',
-                'name' => AcfName::FIELD_TEASER_AMOUNT,
-                'type' => 'number',
-                'instructions' =>
-                    'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.',
-                'required' => 1,
-                'conditional_logic' => [
+            $amount = new Number('field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_AMOUNT));
+            $amount->setDefaultValue($this->getDefaultTeaserAmount())
+                ->setMin($this->getMinTeasers())
+                ->setMax($this->getMaxTeasers())
+                ->setLabel('Amount of Teasers to display')
+                ->setName(AcfName::FIELD_TEASER_AMOUNT)
+                ->setInstructions(
+                    'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.'
+                )
+                ->setRequired(1)
+                ->setConditionalLogic([
                     [
                         [
                             'field' => $this->sortByField,
@@ -120,20 +101,9 @@ abstract class BaseWidget implements WidgetContract
                             'value' => SortBy::MANUAL,
                         ],
                     ],
-                ],
-                'wrapper' => [
-                    'width' => '',
-                    'class' => '',
-                    'id' => '',
-                ],
-                'default_value' => $this->getDefaultTeaserAmount(),
-                'placeholder' => '',
-                'prepend' => '',
-                'append' => '',
-                'min' => $this->getMinTeasers(),
-                'max' => $this->getMaxTeasers(),
-                'step' => '',
-            ];
+                ]);
+
+            return $amount;
         }
 
         return null;
@@ -141,14 +111,15 @@ abstract class BaseWidget implements WidgetContract
 
     private function getTeaserList()
     {
-        return [
-            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_LIST),
-            'label' => 'Teasers',
-            'name' => AcfName::FIELD_TEASER_LIST,
-            'type' => CustomRelationship::NAME,
-            'instructions' => '',
-            'required' => 1,
-            'conditional_logic' => [
+        $teaserList = new CustomRelationship('field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_LIST));
+        $teaserList->setPostType([WpComposite::POST_TYPE])
+            ->setFilters(['search', 'taxonomy', 'post_tag'])
+            ->setMin($this->getMinTeasers())
+            ->setMax($this->getMaxTeasers())
+            ->setLabel('Teasers')
+            ->setName(AcfName::FIELD_TEASER_LIST)
+            ->setRequired(1)
+            ->setConditionalLogic([
                 [
                     [
                         'field' => $this->sortByField,
@@ -156,39 +127,19 @@ abstract class BaseWidget implements WidgetContract
                         'value' => SortBy::MANUAL,
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '',
-                'class' => '',
-                'id' => '',
-            ],
-            'post_type' => [
-                0 => WpComposite::POST_TYPE,
-            ],
-            'taxonomy' => '',
-            'post_tag' => '',
-            'filters' => [
-                0 => 'search',
-                1 => 'taxonomy',
-                2 => 'post_tag',
-            ],
-            'elements' => '',
-            'min' => $this->getMinTeasers(),
-            'max' => $this->getMaxTeasers(),
-            'return_format' => 'object',
-        ];
+            ]);
+        return $teaserList;
     }
 
     private function getCategoryField()
     {
-        return [
-            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_CATEGORY),
-            'label' => 'Category',
-            'name' => AcfName::FIELD_CATEGORY,
-            'type' => 'taxonomy',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $category = new Taxonomy('field_' . hash('md5', $this->widgetName . AcfName::FIELD_CATEGORY));
+        $category->setTaxonomy(AcfName::TAXONOMY_CATEGORY)
+            ->setFieldType('select')
+            ->setAllowNull(1)
+            ->setLabel('Category')
+            ->setName(AcfName::FIELD_CATEGORY)
+            ->setConditionalLogic([
                 [
                     [
                         'field' => $this->sortByField,
@@ -203,33 +154,20 @@ abstract class BaseWidget implements WidgetContract
                         'value' => SortBy::POPULAR,
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '50',
-                'class' => '',
-                'id' => '',
-            ],
-            'taxonomy' => 'category',
-            'field_type' => 'select',
-            'allow_null' => 1,
-            'add_term' => 0,
-            'save_terms' => 0,
-            'load_terms' => 0,
-            'return_format' => 'object',
-            'multiple' => 0,
-        ];
+            ]);
+
+        return $category;
     }
 
     private function getTagField()
     {
-        return [
-            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TAG),
-            'label' => 'Tag',
-            'name' => AcfName::FIELD_TAG,
-            'type' => 'taxonomy',
-            'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => [
+        $tag = new Taxonomy('field_' . hash('md5', $this->widgetName . AcfName::FIELD_TAG));
+        $tag->setTaxonomy(AcfName::TAXONOMY_TAG)
+            ->setFieldType('select')
+            ->setAllowNull(1)
+            ->setLabel('Tag')
+            ->setName(AcfName::FIELD_TAG)
+            ->setConditionalLogic([
                 [
                     [
                         'field' => $this->sortByField,
@@ -244,34 +182,21 @@ abstract class BaseWidget implements WidgetContract
                         'value' => SortBy::POPULAR,
                     ],
                 ],
-            ],
-            'wrapper' => [
-                'width' => '50',
-                'class' => '',
-                'id' => '',
-            ],
-            'taxonomy' => 'post_tag',
-            'field_type' => 'select',
-            'allow_null' => 1,
-            'add_term' => 0,
-            'save_terms' => 0,
-            'load_terms' => 0,
-            'return_format' => 'object',
-            'multiple' => 0,
-        ];
+            ]);
+
+        return $tag;
     }
 
     private function getCustomTaxonomyFields()
     {
         return WpTaxonomy::get_custom_taxonomies()->map(function ($customTaxonomy) {
-            return [
-                'key' => 'field_'.md5($this->widgetName . $customTaxonomy->machine_name),
-                'label' => $customTaxonomy->name,
-                'name' => $customTaxonomy->machine_name,
-                'type' => 'taxonomy',
-                'instructions' => '',
-                'required' => 0,
-                'conditional_logic' => [
+            $taxonomy = new Taxonomy('field_'.md5($this->widgetName . $customTaxonomy->machine_name));
+            $taxonomy->setTaxonomy($customTaxonomy->machine_name)
+                ->setFieldType('select')
+                ->setAllowNull(1)
+                ->setLabel($customTaxonomy->name)
+                ->setName($customTaxonomy->machine_name)
+                ->setConditionalLogic([
                     [
                         [
                             'field' => $this->sortByField,
@@ -279,21 +204,8 @@ abstract class BaseWidget implements WidgetContract
                             'value' => SortBy::CUSTOM,
                         ],
                     ]
-                ],
-                'wrapper' => [
-                    'width' => '',
-                    'class' => '',
-                    'id' => '',
-                ],
-                'taxonomy' => $customTaxonomy->machine_name,
-                'field_type' => 'select',
-                'allow_null' => 1,
-                'add_term' => 0,
-                'save_terms' => 1,
-                'load_terms' => 0,
-                'return_format' => 'object',
-                'multiple' => 0,
-            ];
+                ]);
+            return $taxonomy;
         });
     }
 

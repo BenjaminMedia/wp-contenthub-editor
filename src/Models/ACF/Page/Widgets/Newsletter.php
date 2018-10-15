@@ -3,20 +3,19 @@
 namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets;
 
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\ACFLayout;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Newsletter implements WidgetContract
 {
-    public function getLayout(): array
+    const KEY = 'layout_5bbc54bacaf10';
+
+    public function getLayout(): ACFLayout
     {
-        return [
-            'key' => 'layout_5bbc54bacaf10',
-            'name' => AcfName::WIDGET_NEWSLETTER,
-            'label' => 'Newsletter',
-            'display' => 'block',
-            'sub_fields' => [],
-            'min' => '',
-            'max' => '',
-        ];
+        $layout = new ACFLayout(self::KEY);
+        $layout->setName(AcfName::WIDGET_NEWSLETTER)
+            ->setLabel('Newsletter');
+
+        return $layout;
     }
 }
