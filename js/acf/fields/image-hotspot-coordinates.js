@@ -21,15 +21,15 @@
     $(el).find('.edit-hotspot-image').each(function () {
       if ($(this).is(":visible")) { // Only render visible elements
         $(this).click(function(e) {
-          toggleFocalPoint(this, $(this).data('input-id'));
+          toggleFocalPoint(this);
         })
       }
     })
   }
 
-  function toggleFocalPoint(editBtn, inputId) {
+  function toggleFocalPoint(editBtn) {
     var image = $(editBtn).parents('div.layout').find('img');
-    var input = $('#'+inputId);
+    var input = $(editBtn).parent().find('input[type="hidden"]');
 
     if(image.attr('src') === 'undefined') {
       alert('You must select a image first')
