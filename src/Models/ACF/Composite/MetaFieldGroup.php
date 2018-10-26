@@ -286,7 +286,7 @@ class MetaFieldGroup
                                 'app' => 'App',
                                 'web' => 'Web',
                             ],
-                            'instructions' => '',
+                            'instructions' => 'Do not show this content on:',
                             'required' => 0,
                             'conditional_logic' => 0,
                             'wrapper' => [
