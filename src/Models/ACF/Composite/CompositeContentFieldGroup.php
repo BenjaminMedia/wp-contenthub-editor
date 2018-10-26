@@ -903,6 +903,7 @@ class CompositeContentFieldGroup
                                         'choices' => [
                                             'default' => 'Default',
                                             'inline' => 'Inline',
+                                            'parallax' => 'Parallax'
                                         ],
                                         'allow_null' => 0,
                                         'other_choice' => 0,
@@ -1176,6 +1177,25 @@ class CompositeContentFieldGroup
                                         'max_height' => '',
                                         'max_size' => '',
                                         'mime_types' => '',
+                                    ],
+                                    [
+                                        'key' => 'field_5bd30f723cdcc',
+                                        'label' => 'Collapsible',
+                                        'name' => 'collapsible',
+                                        'type' => 'true_false',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'message' => '',
+                                        'default_value' => 0,
+                                        'ui' => 0,
+                                        'ui_on_text' => '',
+                                        'ui_off_text' => '',
                                     ],
                                     [
                                         'key' => 'field_5bb4bd75fd04c',
