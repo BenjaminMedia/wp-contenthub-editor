@@ -1183,7 +1183,7 @@ class CompositeContentFieldGroup
                                         'label' => 'Collapsible',
                                         'name' => 'collapsible',
                                         'type' => 'true_false',
-                                        'instructions' => '',
+                                        'instructions' => 'Should this paragraph list be collapsed in the view?',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
