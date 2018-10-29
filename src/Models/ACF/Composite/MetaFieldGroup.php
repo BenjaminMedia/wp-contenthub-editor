@@ -276,7 +276,30 @@ class MetaFieldGroup
                                     'mime_types' => '',
                                 ],
                             ]
-                        ]
+                        ],
+                        [
+                            'key' => 'field_5bd2fc21bad06',
+                            'label' => 'Exclude from platforms',
+                            'name' => 'exclude_platforms',
+                            'type' => 'checkbox',
+                            'choices' => [
+                                'app' => 'App',
+                                'web' => 'Web',
+                            ],
+                            'instructions' => 'Do not show this content on:',
+                            'required' => 0,
+                            'conditional_logic' => 0,
+                            'wrapper' => [
+                                'width' => '',
+                                'class' => '',
+                                'id' => '',
+                            ],
+                            'message' => '',
+                            'default_value' => [],
+                            'ui' => 0,
+                            'ui_on_text' => '',
+                            'ui_off_text' => '',
+                        ],
                     ],
                     'location' => [
                         [
