@@ -293,7 +293,7 @@ class WpAttachment
 
     private static function getAlt($file)
     {
-        return static::getFirstMacthingAttribute($file, ['altText', 'alt_text', 'title', 'caption']);
+        return static::getFirstMacthingAttribute($file, ['altText', 'alt_text', 'title', 'caption'], '');
     }
 
     /**
@@ -303,20 +303,20 @@ class WpAttachment
      */
     private static function getCaption($file)
     {
-        $caption = static::getFirstMacthingAttribute($file, ['description', 'caption']);
+        $caption = static::getFirstMacthingAttribute($file, ['description', 'caption'], '');
         if (! empty($caption)) {
             $caption = HtmlToMarkdown::parseHtml($caption);
         }
         return $caption;
     }
 
-    private static function getFirstMacthingAttribute($file, array $attributes)
+    private static function getFirstMacthingAttribute($file, array $attributes, $defaultValue = null)
     {
         return collect($attributes)->reduce(function ($out, $atr) use ($file) {
             if ($data = data_get($file, $atr) ?: null) {
                 $out = $data;
             }
             return $out;
-        }, null);
+        }, $defaultValue);
     }
 }
