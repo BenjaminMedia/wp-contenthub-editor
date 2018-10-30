@@ -17,6 +17,7 @@ class ContentRepository
     const CONTENT_RESOURCE = '/api/v1/widget_contents';
 
     protected $client;
+    protected $failedCsvFile;
 
 
     /**
@@ -24,10 +25,14 @@ class ContentRepository
      *
      * @param null $locale Override default locale
      *
+     * @param null $failedCsvFile
+     *
      * @throws \Exception
      */
-    public function __construct($locale = null)
+    public function __construct($locale = null, $failedCsvFile = null)
     {
+        $this->failedCsvFile = $failedCsvFile;
+        $this->createFailedImportsFile();
         $endpoint = null;
         if ($locale) {
             $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
@@ -128,17 +133,56 @@ class ContentRepository
         }
     }
 
-    private function get($url, $options)
+    private function get($url, $options, $attempt = 1)
     {
         try {
             $response = @$this->client->get($url, $options);
         } catch (Exception $e) {
-            \WP_CLI::error(sprintf('unable to fetch %s. %s', $url, $e->getMessage()), false);
+            \WP_CLI::warning(sprintf('unable to fetch %s. %s will retry', $url, $e->getMessage()), false);
+            if ($attempt < 5) {
+                sleep(1); // Delay for a second before retrying
+                return $this->get($url, $options, $attempt +1);
+            }
+            \WP_CLI::warning(sprintf('Failed 5 times will skip: %s', $url));
+            $this->writeFailedImport($url, $e);
             return null;
         }
         if ($response->getStatusCode() !== 200) {
             return null;
         }
         return json_decode($response->getBody()->getContents());
+    }
+
+    private function createFailedImportsFile()
+    {
+        if ($this->failedCsvFile) {
+            if (!file_exists($this->failedCsvFile)) {
+                touch($this->failedCsvFile);
+            }
+            file_put_contents($this->failedCsvFile, 'id,site,url,response_code');
+        }
+    }
+
+    /**
+     * @param            $url
+     * @param \Exception $exception
+     */
+    private function writeFailedImport($url, Exception $exception)
+    {
+        if ($this->failedCsvFile) {
+            $urlParts = explode('/', $url);
+            file_put_contents(
+                $this->failedCsvFile,
+                sprintf(
+                    '%s%s,%s,%s,%s',
+                    PHP_EOL, // Newline
+                    end($urlParts), // Id
+                    $this->client->getConfig('base_uri'), // Site url
+                    $url, // Requested url
+                    $exception->getCode() // respone code
+                ),
+                FILE_APPEND
+            );
+        }
     }
 }

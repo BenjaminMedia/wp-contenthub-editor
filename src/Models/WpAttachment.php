@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
+use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
 use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
 use function GuzzleHttp\Psr7\parse_query;
@@ -16,6 +17,7 @@ class WpAttachment
 {
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_COPYRIGHT = 'attachment_copyright';
+    const POST_META_COPYRIGHT_URL = 'attachment_copyright_url';
 
     public static function register()
     {
@@ -100,6 +102,12 @@ class WpAttachment
             'value' => get_post_meta($post->ID, static::POST_META_COPYRIGHT, true),
 
         ];
+        $form_fields['copyright_url_field'] = [
+            'label' => __('Copyright URL'),
+            'input' => 'text',
+            'value' => get_post_meta($post->ID, static::POST_META_COPYRIGHT_URL, true),
+
+        ];
         return $form_fields;
     }
 
@@ -116,8 +124,10 @@ class WpAttachment
     {
         if (isset($attachment['copyright_field']) && ! empty($attachment['copyright_field'])) {
             update_post_meta($post['ID'], static::POST_META_COPYRIGHT, $attachment['copyright_field']);
+            update_post_meta($post['ID'], static::POST_META_COPYRIGHT_URL, $attachment['copyright_url_field']);
         } else {
             delete_post_meta($post['ID'], static::POST_META_COPYRIGHT);
+            delete_post_meta($post['ID'], static::POST_META_COPYRIGHT_URL);
         }
 
         return $post;
@@ -204,12 +214,13 @@ class WpAttachment
             'post_mime_type' => mime_content_type($uploadedFile['file']),
             'post_parent' => $postId,
             'post_title' => $file->title ?? '',
-            'post_content' => $file->description ?? '',
-            'post_excerpt' => $file->caption ?? '',
+            'post_content' => '',
+            'post_excerpt' => static::getCaption($file),
             'post_status' => 'inherit',
             'meta_input' => [
                 static::POST_META_CONTENTHUB_ID => $file->id,
-                static::POST_META_COPYRIGHT => $file->copyright ?? '',
+                static::POST_META_COPYRIGHT => $file->copyright ?? null,
+                static::POST_META_COPYRIGHT_URL => $file->copyright_url ?? null,
                 '_wp_attachment_image_alt' => static::getAlt($file),
             ]
         ];
@@ -236,13 +247,14 @@ class WpAttachment
     {
         update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
+        update_post_meta($attachmentId, static::POST_META_COPYRIGHT_URL, $file->copyright_url ?? '');
         global $wpdb;
         $wpdb->update(
             'wp_posts',
             [
-                'post_title' => $file->title ?? $file->caption ?? '',
+                'post_title' => $file->title ?? '',
                 'post_content' => '',
-                'post_excerpt' => $file->caption ?? '',
+                'post_excerpt' => static::getCaption($file),
             ],
             [
                 'ID' => $attachmentId
@@ -287,5 +299,24 @@ class WpAttachment
             }
             return $out;
         }, '');
+    }
+
+    /**
+     * @param $file
+     *
+     * @return mixed|null|string
+     */
+    private static function getCaption($file)
+    {
+        $caption = collect(['description', 'caption'])->reduce(function ($out, $atr) use ($file) {
+            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
+                $out = $file->{$atr};
+            }
+            return $out;
+        }, '');
+        if (! empty($caption)) {
+            $caption = HtmlToMarkdown::parseHtml($caption);
+        }
+        return $caption;
     }
 }
