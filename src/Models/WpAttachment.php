@@ -294,11 +294,11 @@ class WpAttachment
     private static function getAlt($file)
     {
         return collect(['altText', 'alt_text', 'title', 'caption'])->reduce(function ($out, $atr) use ($file) {
-            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
-                $out = $file->{$atr};
+            if ($data = data_get($file, $atr) ?: null) {
+                $out = $data;
             }
             return $out;
-        }, '');
+        }, null);
     }
 
     /**
@@ -309,11 +309,11 @@ class WpAttachment
     private static function getCaption($file)
     {
         $caption = collect(['description', 'caption'])->reduce(function ($out, $atr) use ($file) {
-            if (isset($file->{$atr}) && ! empty($file->{$atr})) {
-                $out = $file->{$atr};
+            if ($data = data_get($file, $atr) ?: null) {
+                $out = $data;
             }
             return $out;
-        }, '');
+        }, null);
         if (! empty($caption)) {
             $caption = HtmlToMarkdown::parseHtml($caption);
         }

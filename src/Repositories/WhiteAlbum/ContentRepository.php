@@ -156,9 +156,6 @@ class ContentRepository
     private function createFailedImportsFile()
     {
         if ($this->failedCsvFile) {
-            if (!file_exists($this->failedCsvFile)) {
-                touch($this->failedCsvFile);
-            }
             file_put_contents($this->failedCsvFile, 'id,site,url,response_code');
         }
     }
