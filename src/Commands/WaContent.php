@@ -26,6 +26,7 @@ class WaContent extends BaseCmd
     const CMD_NAMESPACE = 'wa content';
 
     private $repository = null;
+    private $failedImportFile = null;
 
     public static function register()
     {
@@ -52,6 +53,10 @@ class WaContent extends BaseCmd
      * [--skip-existing]
      * : wether to skip alredy imported articles
      *
+     * [--failed-import-file=<failed-import-file>]
+     * : The .csv file to save failed imports to
+     *
+     *
      * ## EXAMPLES
      * wp contenthub editor wa content import
      *
@@ -64,7 +69,8 @@ class WaContent extends BaseCmd
     {
         $this->disableHooks(); // Disable various hooks and filters during import
 
-        $this->repository = new ContentRepository($assocArgs['locale'] ?? null);
+        $this->failedImportFile = $assocArgs['failed-import-file'] ?? null;
+        $this->repository = new ContentRepository($assocArgs['locale'] ?? null, $this->failedImportFile);
         if ($contentId = $assocArgs['id'] ?? null) {
             $resource = collect([
                 'article' => ContentRepository::ARTICLE_RESOURCE,
@@ -164,7 +170,7 @@ class WaContent extends BaseCmd
 
     private function findMatchingTranslation($whiteAlbumId, $locale)
     {
-        $repository = new ContentRepository($locale);
+        $repository = new ContentRepository($locale, $this->failedImportFile);
         return $repository->findById($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
             $repository->findById($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
     }
@@ -188,7 +194,8 @@ class WaContent extends BaseCmd
         update_field('magazine_year', $waContent->magazine_year ?? null, $postId);
         update_field('magazine_issue', $waContent->magazine_number ?? null, $postId);
 
-        update_field('canonical_url', $waContent->widget_content->canonical_link);
+        update_field('canonical_url', $waContent->widget_content->canonical_link, $postId);
+        update_field('internal_comment', $waContent->widget_content->social_media_text, $postId);
 
         if ($waContent->widget_content->advertorial_label) {
             update_field('commercial', true, $postId);
@@ -211,7 +218,7 @@ class WaContent extends BaseCmd
                             'Widgets::Text'         => 'text_item',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
-                            'Widgets::InfoBox'      => 'info_box',
+                            'Widgets::Info'         => 'info_box',
                             'Widgets::Video'        => 'video',
                         ])
                             ->get($waWidget->type, null),
