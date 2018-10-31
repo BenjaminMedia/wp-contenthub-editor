@@ -31,6 +31,7 @@ class WpComposite
     const CATEGORY_BASE = '';
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_WHITE_ALBUM_ID = 'white_album_id';
+    const POST_META_WHITE_ALBUM_SOURCE = 'white_album_source';
     const POST_META_CUSTOM_PERMALINK = 'custom_permalink';
     const POST_TEASER_TITLE = 'teaser_title';
     const POST_TEASER_DESCRIPTION = 'teaser_description';
