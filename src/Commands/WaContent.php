@@ -134,6 +134,7 @@ class WaContent extends BaseCmd
             'post_author'   => $this->getAuthor($waContent),
             'meta_input'    => [
                 WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
+                WpComposite::POST_META_WHITE_ALBUM_SOURCE => json_encode($waContent),
             ],
         ]);
     }
@@ -515,7 +516,7 @@ class WaContent extends BaseCmd
         $vendor = collect([
             'youtube' => 'https://www.youtube.com/embed/',
             'vimeo'   => 'https://player.vimeo.com/video/',
-            'vimeo'   => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
+            'video23'   => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
         ])->get($provider);
         return $vendor ? $vendor . $videoId : null;
     }
