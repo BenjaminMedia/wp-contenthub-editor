@@ -1100,7 +1100,7 @@ class CompositeContentFieldGroup
                                         ],
                                         'choices' => [
                                             'default' => 'Default',
-                                            'inline' => 'Chapter',
+                                            'chapter' => 'Chapter',
                                         ],
                                         'allow_null' => 0,
                                         'other_choice' => 0,
