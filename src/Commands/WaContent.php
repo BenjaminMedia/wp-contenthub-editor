@@ -27,6 +27,7 @@ class WaContent extends BaseCmd
 
     private $repository = null;
     private $failedImportFile = null;
+    private $isRefreshing = false;
 
     public static function register()
     {
@@ -84,6 +85,46 @@ class WaContent extends BaseCmd
         }
     }
 
+    /**
+     * Reruns the import but only refreshes articles from the local
+     *
+     * ## OPTIONS
+     *
+     * [--id=<id>]
+     * : The id of a single composite to import.
+     *
+     *
+     * ## EXAMPLES
+     * wp contenthub editor wa content refresh
+     *
+     * @param $args
+     * @param $assocArgs
+     *
+     * @throws \Exception
+     */
+    public function refresh($args, $assocArgs)
+    {
+        $this->isRefreshing = true;
+        if ($contentId = $assocArgs['id'] ?? null) {
+            if ($post = get_post(WpComposite::id_from_white_album_id($contentId))) {
+                $this->importComposite($this->getWaContent($post));
+            }
+        } else {
+            WpComposite::map_all(function (WP_Post $post) {
+                $this->importComposite($this->getWaContent($post));
+            });
+        }
+    }
+
+    private function getWaContent(WP_Post $post)
+    {
+        $waContentJson = get_post_meta($post->ID, WpComposite::POST_META_WHITE_ALBUM_SOURCE, true);
+        if ($waContentJson && ($waContent = unserialize($waContentJson))) {
+            return $waContent;
+        }
+        return null;
+    }
+
     private function importComposite($waContent)
     {
         $this->fixNonceErrors();
@@ -133,8 +174,8 @@ class WaContent extends BaseCmd
             'post_modified' => $waContent->widget_content->publish_at,
             'post_author'   => $this->getAuthor($waContent),
             'meta_input'    => [
-                WpComposite::POST_META_WHITE_ALBUM_ID => $waContent->widget_content->id,
-                WpComposite::POST_META_WHITE_ALBUM_SOURCE => json_encode($waContent),
+                WpComposite::POST_META_WHITE_ALBUM_ID     => $waContent->widget_content->id,
+                WpComposite::POST_META_WHITE_ALBUM_SOURCE => serialize($waContent),
             ],
         ]);
     }
@@ -171,6 +212,10 @@ class WaContent extends BaseCmd
 
     private function findMatchingTranslation($whiteAlbumId, $locale)
     {
+        if ($this->isRefreshing && $post = get_post(WpComposite::id_from_white_album_id($whiteAlbumId))) {
+            return $this->getWaContent($post);
+        }
+
         $repository = new ContentRepository($locale, $this->failedImportFile);
         return $repository->findById($whiteAlbumId, ContentRepository::ARTICLE_RESOURCE) ?:
             $repository->findById($whiteAlbumId, ContentRepository::GALLERY_RESOURCE);
@@ -219,7 +264,7 @@ class WaContent extends BaseCmd
                             'Widgets::Text'         => 'text_item',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
-                            'Widgets::Info'         => 'info_box',
+                            'Widgets::Info'         => 'infobox',
                             'Widgets::Video'        => 'video',
                         ])
                             ->get($waWidget->type, null),
@@ -276,6 +321,14 @@ class WaContent extends BaseCmd
                     return [
                         'lead_image'     => $compositeContent->lead_image ?? false,
                         'file'           => WpAttachment::upload_attachment($postId, $compositeContent),
+                        'locked_content' => false,
+                        'acf_fc_layout'  => $compositeContent->type
+                    ];
+                }
+                if ($compositeContent->type === 'infobox') {
+                    return [
+                        'title'          => $compositeContent->title ?? null,
+                        'body'           => HtmlToMarkdown::parseHtml($compositeContent->text),
                         'locked_content' => false,
                         'acf_fc_layout'  => $compositeContent->type
                     ];
@@ -516,7 +569,7 @@ class WaContent extends BaseCmd
         $vendor = collect([
             'youtube' => 'https://www.youtube.com/embed/',
             'vimeo'   => 'https://player.vimeo.com/video/',
-            'video23'   => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
+            'video23' => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
         ])->get($provider);
         return $vendor ? $vendor . $videoId : null;
     }
