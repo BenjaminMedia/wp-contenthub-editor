@@ -13,7 +13,7 @@ class CompositeHelper
     public function __construct()
     {
         add_action('save_post', [$this, 'videoTeaserImage']);
-        add_action('save_post', [$this, 'SetStoryParent']);
+        add_action('save_post', [$this, 'setStoryParent']);
     }
 
     /**
@@ -58,28 +58,41 @@ class CompositeHelper
         }
     }
 
-    public function SetStoryParent($postId)
+    public function setStoryParent($postId)
     {
-        if (wp_is_post_revision($postId) || !have_rows('composite_content', $postId)) {
-            return;
-        }
-
         //do all this magic code because we don\'t want the wp_update_post to run infinitely.
-
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-
-        if (!current_user_can('edit_post', $postId)) {
+        if (!$this->validStoryComposite($postId)) {
             return;
         }
 
         global $wpdb;
 
+        // First remove all relations, so that if we remove a composite from a story,
+        // so it will no longer have a relation to the story  composite.
+        $wpdb->delete(
+            sprintf('%spostmeta', $wpdb->prefix),
+            [
+                'meta_key' => 'story_parent',
+                'meta_value' => $postId
+            ]
+        );
+
+        // Then run through all associated_composites and add a postmeta field, defining the story parent
         collect(get_field('composite_content'))->each(function ($content) use ($postId, $wpdb) {
             if ($content['acf_fc_layout'] === 'associated_composite') {
-                $wpdb->update('wp_posts', ['post_parent' => $postId], ['ID' => $content['composite'][0]->ID]);
+                if (($composite = array_get($content, 'composite.0')) && $composite instanceof \WP_Post) {
+                    add_post_meta($composite->ID, 'story_parent', $postId);
+                }
             }
         });
+    }
+
+    private function validStoryComposite($postId)
+    {
+        return current_user_can('edit_post', $postId) &&
+            !wp_is_post_revision($postId) &&
+            !wp_is_post_autosave($postId) &&
+            have_rows('composite_content', $postId) &&
+            get_field('kind', $postId) === 'Story';
     }
 }
