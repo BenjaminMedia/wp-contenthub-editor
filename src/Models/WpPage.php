@@ -61,6 +61,20 @@ class WpPage
                             'value' => 'page',
                         ],
                     ],
+                    [
+                        [
+                            'param' => 'taxonomy',
+                            'operator' => '==',
+                            'value' => 'category',
+                        ],
+                    ],
+                    [
+                        [
+                            'param' => 'taxonomy',
+                            'operator' => '==',
+                            'value' => 'post_tag',
+                        ],
+                    ],
                 ],
                 'menu_order' => 0,
                 'position' => 'normal',
