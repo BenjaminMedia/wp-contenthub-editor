@@ -78,7 +78,7 @@ class CompositeHelper
         );
 
         // Then run through all associated_composites and add a postmeta field, defining the story parent
-        collect(get_field('composite_content'))->each(function ($content) use ($postId, $wpdb) {
+        collect(get_field('composite_content', $postId))->each(function ($content) use ($postId, $wpdb) {
             if ($content['acf_fc_layout'] === 'associated_composite') {
                 if (($composite = array_get($content, 'composite.0')) && $composite instanceof \WP_Post) {
                     add_post_meta($composite->ID, 'story_parent', $postId);
