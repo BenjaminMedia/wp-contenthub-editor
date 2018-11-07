@@ -1336,14 +1336,14 @@ class CompositeContentFieldGroup
                             ],
                             [
                                 'key' => '58e393a7128b3',
-                                'name' => 'associated_composite',
+                                'name' => 'associated_composites',
                                 'label' => 'Sub Content',
                                 'display' => 'block',
                                 'sub_fields' => [
                                     [
                                         'key' => 'field_58e393e0128b4',
                                         'label' => 'Content',
-                                        'name' => 'composite',
+                                        'name' => 'composites',
                                         'type' => 'relationship',
                                         'instructions' => '',
                                         'required' => 0,
@@ -1364,7 +1364,7 @@ class CompositeContentFieldGroup
                                         ],
                                         'elements' => '',
                                         'min' => '',
-                                        'max' => 1,
+                                        'max' => '',
                                         'return_format' => 'object',
                                     ],
                                     [
