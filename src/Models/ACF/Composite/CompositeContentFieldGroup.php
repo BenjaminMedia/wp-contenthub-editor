@@ -1243,33 +1243,6 @@ class CompositeContentFieldGroup
                                         'button_label' => 'Add item',
                                         'sub_fields' => [
                                             [
-                                                'key' => 'field_5bb4c1bb8cdbc',
-                                                'label' => 'Custom Bullet',
-                                                'name' => 'custom_bullet',
-                                                'type' => 'text',
-                                                'instructions' => '',
-                                                'required' => 1,
-                                                'conditional_logic' => [
-                                                    [
-                                                        [
-                                                            'field' => 'field_5bb4bd75fd04c',
-                                                            'operator' => '==',
-                                                            'value' => 'custom',
-                                                        ],
-                                                    ],
-                                                ],
-                                                'wrapper' => [
-                                                    'width' => '',
-                                                    'class' => '',
-                                                    'id' => '',
-                                                ],
-                                                'default_value' => '',
-                                                'placeholder' => '',
-                                                'prepend' => '',
-                                                'append' => '',
-                                                'maxlength' => '',
-                                            ],
-                                            [
                                                 'key' => 'field_5bb4be86fd04e',
                                                 'label' => 'Title',
                                                 'name' => 'title',
