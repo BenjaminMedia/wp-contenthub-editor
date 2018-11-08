@@ -120,7 +120,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    protected static function getPopularComposites(): ?Collection
+    public static function getPopularComposites(): ?Collection
     {
         $query = WidgetDocumentQuery::make()->byPopular();
         if (self::isWpTerm(self::$acfWidget[AcfName::FIELD_CATEGORY] ?? null)) {
@@ -141,7 +141,7 @@ class SortBy
      *
      * @return Collection|null A collection of composites
      */
-    protected static function getRecentlyViewedComposites(): ?Collection
+    public static function getRecentlyViewedComposites(): ?Collection
     {
         $result = WidgetDocumentQuery::make()->byRecentlyViewed()->get();
 
