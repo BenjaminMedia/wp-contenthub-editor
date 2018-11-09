@@ -122,7 +122,7 @@ class SeoText extends BaseWidget
             ],
             'allow_null' => 0,
             'other_choice' => 0,
-            'default_value' => 'left',
+            'default_value' => 'before',
             'layout' => 'horizontal',
             'return_format' => 'value',
             'save_other_choice' => 0,
