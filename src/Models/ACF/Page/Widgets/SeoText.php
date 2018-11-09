@@ -23,6 +23,7 @@ class SeoText extends BaseWidget
                 $this->getTitleField(),
                 $this->getDescriptionField(),
                 $this->getImageField(),
+                $this->getImagePosition(),
             ]),
             'min' => '',
             'max' => '',
@@ -97,6 +98,34 @@ class SeoText extends BaseWidget
             'max_height' => '',
             'max_size' => '',
             'mime_types' => '',
+        ];
+    }
+
+    public function getImagePosition()
+    {
+        return [
+            'key' => 'field_5be56c5ca42ef',
+            'label' => 'Image Position',
+            'name' => 'image_position',
+            'type' => 'radio',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'choices' => [
+                'left' => 'Left',
+                'right' => 'Right',
+            ],
+            'allow_null' => 0,
+            'other_choice' => 0,
+            'default_value' => 'left',
+            'layout' => 'horizontal',
+            'return_format' => 'value',
+            'save_other_choice' => 0,
         ];
     }
 }
