@@ -117,8 +117,8 @@ class SeoText extends BaseWidget
                 'id' => '',
             ],
             'choices' => [
-                'left' => 'Left',
-                'right' => 'Right',
+                'before' => 'Before Text',
+                'after' => 'After Text',
             ],
             'allow_null' => 0,
             'other_choice' => 0,
