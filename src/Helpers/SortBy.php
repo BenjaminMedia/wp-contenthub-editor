@@ -189,7 +189,7 @@ class SortBy
     private static function convertCxenseResultToComposites($result): ?Collection
     {
         return collect($result['matches'])->map(function (Document $cxArticle) {
-            if ($post = self::getPost(data_get($cxArticle, 'recs-articleid'))) {
+            if ($post = self::getPost($cxArticle->{'recs-articleid'})) {
                 return new Composite(new CompositeAdapter($post));
             }
             return null;
