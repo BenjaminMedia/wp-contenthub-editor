@@ -62,7 +62,7 @@ class FeaturedContent extends BaseWidget
             'name' => AcfName::FIELD_IMAGE,
             'type' => 'image',
             'instructions' => 'Image is used as fallback if you video is selected. That\'s why it is required.',
-            'required' => 1,
+            'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
