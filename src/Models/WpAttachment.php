@@ -4,7 +4,6 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
 use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
 use function GuzzleHttp\Psr7\parse_query;
 
@@ -24,40 +23,9 @@ class WpAttachment
         // Add custom copyright field to image attachments
         add_filter('attachment_fields_to_edit', [__CLASS__, 'add_copyright_field_to_media_uploader'], null, 2);
         add_filter('attachment_fields_to_save', [__CLASS__, 'add_copyright_field_to_media_uploader_save'], null, 2);
-        // load existing value from caption field and pass to acf
-        add_filter('acf/load_value/key=' . AttachmentGroup::CAPTION_FIELD_KEY, [__CLASS__, 'add_caption_value_to_markdown_caption_field'], 0, 3);
-        add_action('admin_head', [__CLASS__, 'remove_caption_field']);
-        add_filter('attachment_fields_to_save', [__CLASS__, 'save_caption_to_wordpress'], 0, 2);
 
         // Make attachments private
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
-    }
-    
-    public static function save_caption_to_wordpress($post_data, $attachment_data)
-    {
-        $post_data['post_excerpt'] = $_POST['acf'][AttachmentGroup::CAPTION_FIELD_KEY] ?? '';
-        return $post_data;
-    }
-
-    public static function add_caption_value_to_markdown_caption_field($value, $postId, $field)
-    {
-        $caption = get_post($postId)->post_excerpt ?? $value;
-
-        return $caption;
-    }
-
-    public static function remove_caption_field()
-    {
-        //unfortunately we have to hide it through css since it's not possible to hide the field through code as if WP 3.5+
-        // for more info: https://wordpress.stackexchange.com/a/94476
-        echo
-        "<style>
-                .media-sidebar .setting[data-setting=caption]
-                .attachment-details .setting[data-setting=caption],
-                .acf-media-modal .media-sidebar .attachment-details .setting[data-setting=caption] {
-                    display: none;
-                }
-        </style>";
     }
 
     public static function wp_update_attachment_metadata($data, $postId)
@@ -100,7 +68,6 @@ class WpAttachment
             'label' => __('Copyright'),
             'input' => 'text',
             'value' => get_post_meta($post->ID, static::POST_META_COPYRIGHT, true),
-
         ];
         $form_fields['copyright_url_field'] = [
             'label' => __('Copyright URL'),
