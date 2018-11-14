@@ -43,7 +43,7 @@ class WpUserProfile
                             'class' => '',
                             'id' => '',
                         ],
-                        'return_format' => 'id',
+                        'return_format' => 'array',
                         'preview_size' => 'medium',
                         'library' => 'all',
                         'min_width' => '',

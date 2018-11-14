@@ -88,7 +88,7 @@ class SeoText extends BaseWidget
                 'class' => '',
                 'id' => '',
             ],
-            'return_format' => 'id',
+            'return_format' => 'array',
             'preview_size' => 'thumbnail',
             'library' => 'all',
             'min_width' => '',
