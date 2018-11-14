@@ -145,7 +145,7 @@ abstract class BaseWidget implements WidgetContract
             'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_LIST),
             'label' => 'Teasers',
             'name' => AcfName::FIELD_TEASER_LIST,
-            'type' => CustomRelationship::NAME,
+            'type' => 'relationship',
             'instructions' => '',
             'required' => 1,
             'conditional_logic' => [
