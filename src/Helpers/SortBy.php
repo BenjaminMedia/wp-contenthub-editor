@@ -2,8 +2,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
-use Bonnier\Willow\Base\Adapters\Wp\Composites\CompositeAdapter;
-use Bonnier\Willow\Base\Models\Base\Composites\Composite;
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
@@ -50,9 +48,7 @@ class SortBy
     protected static function getManualComposites(): ?Collection
     {
         if ($teasers = self::$acfWidget['teaser_list'] ?? null) {
-            return collect($teasers)->map(function (\WP_Post $teaser) {
-                return new Composite(new CompositeAdapter($teaser));
-            });
+            return collect($teasers);
         }
 
         return null;
@@ -103,12 +99,9 @@ class SortBy
         $teaserQuery = new \WP_Query($args);
 
         if ($teaserQuery->have_posts()) {
-            return collect($teaserQuery->posts)->map(function ($postId) {
-                if ($composite = self::getPost($postId)) {
-                    return new Composite(new CompositeAdapter($composite));
-                }
-                return null;
-            })->rejectNullValues();
+            return collect($teaserQuery->posts)->map(function (int $postId) {
+                return get_post($postId);
+            });
         }
 
         return null;
@@ -189,8 +182,8 @@ class SortBy
     private static function convertCxenseResultToComposites($result): ?Collection
     {
         return collect($result['matches'])->map(function (Document $cxArticle) {
-            if ($post = self::getPost($cxArticle->{'recs-articleid'})) {
-                return new Composite(new CompositeAdapter($post));
+            if (($postId = self::getPost($cxArticle->{'recs-articleid'})) && $post = get_post($postId)) {
+                return $post;
             }
             return null;
         })->rejectNullValues();
