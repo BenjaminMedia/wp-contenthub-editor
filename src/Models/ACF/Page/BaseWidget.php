@@ -145,7 +145,7 @@ abstract class BaseWidget implements WidgetContract
             'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_TEASER_LIST),
             'label' => 'Teasers',
             'name' => AcfName::FIELD_TEASER_LIST,
-            'type' => 'relationship',
+            'type' => CustomRelationship::NAME,
             'instructions' => '',
             'required' => 1,
             'conditional_logic' => [
@@ -165,7 +165,10 @@ abstract class BaseWidget implements WidgetContract
             'post_type' => [
                 0 => WpComposite::POST_TYPE,
             ],
-            'taxonomy' => '',
+            'taxonomy' => array(
+                0 => 'category',
+                1 => 'post_tag',
+            ),
             'post_tag' => '',
             'filters' => [
                 0 => 'search',
