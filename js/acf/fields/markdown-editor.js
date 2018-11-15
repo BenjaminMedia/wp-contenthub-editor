@@ -81,9 +81,29 @@
     }, 100)
   });
 
-  acf.add_action('ready', initMarkdownFields);
+  acf.add_action('ready', function(){
+    jQuery(".acf-actions > a[data-name='edit']").on('click', function (event) {
+      window.setTimeout(function(){ // Add slight delay to allow fields to render before init
+        initMarkdownFields(event.target);
+      }, 1200)
+    })
+  });
 
+  acf.add_action('ready', initMarkdownFields);
   function initMarkdownFields(el) {
+    jQuery("label[data-setting='caption'] > textarea").each(function () {
+      if (jQuery(this).is(":visible")) { // Only render visible elements
+        jQuery(this).parent().removeClass('setting');
+        createSimpleMde(this, 'simple');
+      }
+    })
+
+    jQuery(el).find('#attachment_caption').each(function () {
+      if (jQuery(this).is(":visible")) { // Only render visible elements
+        createSimpleMde(this, 'simple');
+      }
+    })
+
     jQuery(el).find('.acf-field-simple-mde').each(function () {
       if (jQuery(this).is(":visible")) { // Only render visible elements
         createSimpleMde(this, jQuery(this).data('simple-mde-config'));
