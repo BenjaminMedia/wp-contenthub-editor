@@ -168,7 +168,9 @@ class WpComposite
         $args = [
             'post_type' => static::POST_TYPE,
             'posts_per_page' => 100,
-            'paged' => 0
+            'paged' => 1,
+            'order' => 'ASC',
+            'orderby' => 'ID'
         ];
 
         $posts = query_posts($args);
