@@ -35,7 +35,7 @@ class WpTerm
         LanguageProvider::setTermLanguage($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
 
-        collect($meta)->each(function ($value, $key) use($createdTerm) {
+        collect($meta)->each(function ($value, $key) use ($createdTerm) {
             update_term_meta($createdTerm['term_id'], $key, $value);
         });
 
@@ -68,7 +68,7 @@ class WpTerm
         LanguageProvider::setTermLanguage($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
 
-        collect($meta)->each(function ($value, $key) use($existingTermId) {
+        collect($meta)->each(function ($value, $key) use ($existingTermId) {
             update_term_meta($existingTermId, $key, $value);
         });
 
