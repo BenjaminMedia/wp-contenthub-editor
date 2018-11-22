@@ -54,7 +54,6 @@ class TermImportHelper
     protected function importTerm($name, $languageCode, $externalTerm)
     {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode} ?? null;
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
@@ -63,7 +62,15 @@ class TermImportHelper
         $_POST['term_lang_choice'] = $languageCode;
 
         $description = $externalTerm->description->{$languageCode} ?? null;
-        $internal = $externalTerm->internal ?? false;
+
+        $meta = [
+            'meta_title' => $externalTerm->meta_title->{$languageCode} ?? null,
+            'meta_description' => $externalTerm->meta_description->{$languageCode} ?? null,
+            'body' => $externalTerm->body->{$languageCode} ?? null,
+            'image_url' => $externalTerm->image_url->{$languageCode} ?? null,
+            'internal' => $externalTerm->internal ?? false,
+            'whitealbum_id' => $externalTerm->whitealbum_id->{$languageCode} ?? null,
+        ];
 
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             $this->preparePostRedirects($existingTermId);
@@ -76,8 +83,7 @@ class TermImportHelper
                 $taxonomy,
                 $parentTermId,
                 $description,
-                $internal,
-                $whitealbumId
+                $meta
             )) {
                 $this->createPostRedirects();
                 return true;
@@ -85,7 +91,15 @@ class TermImportHelper
             return false;
         }
         // Create new term
-        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal, $whitealbumId);
+        return WpTerm::create(
+            $name,
+            $languageCode,
+            $contentHubId,
+            $taxonomy,
+            $parentTermId,
+            $description,
+            $meta
+        );
     }
 
     protected function getParentTermId($languageCode, $externalCategory)
