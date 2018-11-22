@@ -60,5 +60,6 @@ class UpdateEndpointController extends WP_REST_Controller
     {
         $polylang = PLL(); // We have to store in variable because class is using & which is not allowed for objects
         new PLL_Admin_Share_Term_Slug($polylang);
+        new \PLL_Admin_Filters($polylang);
     }
 }
