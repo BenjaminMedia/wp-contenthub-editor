@@ -19,8 +19,7 @@ class WpTerm
         $taxonomy,
         $parentTermId = null,
         $description,
-        $internal,
-        $whitealbumId
+        $meta
     ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent'      => $parentTermId,
@@ -35,8 +34,11 @@ class WpTerm
         }
         LanguageProvider::setTermLanguage($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
-        update_term_meta($createdTerm['term_id'], 'internal', $internal);
-        update_term_meta($createdTerm['term_id'], 'whitealbum_id', $whitealbumId);
+
+        collect($meta)->each(function ($value, $key) use ($createdTerm) {
+            update_term_meta($createdTerm['term_id'], $key, $value);
+        });
+
         static::log('success', "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $createdTerm['term_id'];
     }
@@ -49,8 +51,7 @@ class WpTerm
         $taxonomy,
         $parentTermId = null,
         $description,
-        $internal,
-        $whitealbumId
+        $meta
     ) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name'        => $name,
@@ -66,8 +67,11 @@ class WpTerm
         }
         LanguageProvider::setTermLanguage($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
-        update_term_meta($existingTermId, 'internal', $internal);
-        update_term_meta($existingTermId, 'whitealbum_id', $whitealbumId);
+
+        collect($meta)->each(function ($value, $key) use ($existingTermId) {
+            update_term_meta($existingTermId, $key, $value);
+        });
+
         static::log('success', "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $existingTermId;
     }
