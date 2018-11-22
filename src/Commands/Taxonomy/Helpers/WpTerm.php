@@ -3,7 +3,6 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
-use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 
 /**
@@ -25,7 +24,7 @@ class WpTerm
     ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent'      => $parentTermId,
-            'slug'        => SlugHelper::create_slug($name),
+            'slug'        => $name,
             'description' => $description
         ]);
 
@@ -56,7 +55,7 @@ class WpTerm
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name'        => $name,
             'parent'      => $parentTermId,
-            'slug'        => SlugHelper::create_slug($name),
+            'slug'        => $name,
             'description' => $description
         ]);
 
