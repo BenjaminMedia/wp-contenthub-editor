@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Meta\Sitemap;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\BannerPlacement;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\Newsletter;
@@ -88,6 +89,30 @@ class WpPage
                     3 => 'featured_image',
                     4 => 'send-trackbacks',
                 ],
+                'active' => 1,
+                'description' => '',
+            ]);
+            acf_add_local_field_group([
+                'key' => 'group_5bfe529145a7e',
+                'title' => 'Page Meta',
+                'fields' => [
+                    with(new Sitemap)->getLayout(),
+                ],
+                'location' => [
+                    [
+                        [
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => 'page',
+                        ],
+                    ],
+                ],
+                'menu_order' => 0,
+                'position' => 'side',
+                'style' => 'default',
+                'label_placement' => 'top',
+                'instruction_placement' => 'label',
+                'hide_on_screen' => '',
                 'active' => 1,
                 'description' => '',
             ]);
