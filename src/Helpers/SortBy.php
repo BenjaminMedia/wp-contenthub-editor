@@ -126,7 +126,7 @@ class SortBy
 
         $result = $query->get();
 
-        return self::convertCxenseResultToComposites($result);
+        return self::convertCxenseResultToComposites($result, self::$acfWidget['teaser_amount']);
     }
 
     /**
@@ -138,7 +138,7 @@ class SortBy
     {
         $result = WidgetDocumentQuery::make()->byRecentlyViewed()->get();
 
-        return self::convertCxenseResultToComposites($result);
+        return self::convertCxenseResultToComposites($result, self::$acfWidget['teaser_amount']);
     }
 
     /**
@@ -179,13 +179,13 @@ class SortBy
      * @param array $result Result from Cxense Query
      * @return Collection|null A collection of composites or null.
      */
-    private static function convertCxenseResultToComposites($result): ?Collection
+    private static function convertCxenseResultToComposites($result, $count): ?Collection
     {
         return collect($result['matches'])->map(function (Document $cxArticle) {
             if (($postId = self::getPost($cxArticle->{'recs-articleid'})) && $post = get_post($postId)) {
                 return $post;
             }
             return null;
-        })->rejectNullValues();
+        })->rejectNullValues()->slice(0, $count);
     }
 }
