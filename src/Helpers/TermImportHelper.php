@@ -13,6 +13,7 @@ class TermImportHelper
 {
     protected $taxonomy;
     protected $permalinksToRedirect;
+    protected $currentLocale;
 
     public function __construct($taxonomy)
     {
@@ -58,9 +59,7 @@ class TermImportHelper
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
             $this->taxonomy;
-        // Needed by Polylang to allow same term name in different languages
-        $_POST['term_lang_choice'] = $languageCode;
-
+        $this->setLocaleFilter($languageCode);
         $description = $externalTerm->description->{$languageCode} ?? null;
 
         $meta = [
@@ -178,9 +177,18 @@ class TermImportHelper
                 // Since we left the post_name we need to replace it in the permalink.
                 $newPermalink = str_replace('%postname%', get_post($postId)->post_name, $newPermalink);
                 if ($oldPermalink !== $newPermalink) {
+                    $language = LanguageProvider::getPostLanguage($postId);
+                    $from = $oldParsedUrl['path'];
+                    $to = parse_url($newPermalink, PHP_URL_PATH);
+                    if ($existingRedirect = BonnierRedirect::findRedirectFor($to, $language)) {
+                        if ($existingRedirect->to === $from) {
+                            // Reverse redirect exists so we remove it to create a new one
+                            BonnierRedirect::remove($existingRedirect->id);
+                        }
+                    }
                     BonnierRedirect::createRedirect(
-                        $oldParsedUrl['path'],
-                        parse_url($newPermalink, PHP_URL_PATH),
+                        $from,
+                        $to,
                         LanguageProvider::getPostLanguage($postId),
                         'category-slug-change',
                         $postId
@@ -188,5 +196,22 @@ class TermImportHelper
                 }
             }
         });
+    }
+
+    private function setLocaleFilter($languageCode)
+    {
+        // Needed by Polylang to allow same term name in different languages
+        $_POST['term_lang_choice'] = $languageCode;
+        $this->currentLocale = collect(LanguageProvider::getSimpleLanguageList(['fields' => 'locale']))
+            ->first(function ($locale) use ($languageCode) {
+                return str_contains($locale, $languageCode);
+            });
+        // Needed by wordpress in order to generate the correct slug
+        add_filter('locale', [$this, 'getLocaleForSanitizeTitle'], 100);
+    }
+
+    public function getLocaleForSanitizeTitle($locale)
+    {
+        return $this->currentLocale ?: $locale;
     }
 }
