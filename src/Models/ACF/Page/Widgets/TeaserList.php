@@ -29,6 +29,7 @@ class TeaserList extends BaseWidget
                 $this->getLinkField(),
                 $this->getLinkLabelField(),
                 $this->getDisplayHintField(),
+                $this->getPaginationField(),
             ], $this->getSortByFields()),
             'min' => '',
             'max' => '',
@@ -231,6 +232,29 @@ class TeaserList extends BaseWidget
             'layout' => 'vertical',
             'return_format' => 'value',
             'save_other_choice' => 0,
+        ];
+    }
+
+    private function getPaginationField()
+    {
+        return [
+            'key' => 'field_5c090fa6c5e0d',
+            'label' => 'Pagination',
+            'name' => 'pagination',
+            'type' => 'true_false',
+            'instructions' => 'Should this Teaser List paginate? Only one Teaser List per page can paginate.',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'message' => '',
+            'default_value' => 0,
+            'ui' => 0,
+            'ui_on_text' => '',
+            'ui_off_text' => '',
         ];
     }
 }

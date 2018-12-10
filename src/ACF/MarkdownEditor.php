@@ -195,6 +195,16 @@ class MarkdownEditor extends acf_field
                 filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/composite-validation.js')
             );
         }
+        //ContentHub composite fields validation
+        $current_screen = get_current_screen();
+        if (isset($current_screen->id) && $current_screen->id === 'page') {
+            wp_enqueue_script(
+                'acf-page-validation',
+                ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/page-validation.js',
+                ['acf-input'],
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/page-validation.js')
+            );
+        }
 
         $language = 'da';
         if (isset($_GET['post'])) {
