@@ -36,7 +36,7 @@ class CommercialSpot extends BaseWidget
         return [
             'key' => 'field_5c0fa33fea1a8',
             'label' => 'Title',
-            'type' => AcfName::FIELD_TITLE,
+            'name' => AcfName::FIELD_TITLE,
             'type' => 'text',
             'instructions' => '',
             'required' => 1,
@@ -59,7 +59,7 @@ class CommercialSpot extends BaseWidget
         return [
             'key' => 'field_5c0fa350ea1a9',
             'label' => 'Description',
-            'type' => AcfName::FIELD_DESCRIPTION,
+            'name' => AcfName::FIELD_DESCRIPTION,
             'type' => 'markdown-editor',
             'instructions' => '',
             'required' => 1,
@@ -79,8 +79,8 @@ class CommercialSpot extends BaseWidget
         return [
             'key' => 'field_5c0fa313ea1a7',
             'label' => 'Image',
-            'name' => 'image',
-            'type' => AcfName::FIELD_IMAGE,
+            'name' => AcfName::FIELD_IMAGE,
+            'type' => 'image',
             'instructions' => '',
             'required' => 1,
             'conditional_logic' => 0,
