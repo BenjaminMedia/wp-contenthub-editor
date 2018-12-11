@@ -36,6 +36,7 @@ class AcfName
     const WIDGET_SEO_TEXT = 'seo_text';
     const WIDGET_TAXONOMY_TEASER_LIST = 'taxonomy_teaser_list';
     const WIDGET_TEASER_LIST = 'teaser_list';
+    const WIDGET_COMMERCIAL_SPOT = 'commercial_spot';
 
     const GROUP_PAGE_WIDGETS = 'page_widgets';
 }

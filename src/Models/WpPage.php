@@ -6,6 +6,7 @@ use Bonnier\WP\ContentHub\Editor\ACF\CustomRelationship;
 use Bonnier\WP\ContentHub\Editor\Helpers\AcfName;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Meta\Sitemap;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\BannerPlacement;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\CommercialSpot;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\Newsletter;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\SeoText;
@@ -48,6 +49,7 @@ class WpPage
                             with(new TaxonomyList)->getLayout(),
                             with(new Newsletter)->getLayout(),
                             with(new BannerPlacement)->getLayout(),
+                            with(new CommercialSpot)->getLayout(),
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',
