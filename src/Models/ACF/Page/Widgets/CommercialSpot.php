@@ -7,7 +7,6 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\BaseWidget;
 
 class CommercialSpot extends BaseWidget
 {
-
     public function __construct(array $config = [])
     {
         parent::__construct(AcfName::WIDGET_COMMERCIAL_SPOT, $config);
