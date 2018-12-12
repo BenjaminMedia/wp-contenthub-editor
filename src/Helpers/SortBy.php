@@ -19,16 +19,20 @@ class SortBy
     const CXENSE_RECENT = 'recent';
 
     private static $acfWidget;
+    private static $page;
 
     /**
      * Get a collection of composites based on an ACF Widget
      *
      * @param array $acfWidget
+     * @param int $page
+     *
      * @return Collection|null A collection of composites
      */
-    public static function getComposites(array $acfWidget): ?Collection
+    public static function getComposites(array $acfWidget, int $page = 1): ?array
     {
         self::$acfWidget = $acfWidget;
+        self::$page = $page;
 
         $method = collect([
             self::MANUAL => 'getManualComposites',
@@ -43,12 +47,19 @@ class SortBy
     /**
      * Get a collection of manually selected composites.
      *
-     * @return Collection|null A collection of composites
+     * @return array|null A collection of composites
      */
-    protected static function getManualComposites(): ?Collection
+    protected static function getManualComposites(): ?array
     {
         if ($teasers = self::$acfWidget['teaser_list'] ?? null) {
-            return collect($teasers);
+            $count = count($teasers);
+            return [
+                'composites' => collect($teasers),
+                'page' => 1,
+                'per_page' => $count,
+                'total' => $count,
+                'pages' => 1,
+            ];
         }
 
         return null;
@@ -58,12 +69,13 @@ class SortBy
      * Get a collection of latest published composites
      * by category, tags and custom taxonomy.
      *
-     * @return Collection|null A collection of composites
+     * @return array|null A collection of composites
      */
-    protected static function getCompositesByTaxonomy(): ?Collection
+    protected static function getCompositesByTaxonomy(): ?array
     {
         $args = [
             'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
+            'paged' => self::$page,
             'order' => 'DESC',
             'orderby' => 'post_date',
             'post_type' =>  WpComposite::POST_TYPE,
@@ -99,9 +111,15 @@ class SortBy
         $teaserQuery = new \WP_Query($args);
 
         if ($teaserQuery->have_posts()) {
-            return collect($teaserQuery->posts)->map(function (int $postId) {
-                return get_post($postId);
-            });
+            return [
+                'composites' => collect($teaserQuery->posts)->map(function (int $postId) {
+                    return get_post($postId);
+                }),
+                'page' => self::$page,
+                'per_page' => intval($args['posts_per_page']),
+                'total' => intval($teaserQuery->found_posts),
+                'pages' => intval($teaserQuery->max_num_pages),
+            ];
         }
 
         return null;
@@ -111,9 +129,9 @@ class SortBy
      * Get a collection of popular composites from cxense
      * optionally based on category and tags.
      *
-     * @return Collection|null A collection of composites
+     * @return array|null A collection of composites
      */
-    public static function getPopularComposites(): ?Collection
+    public static function getPopularComposites(): ?array
     {
         $query = WidgetDocumentQuery::make()->byPopular();
         if (self::isWpTerm(self::$acfWidget[AcfName::FIELD_CATEGORY] ?? null)) {
@@ -132,9 +150,9 @@ class SortBy
     /**
      * Get a collection of recently viewed composites from cxense.
      *
-     * @return Collection|null A collection of composites
+     * @return array|null A collection of composites
      */
-    public static function getRecentlyViewedComposites(): ?Collection
+    public static function getRecentlyViewedComposites(): ?array
     {
         $result = WidgetDocumentQuery::make()->byRecentlyViewed()->get();
 
@@ -177,15 +195,23 @@ class SortBy
      * Convert the result array from a cxense query to a collection of composites.
      *
      * @param array $result Result from Cxense Query
-     * @return Collection|null A collection of composites or null.
+     * @param $count
+     *
+     * @return array|null A collection of composites or null.
      */
-    private static function convertCxenseResultToComposites($result, $count): ?Collection
+    private static function convertCxenseResultToComposites($result, $count): ?array
     {
-        return collect($result['matches'])->map(function (Document $cxArticle) {
-            if (($postId = self::getPost($cxArticle->{'recs-articleid'})) && $post = get_post($postId)) {
-                return $post;
-            }
-            return null;
-        })->rejectNullValues()->slice(0, $count);
+        return [
+            'composites' => collect($result['matches'])->map(function (Document $cxArticle) {
+                if (($postId = self::getPost($cxArticle->{'recs-articleid'})) && $post = get_post($postId)) {
+                    return $post;
+                }
+                return null;
+            })->rejectNullValues()->slice(0, $count),
+            'page' => 1,
+            'per_page' => $count,
+            'total' => $count,
+            'pages' => 1,
+        ];
     }
 }
