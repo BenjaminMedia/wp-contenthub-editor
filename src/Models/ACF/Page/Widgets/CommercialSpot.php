@@ -25,6 +25,7 @@ class CommercialSpot extends BaseWidget
                 $this->getImageField(),
                 $this->getLinkField(),
                 $this->getLinkLabelField(),
+                $this->getLabelField(),
             ],
             'min' => '',
             'max' => '',
@@ -62,7 +63,7 @@ class CommercialSpot extends BaseWidget
             'name' => AcfName::FIELD_DESCRIPTION,
             'type' => 'markdown-editor',
             'instructions' => '',
-            'required' => 1,
+            'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
@@ -82,7 +83,7 @@ class CommercialSpot extends BaseWidget
             'name' => AcfName::FIELD_IMAGE,
             'type' => 'image',
             'instructions' => '',
-            'required' => 1,
+            'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
@@ -110,7 +111,7 @@ class CommercialSpot extends BaseWidget
             'name' => AcfName::FIELD_LINK,
             'type' => 'url',
             'instructions' => '',
-            'required' => 0,
+            'required' => 1,
             'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
@@ -130,7 +131,7 @@ class CommercialSpot extends BaseWidget
             'name' => AcfName::FIELD_LINK_LABEL,
             'type' => 'text',
             'instructions' => '',
-            'required' => 0,
+            'required' => 1,
             'conditional_logic' => [
                 [
                     [
@@ -139,6 +140,29 @@ class CommercialSpot extends BaseWidget
                     ],
                 ],
             ],
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ];
+    }
+
+    private function getLabelField()
+    {
+        return [
+            'key' => 'field_5c121e24c912f',
+            'label' => 'Label',
+            'name' => AcfName::FIELD_LABEL,
+            'type' => 'text',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
             'wrapper' => [
                 'width' => '',
                 'class' => '',
