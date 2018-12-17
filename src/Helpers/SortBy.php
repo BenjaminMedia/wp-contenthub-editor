@@ -84,7 +84,6 @@ class SortBy
             'update_post_term_cache' => false, // disable fetching of terms, and a write query to the database
             'cache_results' => false,
             'lang' => LanguageProvider::getCurrentLanguage(),
-            'fields' => 'ids',
         ];
 
         /** @var Collection $taxonomies */
@@ -112,9 +111,7 @@ class SortBy
 
         if ($teaserQuery->have_posts()) {
             return [
-                'composites' => collect($teaserQuery->posts)->map(function (int $postId) {
-                    return get_post($postId);
-                }),
+                'composites' => collect($teaserQuery->posts),
                 'page' => self::$page,
                 'per_page' => intval($args['posts_per_page']),
                 'total' => intval($teaserQuery->found_posts),
