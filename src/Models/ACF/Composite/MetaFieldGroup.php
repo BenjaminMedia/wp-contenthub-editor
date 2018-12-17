@@ -104,6 +104,25 @@ class MetaFieldGroup
                         'new_lines' => '',
                         'readonly' => 0,
                         'disabled' => 0,
+                    ],
+                    [
+                        'key' => 'field_5c177e092b1ec',
+                        'label' => 'Disable CTM',
+                        'name' => 'disable_ctm',
+                        'type' => 'true_false',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'message' => '',
+                        'default_value' => 0,
+                        'ui' => 0,
+                        'ui_on_text' => '',
+                        'ui_off_text' => '',
                     ]
                 ],
                 'location' => [
