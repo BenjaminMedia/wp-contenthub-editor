@@ -101,7 +101,8 @@ class MarkdownEditor extends acf_field
         *  Please note that you must also have a matching $defaults value for the field name (font_size)
         */
 
-        acf_render_field_setting($field, array(
+        acf_render_field_setting(
+            $field, array(
             'label' => __('Simple MDE Configuration', 'acf-markdown-editor'),
             'instructions' => __('Write', 'acf-markdown-editor'),
             'type' => 'radio',
@@ -123,7 +124,8 @@ class MarkdownEditor extends acf_field
             'default_value' => 'standard',
             'layout' => 'vertical',
             'return_format' => 'value',
-        ));
+        )
+        );
     }
 
     /*
@@ -176,7 +178,9 @@ class MarkdownEditor extends acf_field
             ['acf-input'],
             filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
         );
-        wp_enqueue_script('acf-input-simple-mde', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js'));
+        wp_enqueue_script(
+            'acf-input-simple-mde', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
+        );
 
         wp_enqueue_script(
             'acf-input-markdown-editor',
@@ -212,21 +216,27 @@ class MarkdownEditor extends acf_field
         } elseif (isset($_GET['new_lang'])) {
             $language = $_GET['new_lang'];
         }
-        if ($language) {
+        $dictionary = 'js/lang/' . $language . '.dic.txt';
+        $affFile = 'js/lang/' . $language . '.aff.txt';
+        $dictionaryExists = file_exists(ContenthubEditor::instance()->pluginDir . $dictionary);
+        $affExists = file_exists(ContenthubEditor::instance()->pluginDir . $affFile);
+        if ($language && $dictionaryExists && $affExists) {
             wp_localize_script(
-                'acf-input-markdown-editor', 'dictionary', [
+                'acf-input-markdown-editor',
+                'dictionary',
+                [
                     'dic' => parse_url(
-                            ContenthubEditor::instance()->pluginUrl,
-                            PHP_URL_PATH
-                        ) . 'js/lang/' . $language . '.dic.txt?ver=' . filemtime(
-                            ContenthubEditor::instance()->pluginDir . 'js/lang/' . $language . '.dic.txt'
-                        ),
+                        ContenthubEditor::instance()->pluginUrl,
+                        PHP_URL_PATH
+                    ) . $dictionary . '?ver=' . filemtime(
+                        ContenthubEditor::instance()->pluginDir . $dictionary
+                    ),
                     'aff' => parse_url(
-                            ContenthubEditor::instance()->pluginUrl,
-                            PHP_URL_PATH
-                        ) . 'js/lang/' . $language . '.aff.txt?ver=' . filemtime(
-                            ContenthubEditor::instance()->pluginDir . 'js/lang/' . $language . '.aff.txt'
-                        )
+                        ContenthubEditor::instance()->pluginUrl,
+                        PHP_URL_PATH
+                    ) . $affFile . '?ver=' . filemtime(
+                        ContenthubEditor::instance()->pluginDir . $affFile
+                    )
                 ]
             );
         }
@@ -238,7 +248,10 @@ class MarkdownEditor extends acf_field
             ['acf-input'],
             filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
         );
-        wp_enqueue_style('acf-input-markdown-editor', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css'));
+        wp_enqueue_style(
+            'acf-input-markdown-editor', '', [],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
+        );
     }
 
     /*
