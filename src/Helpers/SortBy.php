@@ -15,6 +15,7 @@ class SortBy
     const CUSTOM = 'custom';
     const POPULAR = 'popular';
     const RECENTLY_VIEWED = 'recently_viewed';
+    const SHUFFLE = 'shuffle';
     const CXENSE_TREND = 'trend';
     const CXENSE_RECENT = 'recent';
 

@@ -91,6 +91,7 @@ abstract class BaseWidget implements WidgetContract
                 SortBy::RECENTLY_VIEWED => 'Recently Viewed by User (Cxense)',
                 SortBy::CUSTOM => 'Taxonomy (WordPress)',
                 SortBy::MANUAL => 'Manual (WordPress)',
+                SortBy::SHUFFLE => 'Shuffle',
             ],
             'allow_null' => 0,
             'other_choice' => 0,
