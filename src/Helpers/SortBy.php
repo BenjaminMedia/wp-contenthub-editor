@@ -40,6 +40,7 @@ class SortBy
             self::CUSTOM => 'getCompositesByTaxonomy',
             self::POPULAR => 'getPopularComposites',
             self::RECENTLY_VIEWED => 'getRecentlyViewedComposites',
+            self::SHUFFLE => 'getShuffleComposites',
         ])->get(self::$acfWidget[AcfName::FIELD_SORT_BY] ?? null);
 
         return $method ? self::$method() : null;
@@ -153,6 +154,18 @@ class SortBy
     public static function getRecentlyViewedComposites(): ?array
     {
         $result = WidgetDocumentQuery::make()->byRecentlyViewed()->get();
+
+        return self::convertCxenseResultToComposites($result, self::$acfWidget['teaser_amount']);
+    }
+
+    /**
+     * Get a collection of shuffled composites from cxense.
+     *
+     * @return array|null A collection of composites
+     */
+    public static function getShuffleComposites(): ?array
+    {
+        $result = WidgetDocumentQuery::make()->byShuffle()->get();
 
         return self::convertCxenseResultToComposites($result, self::$acfWidget['teaser_amount']);
     }
