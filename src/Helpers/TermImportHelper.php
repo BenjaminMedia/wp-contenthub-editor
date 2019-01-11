@@ -13,6 +13,7 @@ class TermImportHelper
 {
     protected $taxonomy;
     protected $permalinksToRedirect;
+    protected $categoryLinksToRedirect;
     protected $currentLocale;
 
     public function __construct($taxonomy)
@@ -73,6 +74,7 @@ class TermImportHelper
 
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             $this->preparePostRedirects($existingTermId);
+            $this->prepareCategoryRedirects($existingTermId);
             // Term exists so we update it
             if (WpTerm::update(
                 $existingTermId,
@@ -85,6 +87,7 @@ class TermImportHelper
                 $meta
             )) {
                 $this->createPostRedirects();
+                $this->createCategoryRedirects();
                 return true;
             }
             return false;
@@ -167,6 +170,20 @@ class TermImportHelper
         $this->permalinksToRedirect = collect();
     }
 
+    private function prepareCategoryRedirects($existingTermId)
+    {
+        if ($this->taxonomy === 'category' && $term = get_term($existingTermId)) {
+            $terms = array_merge([$term], get_categories(['child_of' => $existingTermId]));
+            $this->categoryLinksToRedirect = collect($terms)
+                ->reduce(function ($out, \WP_Term $term) {
+                    $out[$term->term_id] = get_category_link($term->term_id);
+                    return $out;
+                }, collect([]));
+            return;
+        }
+        $this->categoryLinksToRedirect = collect();
+    }
+
     private function createPostRedirects()
     {
         $this->permalinksToRedirect->each(function ($oldPermalink, $postId) {
@@ -192,6 +209,31 @@ class TermImportHelper
                         LanguageProvider::getPostLanguage($postId),
                         'category-slug-change',
                         $postId
+                    );
+                }
+            }
+        });
+    }
+
+    private function createCategoryRedirects()
+    {
+        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) {
+            if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
+                $newlink = parse_url(get_category_link($termId), PHP_URL_PATH)
+            ) {
+                if ($oldLink !== $newlink) {
+                    $language = LanguageProvider::getTermLanguage($termId);
+                    if ($existingRedirect = BonnierRedirect::findRedirectFor($newlink, $language)) {
+                        if ($existingRedirect->to === $oldLink) {
+                            BonnierRedirect::remove($existingRedirect->id);
+                        }
+                    }
+                    BonnierRedirect::createRedirect(
+                        $oldLink,
+                        $newlink,
+                        $language,
+                        'category-slug-change',
+                        $termId
                     );
                 }
             }
