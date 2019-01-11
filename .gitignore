@@ -1,2 +1,5 @@
 vendor
 .idea
+.env
+tests/_output/
+tests/_support/
