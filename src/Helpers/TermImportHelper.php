@@ -13,7 +13,8 @@ class TermImportHelper
 {
     protected $taxonomy;
     protected $permalinksToRedirect;
-    protected $categoryLinksToRedirect;
+    protected $catLinksToRedirect;
+    protected $tagLinksToRedirect;
     protected $currentLocale;
 
     public function __construct($taxonomy)
@@ -75,6 +76,7 @@ class TermImportHelper
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             $this->preparePostRedirects($existingTermId);
             $this->prepareCategoryRedirects($existingTermId);
+            $this->prepareTagRedirects($existingTermId);
             // Term exists so we update it
             if (WpTerm::update(
                 $existingTermId,
@@ -88,6 +90,7 @@ class TermImportHelper
             )) {
                 $this->createPostRedirects();
                 $this->createCategoryRedirects();
+                $this->createTagRedirects();
                 return true;
             }
             return false;
@@ -174,14 +177,22 @@ class TermImportHelper
     {
         if ($this->taxonomy === 'category' && $term = get_term($existingTermId)) {
             $terms = array_merge([$term], get_categories(['child_of' => $existingTermId]));
-            $this->categoryLinksToRedirect = collect($terms)
+            $this->catLinksToRedirect = collect($terms)
                 ->reduce(function ($out, \WP_Term $term) {
                     $out[$term->term_id] = get_category_link($term->term_id);
                     return $out;
                 }, collect([]));
             return;
         }
-        $this->categoryLinksToRedirect = collect();
+        $this->catLinksToRedirect = collect();
+    }
+
+    private function prepareTagRedirects($existingTermId)
+    {
+        $this->tagLinksToRedirect = collect([]);
+        if ($this->taxonomy === 'post_tag' && $term = get_term($existingTermId)) {
+            $this->tagLinksToRedirect = collect([$existingTermId => get_tag_link($term)]);
+        }
     }
 
     private function createPostRedirects()
@@ -217,7 +228,7 @@ class TermImportHelper
 
     private function createCategoryRedirects()
     {
-        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) {
+        $this->catLinksToRedirect->each(function ($oldUrl, $termId) {
             if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
                 $newlink = parse_url(get_category_link($termId), PHP_URL_PATH)
             ) {
@@ -233,6 +244,31 @@ class TermImportHelper
                         $newlink,
                         $language,
                         'category-slug-change',
+                        $termId
+                    );
+                }
+            }
+        });
+    }
+
+    private function createTagRedirects()
+    {
+        $this->tagLinksToRedirect->each(function ($oldUrl, $termId) {
+            if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
+                $newLink = parse_url(get_tag_link($termId), PHP_URL_PATH)
+            ) {
+                if ($oldLink !== $newLink) {
+                    $language = LanguageProvider::getTermLanguage($termId);
+                    if ($existingRedirect = BonnierRedirect::findRedirectFor($newLink, $language)) {
+                        if ($existingRedirect->to === $oldLink) {
+                            BonnierRedirect::remove($existingRedirect->id);
+                        }
+                    }
+                    BonnierRedirect::createRedirect(
+                        $oldLink,
+                        $newLink,
+                        $language,
+                        'tag-slug-change',
                         $termId
                     );
                 }
