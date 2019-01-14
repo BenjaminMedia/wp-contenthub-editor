@@ -13,6 +13,7 @@ class TermImportHelper
     protected $taxonomy;
     protected $permalinksToRedirect;
     protected $categoryLinksToRedirect;
+    protected $tagLinksToRedirect;
 
     public function __construct($taxonomy)
     {
@@ -71,6 +72,7 @@ class TermImportHelper
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             $this->preparePostRedirects($existingTermId);
             $this->prepareCategoryRedirects($existingTermId);
+            $this->prepareTagRedirects($existingTermId);
             // Term exists so we update it
             if (WpTerm::update(
                 $existingTermId,
@@ -85,6 +87,7 @@ class TermImportHelper
             )) {
                 $this->createPostRedirects();
                 $this->createCategoryRedirects();
+                $this->createTagRedirects();
                 return true;
             }
             return false;
@@ -135,7 +138,7 @@ class TermImportHelper
         }
         return $wpTaxonomy;
     }
-    
+
     private function preparePostRedirects($existingTermId)
     {
         if ($this->taxonomy === 'category' && $existingTerm = get_term($existingTermId)) {
@@ -173,6 +176,14 @@ class TermImportHelper
         $this->categoryLinksToRedirect = collect();
     }
 
+    private function prepareTagRedirects($existingTermId)
+    {
+        $this->tagLinksToRedirect = collect([]);
+        if ($this->taxonomy === 'post_tag' && $term = get_term($existingTermId)) {
+            $this->tagLinksToRedirect = collect([$existingTermId => get_tag_link($term)]);
+        }
+    }
+
     private function createPostRedirects()
     {
         $this->permalinksToRedirect->each(function ($oldPermalink, $postId) {
@@ -207,6 +218,25 @@ class TermImportHelper
                         $newlink,
                         pll_get_term_language($termId),
                         'category-slug-change',
+                        $termId
+                    );
+                }
+            }
+        });
+    }
+
+    private function createTagRedirects()
+    {
+        $this->tagLinksToRedirect->each(function ($oldUrl, $termId) {
+            if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
+                $newLink = parse_url(get_tag_link($termId), PHP_URL_PATH)
+            ) {
+                if ($oldLink !== $newLink) {
+                    BonnierRedirect::createRedirect(
+                        $oldLink,
+                        $newLink,
+                        pll_get_term_language($termId),
+                        'tag-slug-change',
                         $termId
                     );
                 }
