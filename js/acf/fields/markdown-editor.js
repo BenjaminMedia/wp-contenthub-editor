@@ -118,7 +118,7 @@
     var url = '';
     var title = '';
     var target = 'off';
-    var nofollow = 'on';
+    var nofollow = 'off';
     if(selectedText) {
       var markdownMatch = selectedText.match(/\[(.*)\]\(([^\s]+) ?(.*)?\)/);
       if(markdownMatch) {
