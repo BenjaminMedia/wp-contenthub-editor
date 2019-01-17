@@ -73,13 +73,8 @@ class TermImportHelper
             $this->preparePostRedirects($existingTermId);
             $this->prepareCategoryRedirects($existingTermId);
             $this->prepareTagRedirects($existingTermId);
-            $category = null;
             $tag = null;
-            if ($this->taxonomy === 'category') {
-                if (($cat = get_category($existingTermId)) && $cat instanceof \WP_Term) {
-                    $category = $cat;
-                }
-            } elseif ($this->taxonomy === 'post_tag') {
+            if ($this->taxonomy === 'post_tag') {
                 if (($posttag = get_tag($existingTermId)) && $posttag instanceof \WP_Term) {
                     $tag = $posttag;
                 }
@@ -97,14 +92,23 @@ class TermImportHelper
                 $whitealbumId
             )) {
                 $this->createPostRedirects();
-                $this->createCategoryRedirects($existingTermId, $category);
+                $this->createCategoryRedirects();
                 $this->createTagRedirects($existingTermId, $tag);
                 return true;
             }
             return false;
         }
         // Create new term
-        return WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal, $whitealbumId);
+        return WpTerm::create(
+            $name,
+            $languageCode,
+            $contentHubId,
+            $taxonomy,
+            $parentTermId,
+            $description,
+            $internal,
+            $whitealbumId
+        );
     }
 
     protected function getParentTermId($languageCode, $externalCategory)
@@ -217,19 +221,12 @@ class TermImportHelper
         });
     }
 
-    private function createCategoryRedirects($existingTermId, ?\WP_Term $category)
+    private function createCategoryRedirects()
     {
-        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) use ($existingTermId, $category) {
+        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) {
             if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
-                $newlink = parse_url(get_category_link($termId), PHP_URL_PATH)
+                $newlink = $this->getCategoryPath($termId)
             ) {
-                // Because of what seems to be caching, the get_category_link might not return
-                // the actual new category link. Therefore I intercept the evaluation and
-                // manually replace the old slug with the new slug, to ensure proper redirects.
-                if (intval($existingTermId) === intval($termId)) {
-                    $newCategory = get_category($termId);
-                    $newlink = str_replace($category->slug, $newCategory->slug, $newlink);
-                }
                 if ($oldLink !== $newlink) {
                     BonnierRedirect::createRedirect(
                         $oldLink,
@@ -241,6 +238,19 @@ class TermImportHelper
                 }
             }
         });
+    }
+
+    private function getCategoryPath(int $termId, $slugs = [])
+    {
+        $category = get_category($termId);
+        if ($category instanceof \WP_Term) {
+            array_unshift($slugs, $category->slug);
+            if ($parentId = $category->parent) {
+                return $this->getCategoryPath($parentId, $slugs);
+            }
+        }
+
+        return sprintf('/%s', implode('/', $slugs));
     }
 
     private function createTagRedirects($existingTermId, $tag)
