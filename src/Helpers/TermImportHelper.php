@@ -73,6 +73,17 @@ class TermImportHelper
             $this->preparePostRedirects($existingTermId);
             $this->prepareCategoryRedirects($existingTermId);
             $this->prepareTagRedirects($existingTermId);
+            $category = null;
+            $tag = null;
+            if ($this->taxonomy === 'category') {
+                if (($cat = get_category($existingTermId)) && $cat instanceof \WP_Term) {
+                    $category = $cat;
+                }
+            } elseif ($this->taxonomy === 'post_tag') {
+                if (($posttag = get_tag($existingTermId)) && $posttag instanceof \WP_Term) {
+                    $tag = $posttag;
+                }
+            }
             // Term exists so we update it
             if (WpTerm::update(
                 $existingTermId,
@@ -86,8 +97,8 @@ class TermImportHelper
                 $whitealbumId
             )) {
                 $this->createPostRedirects();
-                $this->createCategoryRedirects();
-                $this->createTagRedirects();
+                $this->createCategoryRedirects($existingTermId, $category);
+                $this->createTagRedirects($existingTermId, $tag);
                 return true;
             }
             return false;
@@ -206,12 +217,19 @@ class TermImportHelper
         });
     }
 
-    private function createCategoryRedirects()
+    private function createCategoryRedirects($existingTermId, ?\WP_Term $category)
     {
-        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) {
+        $this->categoryLinksToRedirect->each(function ($oldUrl, $termId) use ($existingTermId, $category) {
             if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
                 $newlink = parse_url(get_category_link($termId), PHP_URL_PATH)
             ) {
+                // Because of what seems to be caching, the get_category_link might not return
+                // the actual new category link. Therefore I intercept the evaluation and
+                // manually replace the old slug with the new slug, to ensure proper redirects.
+                if (intval($existingTermId) === intval($termId)) {
+                    $newCategory = get_category($termId);
+                    $newlink = str_replace($category->slug, $newCategory->slug, $newlink);
+                }
                 if ($oldLink !== $newlink) {
                     BonnierRedirect::createRedirect(
                         $oldLink,
@@ -225,12 +243,19 @@ class TermImportHelper
         });
     }
 
-    private function createTagRedirects()
+    private function createTagRedirects($existingTermId, $tag)
     {
-        $this->tagLinksToRedirect->each(function ($oldUrl, $termId) {
+        $this->tagLinksToRedirect->each(function ($oldUrl, $termId) use ($existingTermId, $tag) {
             if (($oldLink = parse_url($oldUrl, PHP_URL_PATH)) &&
                 $newLink = parse_url(get_tag_link($termId), PHP_URL_PATH)
             ) {
+                // Because of what seems to be caching, the get_tag_link might not return
+                // the actual new tag link. Therefore I intercept the evaluation and
+                // manually replace the old slug with the new slug, to ensure proper redirects.
+                if (intval($existingTermId) === intval($termId)) {
+                    $newTag = get_tag($termId);
+                    $newLink = str_replace($tag->slug, $newTag->slug, $newLink);
+                }
                 if ($oldLink !== $newLink) {
                     BonnierRedirect::createRedirect(
                         $oldLink,
