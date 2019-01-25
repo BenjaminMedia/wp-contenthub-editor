@@ -212,6 +212,9 @@ class SortBy
      */
     private static function convertCxenseResultToComposites($result, $count): ?array
     {
+        if (!array_get($result, 'matches')) {
+            $result['matches'] = [];
+        }
         return [
             'composites' => collect($result['matches'])->map(function (Document $cxArticle) {
                 if (($postId = self::getPost($cxArticle->{'recs-articleid'})) && $post = get_post($postId)) {
