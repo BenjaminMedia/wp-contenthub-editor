@@ -83,7 +83,8 @@ class WpComposite
                         'author'
                     ],
                     'taxonomies' => [
-                        'category'
+                        'category',
+                        'post_tag'
                     ],
                 ]
             );
