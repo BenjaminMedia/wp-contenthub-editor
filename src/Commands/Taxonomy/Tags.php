@@ -52,6 +52,25 @@ class Tags extends BaseTaxonomyImporter
     }
 
     /**
+     * Refreshes tag count
+     *
+     * ## EXAMPLES
+     *
+     * wp contenthub editor tags refresh
+     *
+     */
+    public function refresh()
+    {
+        $tags = get_tags([
+            'hide_empty' => false,
+        ]);
+        WP_CLI::line(sprintf('Found %s tags', count($tags)));
+        $ids = collect($tags)->pluck('term_id')->toArray();
+        wp_update_term_count($ids, 'post_tag');
+        WP_CLI::success('Tag count refreshed!');
+    }
+
+    /**
      * Cleans failed tags imports
      *
      * ## OPTIONS
