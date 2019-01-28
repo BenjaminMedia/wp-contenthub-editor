@@ -65,7 +65,7 @@ class Tags extends BaseTaxonomyImporter
             'hide_empty' => false,
         ]))->pluck('term_id')->toArray();
         wp_update_term_count($ids, 'post_tag');
-        WP_CLI::success('Post count refreshed on %s tags!', count($ids));
+        WP_CLI::success(sprintf('Post count refreshed on %s tags!', count($ids)));
     }
 
     /**
