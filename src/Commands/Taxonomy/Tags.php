@@ -61,13 +61,11 @@ class Tags extends BaseTaxonomyImporter
      */
     public function refresh()
     {
-        $tags = get_tags([
+        $ids = collect(get_tags([
             'hide_empty' => false,
-        ]);
-        WP_CLI::line(sprintf('Found %s tags', count($tags)));
-        $ids = collect($tags)->pluck('term_id')->toArray();
+        ]))->pluck('term_id')->toArray();
         wp_update_term_count($ids, 'post_tag');
-        WP_CLI::success('Tag count refreshed!');
+        WP_CLI::success('Post count refreshed on %s tags!', count($ids));
     }
 
     /**
