@@ -113,9 +113,9 @@ class ContenthubEditor
     {
         wp_register_style(
             'contenthub_editor_stylesheet',
-            sprintf('%s/css/admin.css', $this->pluginUrl),
+            sprintf('%s/css/admin.css', trim($this->pluginUrl, '/')),
             false,
-            '4.9.0'
+            filemtime(sprintf('/%s/css/admin.css', trim($this->pluginDir, '/')))
         );
         wp_enqueue_style('contenthub_editor_stylesheet');
     }
