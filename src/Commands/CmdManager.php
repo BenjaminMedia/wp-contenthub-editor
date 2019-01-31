@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Commands;
 
 use Bonnier\Willow\Base\Commands\AuthorFix;
+use Bonnier\WP\ContentHub\Editor\Commands\Attachments;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Categories;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Tags;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Vocabularies;
@@ -37,6 +38,7 @@ class CmdManager
             WaContent::register();
             WaRedirectResolver::register();
             AuthorFix::register();
+            Attachments::register();
         }
     }
 }

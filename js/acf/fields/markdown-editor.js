@@ -91,18 +91,6 @@
 
   acf.add_action('ready', initMarkdownFields);
   function initMarkdownFields(el) {
-    jQuery("label[data-setting='caption'] > textarea").each(function () {
-      if (jQuery(this).is(":visible")) { // Only render visible elements
-        jQuery(this).parent().removeClass('setting');
-        createSimpleMde(this, 'simple');
-      }
-    })
-
-    jQuery(el).find('#attachment_caption').each(function () {
-      if (jQuery(this).is(":visible")) { // Only render visible elements
-        createSimpleMde(this, 'simple');
-      }
-    })
 
     jQuery(el).find('.acf-field-simple-mde').each(function () {
       if (jQuery(this).is(":visible")) { // Only render visible elements
