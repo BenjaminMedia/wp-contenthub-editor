@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Attachment\AttachmentFieldGroup;
 use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
 use function GuzzleHttp\Psr7\parse_query;
 
@@ -26,6 +27,9 @@ class WpAttachment
 
         // Make attachments private
         add_filter('wp_update_attachment_metadata', [__CLASS__, 'wp_update_attachment_metadata'], 1000, 2);
+        add_action('init', function () {
+            static::register_acf_fields();
+        });
     }
 
     public static function wp_update_attachment_metadata($data, $postId)
@@ -208,6 +212,11 @@ class WpAttachment
         }
 
         return $attachmentId;
+    }
+
+    private static function register_acf_fields()
+    {
+        AttachmentFieldGroup::register();
     }
 
     private static function updateAttachment($attachmentId, $file)

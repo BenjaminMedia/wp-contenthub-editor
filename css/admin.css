@@ -1,0 +1,6 @@
+label.setting[data-setting="caption"],
+.acf-media-modal.-edit .media-sidebar .attachment-details .setting[data-setting="caption"],
+.wp_attachment_details.edit-form-section label[for="attachment_caption"],
+textarea#attachment_caption {
+    display:none;
+}

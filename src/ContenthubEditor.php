@@ -72,6 +72,8 @@ class ContenthubEditor
             dirname($this->basename) . '/languages'
         );
 
+        add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts']);
+
         $this->settings = new SettingsPage();
         CollectionHelper::register(); // Extends Collection with extra methods
         new MarkdownEditor;
@@ -105,5 +107,16 @@ class ContenthubEditor
         }
 
         return self::$instance;
+    }
+
+    public function loadAdminScripts()
+    {
+        wp_register_style(
+            'contenthub_editor_stylesheet',
+            sprintf('%s/css/admin.css', trim($this->pluginUrl, '/')),
+            false,
+            filemtime(sprintf('/%s/css/admin.css', trim($this->pluginDir, '/')))
+        );
+        wp_enqueue_style('contenthub_editor_stylesheet');
     }
 }
