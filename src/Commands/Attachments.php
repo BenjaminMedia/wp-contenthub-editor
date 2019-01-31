@@ -28,7 +28,12 @@ class Attachments extends \WP_CLI_Command
      */
     public function captions()
     {
-        $attachments = collect(get_posts(['post_type' => 'attachment']));
+        \WP_CLI::line('Fetching all attachments...');
+        $attachments = collect(get_posts([
+            'post_type' => 'attachment',
+            'posts_per_page' => -1
+        ]));
+        \WP_CLI::line(sprintf('Found %s attachments', $attachments->count()));
         $bar = make_progress_bar('Copying attachment captions', $attachments->count());
         $attachments->each(function (\WP_Post $attachment) use (&$bar) {
             update_field('caption', $attachment->post_excerpt, $attachment->ID);
