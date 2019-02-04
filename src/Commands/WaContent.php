@@ -11,7 +11,6 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
-use Bonnier\WP\Redirect\Model\Post;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
@@ -162,7 +161,7 @@ class WaContent extends BaseCmd
         }
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
-        $_POST['term_lang_choice'] = $waContent->translation->locale ?? 'da';
+        $_POST['post_lang_choice'] = $waContent->translation->locale ?? 'da';
 
         return wp_insert_post([
             'ID'            => $existingId,
@@ -426,33 +425,6 @@ class WaContent extends BaseCmd
         }
     }
 
-    private function remove_if_orphaned(WP_Post $post)
-    {
-        $compositeId = get_post_meta($post->ID, WpComposite::POST_META_CONTENTHUB_ID, true);
-        if ($compositeId && ! CompositeRepository::findById($compositeId)) {
-            // Delete attachments on composite
-            collect(get_field('composite_content', $post->ID) ?? [])->each(function ($content) {
-                if ($content['acf_fc_layout'] === 'file') {
-                    wp_delete_attachment($content['file']['ID'], true);
-                    collect($content['images'])->each(function ($image) {
-                        wp_delete_attachment($image['file']['ID'], true);
-                    });
-                }
-                if ($content['acf_fc_layout'] === 'image') {
-                    wp_delete_attachment($content['file']['ID'], true);
-                }
-            });
-            // Delete composite
-            wp_delete_post($post->ID, true);
-            WP_CLI::line(sprintf(
-                'Removed post: %s, with id:%s and composite id:%s',
-                $post->post_title,
-                $post->ID,
-                $compositeId
-            ));
-        }
-    }
-
     /**
      * @param                                $postId
      * @param \Illuminate\Support\Collection $compositeContents
@@ -519,7 +491,6 @@ class WaContent extends BaseCmd
         remove_action('publish_to_publish', [BonnierCachePost::class, 'update_post'], 10);
         remove_action('draft_to_publish', [BonnierCachePost::class, 'publishPost'], 10);
         remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10);
-        remove_action('save_post', [Post::class, 'save'], 5);
     }
 
     private function getAuthor($waContent)
