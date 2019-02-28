@@ -53,11 +53,11 @@ class WpAttachment
     public static function action_wpos3_post_upload_attachment($postId, $s3Object){
         $url = get_post($postId)->guid;
         $image = wp_upload_dir()['path'] . '/' . basename($url);
-        $files_to_remove = apply_filters( 'as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image );
+        //$files_to_remove = apply_filters( 'as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image );
 
-        $filesize_total = 0;
+        //$filesize_total = 0;
 
-        foreach ( $files_to_remove as $index => $path ) {
+        /*foreach ( $files_to_remove as $index => $path ) {
             if ( ! empty( $attachment_id ) && is_int( $attachment_id ) ) {
                 $bytes = filesize( $path );
 
@@ -83,11 +83,35 @@ class WpAttachment
             else {
                 AS3CF_Error::log('REMOVED FILE'. $path);
             }
-        }
+        }*/
 
         // If we were able to sum up file sizes for an attachment, record it.
-        if ( $filesize_total > 0 ) {
+        /*if ( $filesize_total > 0 ) {
             update_post_meta( $attachment_id, 'wpos3_filesize_total', $filesize_total );
+        }*/
+
+        $translations = pll_get_post_translations($postId);
+        if (count($translations) === count(pll_languages_list())) {
+            foreach ($translations as $locale => $translationId) {
+                $translationPostMeta = get_post_meta($postId);
+                var_dump('FOREACH -> ' . $locale . ' => ' . $translationId . ' === ' . json_encode($translationPostMeta['amazonS3_info']));
+                //if (!isset($translationPostMeta['amazonS3_info'])) {
+                update_post_meta($translationId, 'amazonS3_info', $s3Object);
+                //}
+            }
+
+            if ( ! @unlink( $image ) ) {
+                $message = 'Error removing local file ';
+                if ( ! file_exists( $image ) ) {
+                    $message = "Error removing local file. Couldn't find the file at ";
+                } else if ( ! is_writable( $image ) ) {
+                    $message = 'Error removing local file. Ownership or permissions are mis-configured for ';
+                }
+                AS3CF_Error::log( $message . $image );
+            }
+            else {
+                AS3CF_Error::log('REMOVED FILE'. $image);
+            }
         }
     }
 
