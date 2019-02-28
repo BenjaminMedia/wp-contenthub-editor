@@ -2,6 +2,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use AS3CF_Error;
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Attachment\AttachmentFieldGroup;
@@ -30,12 +31,69 @@ class WpAttachment
         add_action('init', function () {
             static::register_acf_fields();
         });
+        add_action('wpos3_post_upload_attachment', [__CLASS__, 'action_wpos3_post_upload_attachment'], 1000, 2);
+        //add_filter('as3cf_update_attached_file', [__CLASS__, 'action_wpos3_post_upload_attachment'], 10, 3);
+    }
+
+    /*public static function action_wpos3_post_upload_attachment($file, $attachment_id, $s3object) {
+        var_dump([$file, $attachment_id, $s3object]);
+        var_dump('as3cf_update_attached_file');
+
+
+        $url = get_post($attachment_id)->guid;
+        $image = basename($url);
+        if (is_file(wp_upload_dir()['path'] . '/' . $image)) {
+            var_dump('supposed to delete media!');
+            wp_delete_file(wp_upload_dir()['path'] . '/' . $image);
+        }
+
+        return $file;
+    }*/
+
+    public static function action_wpos3_post_upload_attachment($postId, $s3Object){
+        $url = get_post($postId)->guid;
+        $image = wp_upload_dir()['path'] . '/' . basename($url);
+        $files_to_remove = apply_filters( 'as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image );
+
+        $filesize_total = 0;
+
+        foreach ( $files_to_remove as $index => $path ) {
+            if ( ! empty( $attachment_id ) && is_int( $attachment_id ) ) {
+                $bytes = filesize( $path );
+
+                $filesize_total += ( false !== $bytes ) ? $bytes : 0;
+            }
+
+            // Individual files might still be kept local, but we're still going to count them towards total above.
+            if ( false !== ( $pre = apply_filters( 'as3cf_preserve_file_from_local_removal', false, $path ) ) ) {
+                continue;
+            }
+
+            if ( ! @unlink( $path ) ) {
+                $message = 'Error removing local file ';
+
+                if ( ! file_exists( $path ) ) {
+                    $message = "Error removing local file. Couldn't find the file at ";
+                } else if ( ! is_writable( $path ) ) {
+                    $message = 'Error removing local file. Ownership or permissions are mis-configured for ';
+                }
+
+                AS3CF_Error::log( $message . $path );
+            }
+            else {
+                AS3CF_Error::log('REMOVED FILE'. $path);
+            }
+        }
+
+        // If we were able to sum up file sizes for an attachment, record it.
+        if ( $filesize_total > 0 ) {
+            update_post_meta( $attachment_id, 'wpos3_filesize_total', $filesize_total );
+        }
     }
 
     public static function wp_update_attachment_metadata($data, $postId)
     {
         $postMeta = get_post_meta($postId);
-
         // Check that attachment meta contains s3 info so we can set the visibility of the object
         if (isset($postMeta['amazonS3_info'][0]) && $s3Info = unserialize($postMeta['amazonS3_info'][0])) {
             static::setS3ObjectVisibility($s3Info['bucket'], $s3Info['key'], 'private');
