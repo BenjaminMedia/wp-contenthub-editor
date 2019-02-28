@@ -50,44 +50,44 @@ class WpAttachment
         return $file;
     }*/
 
-    public static function action_wpos3_post_upload_attachment($postId, $s3Object){
+    public static function action_wpos3_post_upload_attachment($postId, $s3Object)
+    {
         $url = get_post($postId)->guid;
         $image = wp_upload_dir()['path'] . '/' . basename($url);
-        $files_to_remove = apply_filters( 'as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image );
+        $files_to_remove = apply_filters('as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image);
 
         $filesize_total = 0;
 
-        foreach ( $files_to_remove as $index => $path ) {
-            if ( ! empty( $attachment_id ) && is_int( $attachment_id ) ) {
-                $bytes = filesize( $path );
+        foreach ($files_to_remove as $index => $path) {
+            if (! empty($attachment_id) && is_int($attachment_id)) {
+                $bytes = filesize($path);
 
-                $filesize_total += ( false !== $bytes ) ? $bytes : 0;
+                $filesize_total += (false !== $bytes) ? $bytes : 0;
             }
 
             // Individual files might still be kept local, but we're still going to count them towards total above.
-            if ( false !== ( $pre = apply_filters( 'as3cf_preserve_file_from_local_removal', false, $path ) ) ) {
+            if (false !== ($pre = apply_filters('as3cf_preserve_file_from_local_removal', false, $path))) {
                 continue;
             }
 
-            if ( ! @unlink( $path ) ) {
+            if (! @unlink($path)) {
                 $message = 'Error removing local file ';
 
-                if ( ! file_exists( $path ) ) {
+                if (! file_exists($path)) {
                     $message = "Error removing local file. Couldn't find the file at ";
-                } else if ( ! is_writable( $path ) ) {
+                } elseif (! is_writable($path)) {
                     $message = 'Error removing local file. Ownership or permissions are mis-configured for ';
                 }
 
-                AS3CF_Error::log( $message . $path );
-            }
-            else {
+                AS3CF_Error::log($message . $path);
+            } else {
                 AS3CF_Error::log('REMOVED FILE'. $path);
             }
         }
 
         // If we were able to sum up file sizes for an attachment, record it.
-        if ( $filesize_total > 0 ) {
-            update_post_meta( $attachment_id, 'wpos3_filesize_total', $filesize_total );
+        if ($filesize_total > 0) {
+            update_post_meta($attachment_id, 'wpos3_filesize_total', $filesize_total);
         }
     }
 
