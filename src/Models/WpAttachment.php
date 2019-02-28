@@ -50,7 +50,8 @@ class WpAttachment
         return $file;
     }*/
 
-    public static function action_wpos3_post_upload_attachment($postId, $s3Object){
+    public static function action_wpos3_post_upload_attachment($postId, $s3Object)
+    {
         $url = get_post($postId)->guid;
         $image = wp_upload_dir()['path'] . '/' . basename($url);
         //$files_to_remove = apply_filters( 'as3cf_upload_attachment_local_files_to_remove', [$image], $postId, $image );
@@ -100,16 +101,15 @@ class WpAttachment
                 //}
             }
 
-            if ( ! @unlink( $image ) ) {
+            if (! @unlink($image)) {
                 $message = 'Error removing local file ';
-                if ( ! file_exists( $image ) ) {
+                if (! file_exists($image)) {
                     $message = "Error removing local file. Couldn't find the file at ";
-                } else if ( ! is_writable( $image ) ) {
+                } elseif (! is_writable($image)) {
                     $message = 'Error removing local file. Ownership or permissions are mis-configured for ';
                 }
-                AS3CF_Error::log( $message . $image );
-            }
-            else {
+                AS3CF_Error::log($message . $image);
+            } else {
                 AS3CF_Error::log('REMOVED FILE'. $image);
             }
         }
