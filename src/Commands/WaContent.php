@@ -8,7 +8,6 @@ use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
-use Bonnier\WP\ContentHub\Editor\Repositories\Scaphold\CompositeRepository;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Illuminate\Support\Collection;
@@ -67,6 +66,8 @@ class WaContent extends BaseCmd
      */
     public function import($args, $assocArgs)
     {
+        error_reporting(E_ALL); // Enable all error reporting to make sure we catch potential issues
+
         $this->disableHooks(); // Disable various hooks and filters during import
 
         $this->failedImportFile = $assocArgs['failed-import-file'] ?? null;
@@ -161,7 +162,7 @@ class WaContent extends BaseCmd
         }
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
-        $_POST['post_lang_choice'] = $waContent->translation->locale ?? 'da';
+        $_POST['post_lang_choice'] = $waContent->widget_content->site->locale;
 
         return wp_insert_post([
             'ID'            => $existingId,
@@ -181,7 +182,7 @@ class WaContent extends BaseCmd
 
     private function handleTranslation($postId, $waContent)
     {
-        LanguageProvider::setPostLanguage($postId, $waContent->translation->locale ?? 'da');
+        LanguageProvider::setPostLanguage($postId, $waContent->widget_content->site->locale);
 
         //if this is not the master translation, just return
         if (! isset($waContent->translation)) {
@@ -195,7 +196,8 @@ class WaContent extends BaseCmd
                     WpComposite::id_from_white_album_id($translationId);
             }
         )->merge([
-            $waContent->translation->locale ?? 'da' => $postId, // always push current locale
+            // always push current locale
+            $waContent->widget_content->site->locale => $postId,
         ])->rejectNullValues();
         LanguageProvider::savePostTranslations($translationPostIds->toArray());
         if (! $translationPostIds->isEmpty()) {
