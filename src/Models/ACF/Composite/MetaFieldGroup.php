@@ -319,6 +319,25 @@ class MetaFieldGroup
                             'ui_on_text' => '',
                             'ui_off_text' => '',
                         ],
+                        [
+                            'key' => 'field_5bfe50afe902e',
+                            'label' => 'hide from Sitemaps?',
+                            'name' => 'sitemap',
+                            'type' => 'true_false',
+                            'instructions' => '',
+                            'required' => 0,
+                            'conditional_logic' => 0,
+                            'wrapper' => [
+                                'width' => '',
+                                'class' => '',
+                                'id' => '',
+                            ],
+                            'message' => 'Should this page be hidden from sitemaps (no-follow)?',
+                            'default_value' => 0,
+                            'ui' => 0,
+                            'ui_on_text' => '',
+                            'ui_off_text' => '',
+                        ],
                     ],
                     'location' => [
                         [
