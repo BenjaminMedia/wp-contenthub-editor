@@ -91,7 +91,7 @@ class TermImportHelper
                 $this->createPostRedirects();
                 $this->createCategoryRedirects();
                 $this->createTagRedirects();
-                return true;
+                return $existingTermId;
             }
             return false;
         }
