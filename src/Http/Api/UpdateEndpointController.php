@@ -39,6 +39,8 @@ class UpdateEndpointController extends WP_REST_Controller
                 $termImporter->deleteTermAndTranslations($resource);
             }
 
+            $this->refreshCache($meta);
+
             return new WP_REST_Response(['status' => 'OK']);
         }
 
@@ -54,6 +56,15 @@ class UpdateEndpointController extends WP_REST_Controller
     {
         // Convert array to object
         return json_decode(json_encode($resource));
+    }
+
+    private function refreshCache($meta)
+    {
+        if ($meta['entity_type'] === 'category') {
+            // Empty the cached category relationship
+            // See https://developer.wordpress.org/reference/functions/clean_taxonomy_cache/
+            delete_option('category_children');
+        }
     }
 
     private function initPolylangShareTermSlug()
