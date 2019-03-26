@@ -26,6 +26,7 @@ class CommercialSpot extends BaseWidget
                 $this->getLinkField(),
                 $this->getLinkLabelField(),
                 $this->getLabelField(),
+                $this->getDisplayHint(),
             ],
             'min' => '',
             'max' => '',
@@ -173,6 +174,34 @@ class CommercialSpot extends BaseWidget
             'prepend' => '',
             'append' => '',
             'maxlength' => '',
+        ];
+    }
+
+    private function getDisplayHint()
+    {
+        return [
+            'key' => 'field_5c98e5cce3b8c',
+            'label' => 'Display Format',
+            'name' => AcfName::FIELD_DISPLAY_HINT,
+            'type' => 'radio',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'choices' => [
+                AcfName::DISPLAY_HINT_DEFAULT => 'Default',
+                AcfName::DISPLAY_HINT_WIDE => 'Wide',
+            ],
+            'allow_null' => 0,
+            'other_choice' => 0,
+            'default_value' => AcfName::DISPLAY_HINT_DEFAULT,
+            'layout' => 'vertical',
+            'return_format' => 'value',
+            'save_other_choice' => 0,
         ];
     }
 }
