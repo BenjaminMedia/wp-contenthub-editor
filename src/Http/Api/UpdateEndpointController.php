@@ -61,6 +61,12 @@ class UpdateEndpointController extends WP_REST_Controller
 
     private function refreshCache($resource, $meta)
     {
+        if ($meta['entity_type'] === 'category') {
+            // Empty the cached category relationship
+            // See https://developer.wordpress.org/reference/functions/clean_taxonomy_cache/
+            delete_option('category_children');
+        }
+        
         if ($meta['entity_type'] !== 'category' || (!class_exists('WpSiteManager\Plugin'))) {
             return;
         }
