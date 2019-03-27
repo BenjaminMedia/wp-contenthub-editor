@@ -14,6 +14,15 @@ class UpdateEndpointController extends WP_REST_Controller
 {
     public function register_routes()
     {
+        // We need to set PLL_ADMIN to true, before polylang is initialized
+        // But we should only do it, when we are requesting this endpoint.
+        // Doing it inside 'rest_api_ini' is too late, so this ugly hack is sadly needed.
+        if ($_SERVER['REQUEST_URI'] === '/wp-json/content-hub-editor/updates' &&
+            $_SERVER['REQUEST_METHOD'] === 'POST' &&
+            !defined('PLL_ADMIN')
+        ) {
+            define('PLL_ADMIN', true);
+        }
         add_action('rest_api_init', function () {
             register_rest_route('content-hub-editor', '/updates', [
                 'methods'  => WP_REST_Server::CREATABLE,
@@ -61,12 +70,6 @@ class UpdateEndpointController extends WP_REST_Controller
 
     private function refreshCache($resource, $meta)
     {
-        if ($meta['entity_type'] === 'category') {
-            // Empty the cached category relationship
-            // See https://developer.wordpress.org/reference/functions/clean_taxonomy_cache/
-            delete_option('category_children');
-        }
-        
         if ($meta['entity_type'] !== 'category' || (!class_exists('WpSiteManager\Plugin'))) {
             return;
         }
