@@ -7,6 +7,7 @@ class AcfName
     const DISPLAY_HINT_DEFAULT = 'default';
     const DISPLAY_HINT_FEATURED_WITH_RELATED = 'featured_with_related';
     const DISPLAY_HINT_LEAD = 'lead';
+    const DISPLAY_HINT_COMPACT = 'compact';
     const DISPLAY_HINT_MAGAZINE_ISSUE = 'magazine_issue';
     const DISPLAY_HINT_ORDERED_LIST = 'ordered_list';
     const DISPLAY_HINT_PRESENTATION = 'presentation';

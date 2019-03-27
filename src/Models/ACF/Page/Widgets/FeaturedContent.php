@@ -28,6 +28,7 @@ class FeaturedContent extends BaseWidget
                 $this->getImage(),
                 $this->getVideo(),
                 $this->getDisplayHint(),
+                $this->getLabelField(),
             ], $this->getSortByFields()),
             'min' => '',
             'max' => '',
@@ -123,6 +124,7 @@ class FeaturedContent extends BaseWidget
             'choices' => [
                 AcfName::DISPLAY_HINT_DEFAULT => 'Default',
                 AcfName::DISPLAY_HINT_LEAD => 'Lead',
+                AcfName::DISPLAY_HINT_COMPACT => 'Compact',
             ],
             'allow_null' => 0,
             'other_choice' => 0,
@@ -130,6 +132,29 @@ class FeaturedContent extends BaseWidget
             'layout' => 'vertical',
             'return_format' => 'value',
             'save_other_choice' => 0,
+        ];
+    }
+
+    private function getLabelField()
+    {
+        return [
+            'key' => 'field_5c98afd2a5e6e',
+            'label' => 'Label',
+            'name' => AcfName::FIELD_LABEL,
+            'type' => 'text',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'default_value' => '',
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
         ];
     }
 }
