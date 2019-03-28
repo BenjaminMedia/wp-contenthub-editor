@@ -4,7 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
-use Bonnier\WP\Redirect\Http\BonnierRedirect;
+use Bonnier\WP\Redirect\Models\Redirect;
+use Bonnier\WP\Redirect\WpBonnierRedirect;
+use cli\progress\Bar;
 use WP_CLI;
 
 class WaRedirectResolver extends BaseCmd
@@ -21,11 +23,15 @@ class WaRedirectResolver extends BaseCmd
 
     public static function register()
     {
-        WP_CLI::add_command(sprintf(
-            '%s %s',
-            CmdManager::CORE_CMD_NAMESPACE,
-            self::CMD_NAMESPACE
-        ), __CLASS__);
+        try {
+            WP_CLI::add_command(sprintf(
+                '%s %s',
+                CmdManager::CORE_CMD_NAMESPACE,
+                self::CMD_NAMESPACE
+            ), __CLASS__);
+        } catch (\Exception $exception) {
+            wp_die($exception->getMessage());
+        }
     }
 
     /**
@@ -41,15 +47,22 @@ class WaRedirectResolver extends BaseCmd
      *
      * ## EXAMPLES
      * wp contenthub editor wa redirect resolve run
+     *
+     * @throws WP_CLI\ExitException
      */
     public function run($args, $assoc_args)
     {
         $this->delay = $assoc_args['delay'] ?? 1;
-        $this->repository = new ContentRepository();
+        try {
+            $this->repository = new ContentRepository();
+        } catch (\Exception $exception) {
+            WP_CLI::error($exception->getMessage());
+        }
 
         WP_CLI::line('Fetching composite ids and white album ids from database...');
         $compositeIds = $this->getCompositeIds();
 
+        /** @var Bar $progress */
         $progress = WP_CLI\Utils\make_progress_bar('Resolving redirects...', $compositeIds->count());
         $compositeIds->each(function (int $whiteAlbumID, int $compositeID) use (&$progress) {
             if (get_post_status($compositeID) === 'publish') {
@@ -108,13 +121,16 @@ class WaRedirectResolver extends BaseCmd
 
         if ($compositePath !== $whiteAlbumPath) {
             $locale = LanguageProvider::getPostLanguage($compositeID);
-            if (!BonnierRedirect::addRedirect(
-                $whiteAlbumPath,
-                $compositePath,
-                $locale,
-                'WA-WILLOW:REDIRECTS',
-                $compositeID
-            )) {
+            $redirect = new Redirect();
+            $redirect->setFrom($whiteAlbumPath)
+                ->setTo($compositePath)
+                ->setLocale($locale)
+                ->setType('WA-WILLOW:REDIRECTS')
+                ->setWpID($compositeID);
+
+            try {
+                WpBonnierRedirect::instance()->getRedirectRepository()->save($redirect);
+            } catch (\Exception $exception) {
                 $this->failedRedirects[] = [
                     sprintf(
                         'Failed creating redirect for composite %s: \'%s\' -> \'%s\'',
