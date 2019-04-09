@@ -167,7 +167,10 @@ class WpComposite
 
     public static function addedTermRelationship(int $postID, int $termID, string $taxonomy)
     {
-        if (($taxonomy === 'category' && $post = get_post($postID)) && $post instanceof WP_Post) {
+        if (($taxonomy === 'category' && $post = get_post($postID)) &&
+            $post instanceof WP_Post &&
+            $post->post_type === self::POST_TYPE
+        ) {
             update_field('category', $termID, $post->ID);
         }
     }
