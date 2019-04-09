@@ -93,6 +93,7 @@ class WpComposite
 
         add_action('save_post', [__CLASS__, 'on_save'], 10, 2);
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
+        add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
     }
 
     /**
@@ -162,6 +163,16 @@ class WpComposite
             }
         }
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
+    }
+
+    public static function addedTermRelationship(int $postID, int $termID, string $taxonomy)
+    {
+        if (($taxonomy === 'category' && $post = get_post($postID)) &&
+            $post instanceof WP_Post &&
+            $post->post_type === self::POST_TYPE
+        ) {
+            update_field('category', $termID, $post->ID);
+        }
     }
 
     public static function map_all($callback)
