@@ -43,10 +43,6 @@ class ComposerStaticInit5b995af53178ac0ec4e719e2545371c2
         array (
             'Doctrine\\Common\\Inflector\\' => 26,
         ),
-        'C' => 
-        array (
-            'Carbon\\' => 7,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -98,10 +94,10 @@ class ComposerStaticInit5b995af53178ac0ec4e719e2545371c2
         array (
             0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
         ),
-        'Carbon\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
-        ),
+    );
+
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -109,6 +105,7 @@ class ComposerStaticInit5b995af53178ac0ec4e719e2545371c2
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit5b995af53178ac0ec4e719e2545371c2::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit5b995af53178ac0ec4e719e2545371c2::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit5b995af53178ac0ec4e719e2545371c2::$fallbackDirsPsr4;
 
         }, null, ClassLoader::class);
     }
