@@ -13,6 +13,16 @@ class UpdateEndpointController extends WP_REST_Controller
 {
     public function register_routes()
     {
+        // We need to set PLL_ADMIN to true, before polylang is initialized
+        // But we should only do it, when we are requesting this endpoint.
+        // Doing it inside 'rest_api_ini' is too late, so this ugly hack is sadly needed.
+        if ($_SERVER['REQUEST_URI'] === '/wp-json/content-hub-editor/updates' &&
+            $_SERVER['REQUEST_METHOD'] === 'POST' &&
+            !defined('PLL_ADMIN')
+        ) {
+            define('PLL_ADMIN', true);
+        }
+
         add_action('rest_api_init', function () {
             register_rest_route('content-hub-editor', '/updates', [
                 'methods'  => WP_REST_Server::CREATABLE,
@@ -39,8 +49,6 @@ class UpdateEndpointController extends WP_REST_Controller
                 $termImporter->deleteTermAndTranslations($resource);
             }
 
-            $this->refreshCache($meta);
-
             return new WP_REST_Response(['status' => 'OK']);
         }
 
@@ -56,15 +64,6 @@ class UpdateEndpointController extends WP_REST_Controller
     {
         // Convert array to object
         return json_decode(json_encode($resource));
-    }
-
-    private function refreshCache($meta)
-    {
-        if ($meta['entity_type'] === 'category') {
-            // Empty the cached category relationship
-            // See https://developer.wordpress.org/reference/functions/clean_taxonomy_cache/
-            delete_option('category_children');
-        }
     }
 
     private function initPolylangShareTermSlug()
