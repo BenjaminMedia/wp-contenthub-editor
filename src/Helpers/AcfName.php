@@ -11,7 +11,6 @@ class AcfName
     const DISPLAY_HINT_MAGAZINE_ISSUE = 'magazine_issue';
     const DISPLAY_HINT_ORDERED_LIST = 'ordered_list';
     const DISPLAY_HINT_PRESENTATION = 'presentation';
-    const DISPLAY_HINT_WIDE = 'wide';
     const DISPLAY_HINT_SLIDER = 'slider';
 
     const TAXONOMY_CATEGORY = 'category';
