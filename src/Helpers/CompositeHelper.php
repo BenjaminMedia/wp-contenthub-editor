@@ -14,6 +14,7 @@ class CompositeHelper
     {
         add_action('save_post', [$this, 'videoTeaserImage']);
         add_action('save_post', [$this, 'setStoryParent']);
+        add_filter('acf/validate_value/key=field_58e393e0128b4', [$this, 'validateArticleNotPartOfMultipleStories'], 10, 4);
     }
 
     /**
@@ -94,5 +95,36 @@ class CompositeHelper
             !wp_is_post_autosave($postId) &&
             have_rows('composite_content', $postId) &&
             get_field('kind', $postId) === 'Story';
+    }
+
+    public function validateArticleNotPartOfMultipleStories($valid, $articlesInStory)
+    {
+        if (!$articlesInStory) {
+            return false;
+        }
+        $currentPostId = $_POST['post_ID'];
+
+        collect($articlesInStory)->each(function ($article) use (&$valid, &$currentPostId) {
+            $parentStoryIds = get_post_meta($article, 'story_parent');
+
+            if (count($parentStoryIds) > 0 && !in_array($currentPostId, $parentStoryIds)) {
+                $violatedPostId = collect($parentStoryIds)->first(function ($parentId) use (&$valid, &$currentPostId) {
+                    return (int)$parentId !== (int)$currentPostId;
+                });
+
+                if ($violatedPostId) {
+                    $valid = sprintf(
+                        '%s: %s <a class="post-edit-link" href="%s" target="_blank">%s</a>',
+                        get_post($article)->post_title,
+                        'Is used in another story',
+                        get_edit_post_link($violatedPostId),
+                        'Click here to edit the story where it\'s used'
+                    );
+                    return $valid;
+                }
+            }
+        });
+
+        return $valid;
     }
 }
