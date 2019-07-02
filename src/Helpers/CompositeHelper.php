@@ -112,7 +112,10 @@ class CompositeHelper
                     return (int)$parentId !== (int)$currentPostId;
                 });
 
-                if ($violatedPostId) {
+                $sameArticleKind = get_post_meta($currentPostId, 'kind')[0] === 'Story'
+                    && get_post_meta($violatedPostId, 'kind')[0] === 'Story';
+
+                if ($violatedPostId && $sameArticleKind) {
                     $valid = sprintf(
                         '%s: %s <a class="post-edit-link" href="%s" target="_blank">%s</a>',
                         get_post($article)->post_title,
