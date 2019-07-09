@@ -211,7 +211,7 @@
       var output = '[';
       output += jQuery('#simpleMDE-link-text').val();
       output += '](';
-      output += encodeURI(jQuery('#simpleMDE-link-url').val()).replace(/\(|\)/g, (char) => {
+      output += jQuery('#simpleMDE-link-url').val().replace(/\(|\)/g, (char) => {
         return char === '(' ? '%28' : '%29';
       });
       var attributes = {};
