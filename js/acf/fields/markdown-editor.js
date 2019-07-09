@@ -211,7 +211,7 @@
       var output = '[';
       output += jQuery('#simpleMDE-link-text').val();
       output += '](';
-      output += jQuery('#simpleMDE-link-url').val();
+      output += jQuery('#simpleMDE-link-url').val().replace('(', '%28').replace(')', '%29');
       var attributes = {};
       var title = jQuery('#simpleMDE-link-title').val();
       if(title) {
