@@ -93,9 +93,7 @@
   function initMarkdownFields(el) {
 
     jQuery(el).find('.acf-field-simple-mde').each(function () {
-      if (jQuery(this).is(":visible")) { // Only render visible elements
-        createSimpleMde(this, jQuery(this).data('simple-mde-config'));
-      }
+      createSimpleMde(this, jQuery(this).data('simple-mde-config'));
     })
   }
 
