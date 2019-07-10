@@ -22,6 +22,9 @@
   }
 
   function createSimpleMde(textArea, options) {
+    if (jQuery(textArea).hasClass('simple-mde-instantiated')) {
+      return;
+    }
     var mdeOptions = {
       element: textArea,
       previewRender: previewContent,
@@ -73,6 +76,7 @@
       };
     }
     new SimpleMDE(Object.assign(mdeOptions, toolbar));
+    jQuery(textArea).addClass('simple-mde-instantiated');
   };
 
   acf.add_action('append', function (el) {
@@ -91,11 +95,14 @@
 
   acf.add_action('ready', initMarkdownFields);
   function initMarkdownFields(el) {
-
     jQuery(el).find('.acf-field-simple-mde').each(function () {
-      createSimpleMde(this, jQuery(this).data('simple-mde-config'));
+      if (jQuery(this).is(":visible")) { // Only render visible elements
+        createSimpleMde(this, jQuery(this).data('simple-mde-config'));
+      }
     })
   }
+
+  acf.add_action('show_field', initMarkdownFields);
 
   function createLinkModal(editor) {
     var cm = editor.codemirror;
