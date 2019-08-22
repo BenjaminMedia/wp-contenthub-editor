@@ -14,6 +14,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TeaserFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TranslationStateFieldGroup;
 use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\TeaserList;
+use Bonnier\WP\ContentHub\Editor\Models\Partials\EstimatedReadingTime;
 use WP_Post;
 
 /**
@@ -94,6 +95,7 @@ class WpComposite
         add_action('save_post', [__CLASS__, 'on_save'], 10, 2);
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
+        add_action('acf_save/post', [EstimatedReadingTime::class, 'addEstimatedReadingTime']);
     }
 
     /**
