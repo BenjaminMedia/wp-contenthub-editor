@@ -39,7 +39,6 @@ class EstimatedReadingTime
                 // After 10 images the average time pr images is estimated to 3 sec. (source Medium)
                 $seconds = $seconds + 3;
             }
-
         }
         return $seconds;
     }
