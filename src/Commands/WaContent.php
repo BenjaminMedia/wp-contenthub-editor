@@ -175,6 +175,7 @@ class WaContent extends BaseCmd
             'post_date'     => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
             'post_author'   => $this->getAuthor($waContent),
+            'post_category' => [WpTerm::id_from_whitealbum_id($waContent->widget_content->category_id) ?? null],
             'meta_input'    => [
                 WpComposite::POST_META_WHITE_ALBUM_ID     => $waContent->widget_content->id,
                 WpComposite::POST_META_WHITE_ALBUM_SOURCE => serialize($waContent),
