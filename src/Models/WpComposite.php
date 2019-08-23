@@ -95,7 +95,7 @@ class WpComposite
         add_action('save_post', [__CLASS__, 'on_save'], 10, 2);
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
-        add_action('acf_save/post', [EstimatedReadingTime::class, 'addEstimatedReadingTime']);
+        add_action('save_post', [EstimatedReadingTime::class, 'addEstimatedReadingTime'], 20);
     }
 
     /**

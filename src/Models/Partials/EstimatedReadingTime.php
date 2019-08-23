@@ -29,20 +29,11 @@ class EstimatedReadingTime
 
     private static function imageConsumationTime($amountOfImages)
     {
-        $seconds = 0;
-        $defaultConsumeTime = 12;
-
+        $defaultConsumptionTime = 12;
         if ($amountOfImages <= 10) {
             $seconds = $defaultConsumptionTime * $amountOfImages;
         } else {
-            $seconds = ($defaultConsumptionTime * 10) + (($amountOfImages - 10) * 3)
-        }
-            if ($i < 10) {
-                $seconds = $seconds + ($defaultConsumeTime - $i);
-            } else {
-                // After 10 images the average time pr images is estimated to 3 sec. (source Medium)
-                $seconds = $seconds + 3;
-            }
+            $seconds = ($defaultConsumptionTime * 10) + (($amountOfImages - 10) * 3);
         }
         return $seconds;
     }
@@ -62,7 +53,16 @@ class EstimatedReadingTime
                     break;
                 case 'text_item':
                 case 'infobox':
-                    $totalWordCount = $totalWordCount + str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
+                    $totalWordCount += str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
+                    break;
+                case 'lead_paragraph':
+                    $totalWordCount += str_word_count($contentWidget['title'] . $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
+                    break;
+                case 'paragraph_list':
+                    $totalWordCount += self::getParagraphListWordCount($contentWidget, $imageCounter);
+                    break;
+                case 'hotspot_image':
+                    $totalWordCount += self::getHostspotImageWordCount($contentWidget, $imageCounter);
                     break;
                 case 'inserted_code':
                 case 'link':
@@ -82,16 +82,36 @@ class EstimatedReadingTime
         if ($locale === 'fi') {
             $wordsPerMinute = 150;
         }
-        return $wordCount / $wordsPerMinute * 60;
-            case 'fi':
-                $wordsPerMinute = 150;
-                break;
-            default:
-                $wordsPerMinute = 180;
-                break;
-        }
-
         // calculcate number of minutes required to read number of words and convert to secconds
         return $wordCount / $wordsPerMinute * 60;
+    }
+
+    private static function getParagraphListWordCount($contentWidget, int &$imageCounter)
+    {
+        if ($contentWidget['image']) {
+            $imageCounter++;
+        }
+        $widgetWords = $contentWidget['title'] . $contentWidget['description'];
+        $widgetWords .= array_reduce($contentWidget['items'], function ($words, $paragraphItem) use (&$imageCounter) {
+            $words .= $paragraphItem['title'] . $paragraphItem['description'];
+            if ($paragraphItem['image']) {
+                $imageCounter++;
+            }
+            return $words;
+        }, '');
+        return str_word_count($widgetWords, 0, self::EXTENDED_CHARLIST);
+    }
+
+    private static function getHostspotImageWordCount($contentWidget, int &$imageCounter)
+    {
+        if ($contentWidget['image']) {
+            $imageCounter++;
+        }
+        $widgetWords = $contentWidget['title'] . $contentWidget['description'];
+        $widgetWords .= array_reduce($contentWidget['hotspots'], function ($words, $hotspotItem) use (&$imageCounter) {
+            $words .= $hotspotItem['title'] . $hotspotItem['description'];
+            return $words;
+        }, '');
+        return str_word_count($widgetWords, 0, self::EXTENDED_CHARLIST);
     }
 }
