@@ -32,7 +32,11 @@ class EstimatedReadingTime
         $seconds = 0;
         $defaultConsumeTime = 12;
 
-        for ($i = 0; $i < $amountOfImages; $i++) {
+        if ($amountOfImages <= 10) {
+            $seconds = $defaultConsumptionTime * $amountOfImages;
+        } else {
+            $seconds = ($defaultConsumptionTime * 10) + (($amountOfImages - 10) * 3)
+        }
             if ($i < 10) {
                 $seconds = $seconds + ($defaultConsumeTime - $i);
             } else {
@@ -74,7 +78,11 @@ class EstimatedReadingTime
 
     private static function readingTime($locale, $wordCount)
     {
-        switch ($locale) {
+        $wordsPerMinute = 180;
+        if ($locale === 'fi') {
+            $wordsPerMinute = 150;
+        }
+        return $wordCount / $wordsPerMinute * 60;
             case 'fi':
                 $wordsPerMinute = 150;
                 break;
