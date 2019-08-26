@@ -6,6 +6,7 @@ use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
+use Bonnier\WP\ContentHub\Editor\Models\Partials\EstimatedReadingTime;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
@@ -149,6 +150,7 @@ class WaContent extends BaseCmd
         $this->saveTeasers($postId, $waContent);
         $this->saveCategories($postId, $waContent);
         $this->saveTags($postId, $waContent);
+        $this->calculateReadingTime($postId);
 
         WP_CLI::success('imported: ' . $waContent->widget_content->title . ' id: ' . $postId);
     }
@@ -173,6 +175,7 @@ class WaContent extends BaseCmd
             'post_date'     => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
             'post_author'   => $this->getAuthor($waContent),
+            'post_category' => [WpTerm::id_from_whitealbum_id($waContent->widget_content->category_id) ?? null],
             'meta_input'    => [
                 WpComposite::POST_META_WHITE_ALBUM_ID     => $waContent->widget_content->id,
                 WpComposite::POST_META_WHITE_ALBUM_SOURCE => serialize($waContent),
@@ -551,5 +554,10 @@ class WaContent extends BaseCmd
     {
         wp_set_current_user(1); // Make sure we act as admin to allow upload of all file types
         $_REQUEST['_pll_nonce'] = wp_create_nonce('pll_language');
+    }
+
+    private function calculateReadingTime($postId)
+    {
+        EstimatedReadingTime::addEstimatedReadingTime($postId);
     }
 }
