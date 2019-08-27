@@ -2,6 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\Partials;
 
+use Bonnier\Willow\Base\Actions\Backend\Locale;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
+
 /**
  * Class EstimatedReadingTime
  *
@@ -15,9 +18,10 @@ class EstimatedReadingTime
     {
         list($totalWordCount, $imageCounter) = static::getWordAndImageCount($postId);
 
-        $locale = pll_get_post_language($postId);
+        $locale = LanguageProvider::getPostLanguage($postId);
 
-        $readingTimeInSecconds = static::readingTime($locale, $totalWordCount) + self::imageConsumationTime($imageCounter);
+        $readingTimeInSecconds = static::readingTime($locale, $totalWordCount) +
+            self::imageConsumationTime($imageCounter);
 
         $readingTimeInMinutes = ceil( // Round to nearest whole minute using ceil to avoid hitting 0
             $readingTimeInSecconds / 60
@@ -43,7 +47,7 @@ class EstimatedReadingTime
         $totalWordCount = 0;
         $imageCounter = 0;
 
-        foreach (get_field('composite_content', $postId) as $contentWidget) {
+        foreach (get_field('composite_content', $postId) ?: [] as $contentWidget) {
             switch ($contentWidget['acf_fc_layout']) {
                 case 'gallery':
                     $imageCounter += count($contentWidget['images']);
@@ -56,7 +60,8 @@ class EstimatedReadingTime
                     $totalWordCount += str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
                     break;
                 case 'lead_paragraph':
-                    $totalWordCount += str_word_count($contentWidget['title'] . $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
+                    $totalWordCount += str_word_count($contentWidget['title'] .
+                        $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
                     break;
                 case 'paragraph_list':
                     $totalWordCount += self::getParagraphListWordCount($contentWidget, $imageCounter);
