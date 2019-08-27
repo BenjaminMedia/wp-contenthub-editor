@@ -2,6 +2,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models\Partials;
 
+use Bonnier\Willow\Base\Actions\Backend\Locale;
+use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
+
 /**
  * Class EstimatedReadingTime
  *
@@ -15,13 +18,10 @@ class EstimatedReadingTime
     {
         list($totalWordCount, $imageCounter) = static::getWordAndImageCount($postId);
 
-        if (function_exists('pll_get_post_language')) {
-            $locale = pll_get_post_language($postId);
-        } else {
-            $locale = null;
-        }
+        $locale = LanguageProvider::getPostLanguage($postId);
 
-        $readingTimeInSecconds = static::readingTime($locale, $totalWordCount) + self::imageConsumationTime($imageCounter);
+        $readingTimeInSecconds = static::readingTime($locale, $totalWordCount) +
+            self::imageConsumationTime($imageCounter);
 
         $readingTimeInMinutes = ceil( // Round to nearest whole minute using ceil to avoid hitting 0
             $readingTimeInSecconds / 60
@@ -47,35 +47,34 @@ class EstimatedReadingTime
         $totalWordCount = 0;
         $imageCounter = 0;
 
-        if ($contentWidgets = get_field('composite_content', $postId)) {
-            foreach ($contentWidgets as $contentWidget) {
-                switch ($contentWidget['acf_fc_layout']) {
-                    case 'gallery':
-                        $imageCounter += count($contentWidget['images']);
-                        break;
-                    case 'image':
-                        $imageCounter++;
-                        break;
-                    case 'text_item':
-                    case 'infobox':
-                        $totalWordCount += str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
-                        break;
-                    case 'lead_paragraph':
-                        $totalWordCount += str_word_count($contentWidget['title'] . $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
-                        break;
-                    case 'paragraph_list':
-                        $totalWordCount += self::getParagraphListWordCount($contentWidget, $imageCounter);
-                        break;
-                    case 'hotspot_image':
-                        $totalWordCount += self::getHostspotImageWordCount($contentWidget, $imageCounter);
-                        break;
-                    case 'inserted_code':
-                    case 'link':
-                    case 'video':
-                    case 'file':
-                    default:
-                        break;
-                }
+        foreach (get_field('composite_content', $postId) ?: [] as $contentWidget) {
+            switch ($contentWidget['acf_fc_layout']) {
+                case 'gallery':
+                    $imageCounter += count($contentWidget['images']);
+                    break;
+                case 'image':
+                    $imageCounter++;
+                    break;
+                case 'text_item':
+                case 'infobox':
+                    $totalWordCount += str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
+                    break;
+                case 'lead_paragraph':
+                    $totalWordCount += str_word_count($contentWidget['title'] .
+                        $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
+                    break;
+                case 'paragraph_list':
+                    $totalWordCount += self::getParagraphListWordCount($contentWidget, $imageCounter);
+                    break;
+                case 'hotspot_image':
+                    $totalWordCount += self::getHostspotImageWordCount($contentWidget, $imageCounter);
+                    break;
+                case 'inserted_code':
+                case 'link':
+                case 'video':
+                case 'file':
+                default:
+                    break;
             }
         }
 
