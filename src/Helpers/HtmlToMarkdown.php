@@ -51,7 +51,8 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
                     'html' => $html,
                 ]
             ]);
-            return $request->getBody()->getContents();
+            // Strip tags to avoid unwanted HTML in markdown
+            return strip_tags($request->getBody()->getContents());
         } catch (Exception $exception) {
             return null;
         }
