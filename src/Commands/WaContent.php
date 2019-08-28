@@ -194,9 +194,11 @@ class WaContent extends BaseCmd
 
         $translationPostIds = collect($waContent->translation->translation_ids)->map(
             function ($translationId, $locale) use ($waContent) {
-                return $waContent->translation->is_master ? // Only import the translations when import master locale
-                    $this->importTranslation($translationId, $locale) :
-                    WpComposite::id_from_white_album_id($translationId);
+                $translatedPostId = WpComposite::id_from_white_album_id($translationId);
+                if (! $translatedPostId) {
+                    $translatedPostId = $this->importTranslation($translationId, $locale);
+                }
+                return $translatedPostId;
             }
         )->merge([
             // always push current locale
