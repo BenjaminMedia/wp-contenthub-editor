@@ -12,6 +12,8 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class MetaFieldGroup
 {
+    const SITEMAP_FIELD = 'field_5bfe50afe902e';
+
     const COMMERCIAL_TYPES = [
         'Advertorial' => 'Advertorial',
         'AffiliatePartner' => 'AffiliatePartner',
@@ -23,6 +25,7 @@ class MetaFieldGroup
     {
         static::create_acf_field_group();
         static::register_translations();
+        static::register_sitemap_hooks();
     }
 
     private static function create_acf_field_group()
@@ -320,7 +323,7 @@ class MetaFieldGroup
                             'ui_off_text' => '',
                         ],
                         [
-                            'key' => 'field_5bfe50afe902e',
+                            'key' => static::SITEMAP_FIELD,
                             'label' => 'hide from Sitemaps?',
                             'name' => 'sitemap',
                             'type' => 'true_false',
@@ -383,5 +386,16 @@ class MetaFieldGroup
     {
         $years = array_reverse(range(1980, date("Y") + 1));
         return array_combine($years, $years);
+    }
+
+    private static function register_sitemap_hooks()
+    {
+        add_filter('acf/update_value/key=' . static::SITEMAP_FIELD, function ($hideFromSiteMap, $postId) {
+            if (CompositeFieldGroup::KIND_TYPE_SHELL === get_field(CompositeFieldGroup::KIND_FIELD, $postId)) {
+                // Force hide from sitemap allways
+                $hideFromSiteMap = 1;
+            }
+            return $hideFromSiteMap;
+        }, 10, 2);
     }
 }

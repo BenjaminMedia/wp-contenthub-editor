@@ -5,8 +5,6 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\PermalinkHelper;
 use Bonnier\WP\ContentHub\Editor\Http\Api\CompositeRestController;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\AttachmentGroup;
-use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeContentFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\MetaFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\TaxonomyFieldGroup;
@@ -128,7 +126,6 @@ class WpComposite
     {
         CompositeFieldGroup::register();
         TeaserFieldGroup::register();
-        CompositeContentFieldGroup::register();
         MetaFieldGroup::register();
         TranslationStateFieldGroup::register();
         TaxonomyFieldGroup::register(WpTaxonomy::get_custom_taxonomies());
