@@ -13,7 +13,11 @@ class CompositeFieldGroup
 {
     const AUTHOR_KEY = 'field_5af9888b4b7a1';
     const CONTENT_FIELD = 'field_58aae476809c6';
+    const SHELL_LINK_FIELD = 'field_5d66623efb36e';
+    const KIND_FIELD = 'field_58e388862daa8';
     const VIDEO_TEASER_IMAGE_FIELD = 'field_5a8d7ae021e44';
+
+    const KIND_TYPE_SHELL = 'Shell';
 
     public static function register()
     {
@@ -30,7 +34,7 @@ class CompositeFieldGroup
                 'title' => 'Composite Fields',
                 'fields' => [
                     [
-                        'key' => 'field_58e388862daa8',
+                        'key' => static::KIND_FIELD,
                         'label' => 'Kind',
                         'name' => 'kind',
                         'type' => 'radio',
@@ -43,9 +47,9 @@ class CompositeFieldGroup
                             'id' => '',
                         ],
                         'choices' => [
-                            'Article' => 'Article',
-                            'Shell' => 'Shell',
-                            'Story' => 'Story',
+                            'Article'               => 'Article',
+                            static::KIND_TYPE_SHELL => static::KIND_TYPE_SHELL,
+                            'Story'                 => 'Story',
                         ],
                         'other_choice' => 0,
                         'save_other_choice' => 0,
@@ -91,6 +95,7 @@ class CompositeFieldGroup
                         'role' => '',
                         'allow_null' => 0,
                         'multiple' => 0,
+                        'return_format' => 'array',
                     ],
                     [
                         'key' => 'field_5a8d44d026528',
@@ -162,7 +167,15 @@ class CompositeFieldGroup
                         'type' => 'message',
                         'instructions' => 'Click the add widget button to add content',
                         'required' => 0,
-                        'conditional_logic' => 0,
+                        'conditional_logic' => [
+                            [
+                                [
+                                    'field' => 'field_58e388862daa8',
+                                    'operator' => '!=',
+                                    'value' => 'Shell',
+                                ],
+                            ],
+                        ],
                         'wrapper' => [
                             'width' => '',
                             'class' => '',
@@ -177,12 +190,19 @@ class CompositeFieldGroup
                         'label' => 'Locked Content',
                         'name' => 'locked_content',
                         'type' => 'true_false',
-                        'instructions' =>
-                            'Check this box if you want parts of the content to be locked.
-                            Please note that you should mark each content item that you want to be locked,
-                            by checking the "Locked Content" checkbox.',
+                        'instructions' => 'Check this box if you want parts of the content to be locked.
+														Please note that you should mark each content item that you want to be locked,
+														by checking the "Locked Content" checkbox.',
                         'required' => 0,
-                        'conditional_logic' => 0,
+                        'conditional_logic' => [
+                            [
+                                [
+                                    'field' => 'field_58e388862daa8',
+                                    'operator' => '!=',
+                                    'value' => 'Shell',
+                                ],
+                            ],
+                        ],
                         'wrapper' => [
                             'width' => '',
                             'class' => '',
@@ -209,6 +229,13 @@ class CompositeFieldGroup
                                     'value' => '1',
                                 ],
                             ],
+                            [
+                                [
+                                    'field' => 'field_58e388862daa8',
+                                    'operator' => '!=',
+                                    'value' => 'Shell',
+                                ],
+                            ],
                         ],
                         'wrapper' => [
                             'width' => '',
@@ -224,8 +251,8 @@ class CompositeFieldGroup
                         'allow_null' => 0,
                         'multiple' => 0,
                         'ui' => 0,
-                        'ajax' => 0,
                         'return_format' => 'value',
+                        'ajax' => 0,
                         'placeholder' => '',
                     ],
                     [
@@ -235,17 +262,22 @@ class CompositeFieldGroup
                         'type' => 'flexible_content',
                         'instructions' => '',
                         'required' => 1,
-                        'conditional_logic' => 0,
+                        'conditional_logic' => [
+                            [
+                                [
+                                    'field' => 'field_58e388862daa8',
+                                    'operator' => '!=',
+                                    'value' => 'Shell',
+                                ],
+                            ],
+                        ],
                         'wrapper' => [
                             'width' => '',
                             'class' => '',
                             'id' => '',
                         ],
-                        'button_label' => 'Add Widget',
-                        'min' => '',
-                        'max' => '',
                         'layouts' => [
-                            [
+                            '58aae53c26608' => [
                                 'key' => '58aae53c26608',
                                 'name' => 'text_item',
                                 'label' => 'Text',
@@ -271,7 +303,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58aaef9fb02bc' => [
                                 'key' => '58aaef9fb02bc',
                                 'name' => 'image',
                                 'label' => 'Image',
@@ -440,7 +472,7 @@ class CompositeFieldGroup
                                         ],
                                         'choices' => [
                                             'inline' => 'Inline',
-                                            'wide'   => 'Full Width',
+                                            'wide' => 'Full Width',
                                         ],
                                         'allow_null' => 0,
                                         'other_choice' => 0,
@@ -502,9 +534,8 @@ class CompositeFieldGroup
                                         'label' => 'Image',
                                         'name' => 'image',
                                         'type' => 'image',
-                                        'instructions' =>
-                                            'picture shown on audio of the audio file.
-                                            If not set, it\'ll default to the lead image.',
+                                        'instructions' => 'picture shown on audio of the audio file.
+																						If not set, it\'ll default to the lead image.',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -527,7 +558,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '590aef9de4a5e' => [
                                 'key' => '590aef9de4a5e',
                                 'name' => 'file',
                                 'label' => 'File',
@@ -666,7 +697,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58aaea63b12d2' => [
                                 'key' => '58aaea63b12d2',
                                 'name' => 'video',
                                 'label' => 'Video',
@@ -677,9 +708,8 @@ class CompositeFieldGroup
                                         'label' => 'Teaser Image',
                                         'name' => 'video_teaser_image',
                                         'type' => 'true_false',
-                                        'instructions' =>
-                                            'This will generate an image from the video
-                                            and set it as a <b>teaser image</b> for the article.',
+                                        'instructions' => 'This will generate an image from the video
+																						and set it as a <b>teaser image</b> for the article.',
                                         'required' => 0,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -698,9 +728,8 @@ class CompositeFieldGroup
                                         'label' => 'Embed Url',
                                         'name' => 'embed_url',
                                         'type' => 'text',
-                                        'instructions' =>
-                                            'Paste the embed url from your video provider, supported providers are:
-                                            Vimeo, YouTube, 23Video',
+                                        'instructions' => 'Paste the embed url from your video provider, supported providers are:
+																						Vimeo, YouTube, 23Video',
                                         'required' => 1,
                                         'conditional_logic' => 0,
                                         'wrapper' => [
@@ -764,7 +793,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '590b1798c8768' => [
                                 'key' => '590b1798c8768',
                                 'name' => 'link',
                                 'label' => 'Link',
@@ -868,7 +897,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '5a4f4dea1745f' => [
                                 'key' => '5a4f4dea1745f',
                                 'name' => 'gallery',
                                 'label' => 'Gallery',
@@ -1032,7 +1061,7 @@ class CompositeFieldGroup
                                         'choices' => [
                                             'default' => 'Default',
                                             'inline' => 'Inline',
-                                            'parallax' => 'Parallax'
+                                            'parallax' => 'Parallax',
                                         ],
                                         'allow_null' => 0,
                                         'other_choice' => 0,
@@ -1045,7 +1074,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58aae89d0f005' => [
                                 'key' => '58aae89d0f005',
                                 'name' => 'inserted_code',
                                 'label' => 'Inserted Code',
@@ -1101,7 +1130,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58aae479d3958' => [
                                 'key' => '58aae479d3958',
                                 'name' => 'infobox',
                                 'label' => 'Infobox',
@@ -1173,7 +1202,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            'layout_5bbb614643179' => [
                                 'key' => 'layout_5bbb614643179',
                                 'name' => 'lead_paragraph',
                                 'label' => 'Lead Paragraph',
@@ -1242,7 +1271,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            'layout_5bb4bd1afd048' => [
                                 'key' => 'layout_5bb4bd1afd048',
                                 'name' => 'paragraph_list',
                                 'label' => 'Paragraph List',
@@ -1436,7 +1465,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58e393a7128b3' => [
                                 'key' => '58e393a7128b3',
                                 'name' => 'associated_composites',
                                 'label' => 'Sub Content',
@@ -1500,7 +1529,7 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
-                            [
+                            '58aeadaacbe5c' => [
                                 'key' => '58aeadaacbe5c',
                                 'name' => 'inventory',
                                 'label' => 'Inventory',
@@ -1781,6 +1810,8 @@ class CompositeFieldGroup
                                         ],
                                     ],
                                 ],
+                                'min' => '',
+                                'max' => '',
                             ],
                             'layout_5bb315118c73b' => [
                                 'key' => 'layout_5bb315118c73b',
@@ -1831,6 +1862,33 @@ class CompositeFieldGroup
                                 'max' => '',
                             ],
                         ],
+                        'button_label' => 'Add Widget',
+                        'min' => '',
+                        'max' => '',
+                    ],
+                    [
+                        'key' => static::SHELL_LINK_FIELD,
+                        'label' => 'Shell Link',
+                        'name' => 'shell_link',
+                        'type' => 'url',
+                        'instructions' => 'Enter the URL that the shell article should direct users to',
+                        'required' => 1,
+                        'conditional_logic' => [
+                            [
+                                [
+                                    'field' => 'field_58e388862daa8',
+                                    'operator' => '==',
+                                    'value' => 'Shell',
+                                ],
+                            ],
+                        ],
+                        'wrapper' => [
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ],
+                        'default_value' => '',
+                        'placeholder' => 'Example of valid URL: https://google.com',
                     ],
                 ],
                 'location' => [
@@ -1848,9 +1906,9 @@ class CompositeFieldGroup
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
                 'hide_on_screen' => [
-                    'slug',
-                    'categories',
-                    'author'
+                    0 => 'slug',
+                    1 => 'author',
+                    2 => 'categories',
                 ],
                 'active' => 1,
                 'description' => 'test',
