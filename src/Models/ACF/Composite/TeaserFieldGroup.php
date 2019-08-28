@@ -372,7 +372,7 @@ class TeaserFieldGroup
     {
         // If not valid and a Video-Widget with Teaser-Image checked exists
         return $valid ?:
-            collect($_POST['acf'][CompositeContentFieldGroup::CONTENT_FIELD])
-                ->contains(CompositeContentFieldGroup::VIDEO_TEASER_IMAGE_FIELD, '1');
+            collect($_POST['acf'][CompositeFieldGroup::CONTENT_FIELD])
+                ->contains(CompositeFieldGroup::VIDEO_TEASER_IMAGE_FIELD, '1');
     }
 }
