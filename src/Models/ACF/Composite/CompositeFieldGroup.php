@@ -170,9 +170,9 @@ class CompositeFieldGroup
                         'conditional_logic' => [
                             [
                                 [
-                                    'field' => 'field_58e388862daa8',
+                                    'field' => static::KIND_FIELD,
                                     'operator' => '!=',
-                                    'value' => 'Shell',
+                                    'value' => static::KIND_TYPE_SHELL,
                                 ],
                             ],
                         ],
@@ -197,9 +197,9 @@ class CompositeFieldGroup
                         'conditional_logic' => [
                             [
                                 [
-                                    'field' => 'field_58e388862daa8',
+                                    'field' => static::KIND_FIELD,
                                     'operator' => '!=',
-                                    'value' => 'Shell',
+                                    'value' => static::KIND_TYPE_SHELL,
                                 ],
                             ],
                         ],
@@ -231,9 +231,9 @@ class CompositeFieldGroup
                             ],
                             [
                                 [
-                                    'field' => 'field_58e388862daa8',
+                                    'field' => static::KIND_FIELD,
                                     'operator' => '!=',
-                                    'value' => 'Shell',
+                                    'value' => static::KIND_TYPE_SHELL,
                                 ],
                             ],
                         ],
@@ -265,9 +265,9 @@ class CompositeFieldGroup
                         'conditional_logic' => [
                             [
                                 [
-                                    'field' => 'field_58e388862daa8',
+                                    'field' => static::KIND_FIELD,
                                     'operator' => '!=',
-                                    'value' => 'Shell',
+                                    'value' => static::KIND_TYPE_SHELL,
                                 ],
                             ],
                         ],
@@ -1876,9 +1876,9 @@ class CompositeFieldGroup
                         'conditional_logic' => [
                             [
                                 [
-                                    'field' => 'field_58e388862daa8',
+                                    'field' => static::KIND_FIELD,
                                     'operator' => '==',
-                                    'value' => 'Shell',
+                                    'value' => static::KIND_TYPE_SHELL,
                                 ],
                             ],
                         ],
