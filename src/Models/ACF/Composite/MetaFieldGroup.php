@@ -398,6 +398,4 @@ class MetaFieldGroup
             return $hideFromSiteMap;
         }, 10, 2);
     }
-
-
 }
