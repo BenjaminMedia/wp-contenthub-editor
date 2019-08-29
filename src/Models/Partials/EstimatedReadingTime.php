@@ -48,7 +48,7 @@ class EstimatedReadingTime
         $imageCounter = 0;
 
         foreach (get_field('composite_content', $postId) ?: [] as $contentWidget) {
-            switch ($contentWidget['acf_fc_layout']) {
+            switch (data_get($contentWidget, 'acf_fc_layout')) {
                 case 'gallery':
                     $imageCounter += count(data_get($contentWidget, 'images', []));
                     break;
