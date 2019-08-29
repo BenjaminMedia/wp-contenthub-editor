@@ -48,20 +48,20 @@ class EstimatedReadingTime
         $imageCounter = 0;
 
         foreach (get_field('composite_content', $postId) ?: [] as $contentWidget) {
-            switch ($contentWidget['acf_fc_layout']) {
+            switch (data_get($contentWidget, 'acf_fc_layout')) {
                 case 'gallery':
-                    $imageCounter += count($contentWidget['images']);
+                    $imageCounter += count(data_get($contentWidget, 'images', []));
                     break;
                 case 'image':
                     $imageCounter++;
                     break;
                 case 'text_item':
                 case 'infobox':
-                    $totalWordCount += str_word_count($contentWidget['body'], 0, self::EXTENDED_CHARLIST);
+                    $totalWordCount += str_word_count(data_get($contentWidget, 'body', ''), 0, self::EXTENDED_CHARLIST);
                     break;
                 case 'lead_paragraph':
-                    $totalWordCount += str_word_count($contentWidget['title'] .
-                        $contentWidget['description'], 0, self::EXTENDED_CHARLIST);
+                    $totalWordCount += str_word_count(data_get($contentWidget, 'title', '') .
+                        data_get($contentWidget, 'description', ''), 0, self::EXTENDED_CHARLIST);
                     break;
                 case 'paragraph_list':
                     $totalWordCount += self::getParagraphListWordCount($contentWidget, $imageCounter);
@@ -93,13 +93,16 @@ class EstimatedReadingTime
 
     private static function getParagraphListWordCount($contentWidget, int &$imageCounter)
     {
-        if ($contentWidget['image']) {
+        if (data_get($contentWidget, 'image')) {
             $imageCounter++;
         }
-        $widgetWords = $contentWidget['title'] . $contentWidget['description'];
-        $widgetWords .= array_reduce($contentWidget['items'], function ($words, $paragraphItem) use (&$imageCounter) {
-            $words .= $paragraphItem['title'] . $paragraphItem['description'];
-            if ($paragraphItem['image']) {
+        $widgetWords = data_get($contentWidget, 'title', '') . data_get($contentWidget, 'description', '');
+
+        $items = data_get($contentWidget, 'items', []) ?: [];
+
+        $widgetWords .= array_reduce($items, function ($words, $paragraphItem) use (&$imageCounter) {
+            $words .= data_get($paragraphItem, 'title', '') . data_get($paragraphItem, 'description', '');
+            if (data_get($paragraphItem, 'image')) {
                 $imageCounter++;
             }
             return $words;
@@ -109,12 +112,13 @@ class EstimatedReadingTime
 
     private static function getHostspotImageWordCount($contentWidget, int &$imageCounter)
     {
-        if ($contentWidget['image']) {
+        if (data_get($contentWidget, 'image')) {
             $imageCounter++;
         }
-        $widgetWords = $contentWidget['title'] . $contentWidget['description'];
-        $widgetWords .= array_reduce($contentWidget['hotspots'], function ($words, $hotspotItem) use (&$imageCounter) {
-            $words .= $hotspotItem['title'] . $hotspotItem['description'];
+        $widgetWords = data_get($contentWidget, 'title', '') . data_get($contentWidget, 'description', '');
+        $hotspotItems = data_get($contentWidget, 'hotspots', []) ?: [];
+        $widgetWords .= array_reduce($hotspotItems, function ($words, $hotspotItem) use (&$imageCounter) {
+            $words .= data_get($hotspotItem, 'title', '') . data_get($hotspotItem, 'description', '');
             return $words;
         }, '');
         return str_word_count($widgetWords, 0, self::EXTENDED_CHARLIST);
