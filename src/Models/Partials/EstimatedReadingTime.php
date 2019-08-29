@@ -16,7 +16,6 @@ class EstimatedReadingTime
 
     public static function addEstimatedReadingTime($postId)
     {
-
         list($totalWordCount, $imageCounter) = static::getWordAndImageCount($postId);
 
         $locale = LanguageProvider::getPostLanguage($postId);
