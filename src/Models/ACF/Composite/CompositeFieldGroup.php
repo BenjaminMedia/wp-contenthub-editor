@@ -208,6 +208,33 @@ class CompositeFieldGroup
                                         'simple_mde_config' => 'standard',
                                         'font_size' => 14,
                                     ),
+                                    array(
+                                      'key' => 'field_5d720cfce3350',
+                                      'label' => 'Locked Content',
+                                      'name' => 'locked_content',
+                                      'type' => 'true_false',
+                                      'instructions' => '',
+                                      'required' => 0,
+                                      'conditional_logic' => array(
+                                        array(
+                                          array(
+                                            'field' => 'field_5921f0c676974',
+                                            'operator' => '==',
+                                            'value' => '1',
+                                          ),
+                                        ),
+                                      ),
+                                      'wrapper' => array(
+                                        'width' => '',
+                                        'class' => '',
+                                        'id' => '',
+                                      ),
+                                      'message' => '',
+                                      'default_value' => 0,
+                                      'ui' => 0,
+                                      'ui_on_text' => '',
+                                      'ui_off_text' => '',
+                                    ),
                                 ),
                                 'min' => '',
                                 'max' => '',
