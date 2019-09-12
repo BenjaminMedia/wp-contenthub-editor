@@ -356,7 +356,7 @@ class TeaserFieldGroup
                         ],
                     ],
                 ],
-                'menu_order' => 1,
+                'menu_order' => 0,
                 'position' => 'acf_after_title',
                 'style' => 'seamless',
                 'label_placement' => 'top',

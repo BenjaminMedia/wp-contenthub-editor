@@ -1900,7 +1900,7 @@ class CompositeFieldGroup
                         ],
                     ],
                 ],
-                'menu_order' => 0,
+                'menu_order' => 1,
                 'position' => 'acf_after_title',
                 'style' => 'seamless',
                 'label_placement' => 'top',
