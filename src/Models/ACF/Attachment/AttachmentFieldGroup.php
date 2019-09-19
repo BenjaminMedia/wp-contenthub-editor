@@ -4,6 +4,9 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Attachment;
 
 class AttachmentFieldGroup
 {
+   const CAPTION_FIELD_KEY =  'field_5c51b211deb49';
+
+
     public static function register()
     {
         if (function_exists('acf_add_local_field_group')) {
@@ -12,7 +15,7 @@ class AttachmentFieldGroup
                 'title' => 'Attachments',
                 'fields' => [
                     [
-                        'key' => 'field_5c51b211deb49',
+                        'key' => static::CAPTION_FIELD_KEY,
                         'label' => 'Caption',
                         'name' => 'caption',
                         'type' => 'markdown-editor',

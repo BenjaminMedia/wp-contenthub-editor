@@ -122,6 +122,16 @@ class WpComposite
         );
     }
 
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function white_albun_id_form_post_id($id)
+    {
+        return get_post_meta($id, static::POST_META_WHITE_ALBUM_ID, true);
+    }
+
     private static function register_acf_fields()
     {
         CompositeFieldGroup::register();
