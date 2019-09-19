@@ -46,12 +46,12 @@ class WaContent extends BaseCmd
      */
     public function prune($args, $assocArgs)
     {
-        WpComposite::map_all(function (WP_Post $post){
-            if($waId = WpComposite::white_albun_id_form_post_id($post->ID)) {
+        WpComposite::map_all(function (WP_Post $post) {
+            if ($waId = WpComposite::white_albun_id_form_post_id($post->ID)) {
                 $repository = new ContentRepository(LanguageProvider::getPostLanguage($post->ID));
                 $content = $repository->findById($waId, ContentRepository::ARTICLE_RESOURCE) ?:
                     $repository->findById($waId, ContentRepository::GALLERY_RESOURCE);
-                if(!$content) {
+                if (!$content) {
                     wp_trash_post($post->ID);
                     WP_CLI::success(sprintf(
                         'Trashed orphaned content: %s id: %s',

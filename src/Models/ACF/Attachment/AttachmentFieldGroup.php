@@ -4,7 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Models\ACF\Attachment;
 
 class AttachmentFieldGroup
 {
-   const CAPTION_FIELD_KEY =  'field_5c51b211deb49';
+    const CAPTION_FIELD_KEY =  'field_5c51b211deb49';
 
 
     public static function register()
