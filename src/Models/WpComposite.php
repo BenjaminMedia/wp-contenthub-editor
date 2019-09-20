@@ -127,7 +127,7 @@ class WpComposite
      *
      * @return null|string
      */
-    public static function white_albun_id_form_post_id($id)
+    public static function white_album_id_form_post_id($id)
     {
         return get_post_meta($id, static::POST_META_WHITE_ALBUM_ID, true);
     }
