@@ -196,6 +196,7 @@ class WpAttachment
             ]
         ];
         $attachmentId = wp_insert_attachment($attachment, $uploadedFile['file'], $postId);
+        update_field(AttachmentFieldGroup::CAPTION_FIELD_KEY, static::getCaption($file), $attachmentId);
         if (is_wp_error($attachmentId)) {
             return null;
         }
@@ -224,6 +225,7 @@ class WpAttachment
         update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT_URL, $file->copyright_url ?? '');
+        update_field(AttachmentFieldGroup::CAPTION_FIELD_KEY, static::getCaption($file), $attachmentId);
         global $wpdb;
         $wpdb->update(
             'wp_posts',

@@ -34,7 +34,37 @@ class WaContent extends BaseCmd
     }
 
     /**
-     * Imports composites from Scaphold
+     * Prunes imported composites from WhiteAlbum by removing those that are deleted on WhiteAlbum
+     *
+     * ## EXAMPLES
+     * wp contenthub editor wa content prune
+     *
+     * @param $args
+     * @param $assocArgs
+     *
+     * @throws \Exception
+     */
+    public function prune($args, $assocArgs)
+    {
+        WpComposite::map_all(function (WP_Post $post) {
+            if ($waId = WpComposite::white_album_id_form_post_id($post->ID)) {
+                $repository = new ContentRepository(LanguageProvider::getPostLanguage($post->ID));
+                $content = $repository->findById($waId, ContentRepository::ARTICLE_RESOURCE) ?:
+                    $repository->findById($waId, ContentRepository::GALLERY_RESOURCE);
+                if (!$content) {
+                    wp_trash_post($post->ID);
+                    WP_CLI::success(sprintf(
+                        'Trashed orphaned content: %s id: %s',
+                        $post->post_title,
+                        $post->ID
+                    ));
+                }
+            }
+        });
+    }
+
+    /**
+     * Imports composites from WhiteAlbum
      *
      * ## OPTIONS
      *
