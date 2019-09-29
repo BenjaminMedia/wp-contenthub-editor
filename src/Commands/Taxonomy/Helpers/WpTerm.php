@@ -14,6 +14,7 @@ class WpTerm
 {
     public static function create(
         $name,
+        $slug,
         $languageCode,
         $contentHubId,
         $taxonomy,
@@ -23,7 +24,7 @@ class WpTerm
     ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
             'parent'      => $parentTermId,
-            'slug'        => $name,
+            'slug'        => $slug,
             'description' => $description
         ]);
 
@@ -46,6 +47,7 @@ class WpTerm
     public static function update(
         $existingTermId,
         $name,
+        $slug,
         $languageCode,
         $contentHubId,
         $taxonomy,
@@ -56,7 +58,7 @@ class WpTerm
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
             'name'        => $name,
             'parent'      => $parentTermId,
-            'slug'        => $name,
+            'slug'        => $slug,
             'description' => $description
         ]);
 
