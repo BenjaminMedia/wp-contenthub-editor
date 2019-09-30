@@ -53,6 +53,7 @@ class TermImportHelper
             $this->taxonomy;
         $this->setLocaleFilter($languageCode);
         $description = $externalTerm->description->{$languageCode} ?? null;
+        $slug = object_get($externalTerm, 'slug.'.$languageCode) ?: $name;
 
         $meta = [
             'meta_title' => $externalTerm->meta_title->{$languageCode} ?? null,
@@ -68,6 +69,7 @@ class TermImportHelper
             if (WpTerm::update(
                 $existingTermId,
                 $name,
+                $slug,
                 $languageCode,
                 $contentHubId,
                 $taxonomy,
@@ -82,6 +84,7 @@ class TermImportHelper
         // Create new term
         return WpTerm::create(
             $name,
+            $slug,
             $languageCode,
             $contentHubId,
             $taxonomy,

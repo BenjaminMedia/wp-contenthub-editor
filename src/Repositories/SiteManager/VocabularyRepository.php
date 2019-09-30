@@ -56,4 +56,15 @@ class VocabularyRepository implements TaxonomyContract
             json_decode($response->getBody()->getContents()) :
             null;
     }
+
+    /**
+     * @param $id
+     *
+     * @throws \Exception
+     */
+    public static function find_by_content_hub_id($id)
+    {
+        // TODO: Implement find_by_content_hub_id() method.
+        throw new \Exception('find_by_content_hub_id not implemented yet');
+    }
 }
