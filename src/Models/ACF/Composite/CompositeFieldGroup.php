@@ -878,6 +878,33 @@ class CompositeFieldGroup
                                         'new_lines' => '',
                                     ),
                                     array(
+                                        'key' => 'field_5d94ae31d18e5',
+                                        'label' => 'Text alignment',
+                                        'name' => 'text_alignment',
+                                        'type' => 'select',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => array(
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ),
+                                        'choices' => array(
+                                            'text-left' => 'Left',
+                                            'text-center' => 'Center',
+                                        ),
+                                        'default_value' => array(
+                                            0 => 'text-left',
+                                        ),
+                                        'allow_null' => 0,
+                                        'multiple' => 0,
+                                        'ui' => 1,
+                                        'ajax' => 0,
+                                        'return_format' => 'value',
+                                        'placeholder' => '',
+                                    ),
+                                    array(
                                         'key' => 'field_5922bdd55cda2',
                                         'label' => 'Locked Content',
                                         'name' => 'locked_content',
