@@ -98,6 +98,13 @@ class TeaserFieldGroup
                             'value' => 'contenthub_composite',
                         ],
                     ],
+                    [
+                        [
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => 'page',
+                        ],
+                    ],
                 ],
                 'menu_order' => 2,
                 'position' => 'acf_after_title',
