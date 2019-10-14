@@ -16,6 +16,10 @@ class EstimatedReadingTime
 
     public static function addEstimatedReadingTime($postId)
     {
+        if (!is_int($postId)) {
+            // A term was saved and ACF triggered this hook.
+            return;
+        }
         list($totalWordCount, $imageCounter) = static::getWordAndImageCount($postId);
 
         $locale = LanguageProvider::getPostLanguage($postId);
