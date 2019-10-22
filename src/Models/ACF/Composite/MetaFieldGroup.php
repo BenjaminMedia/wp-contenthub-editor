@@ -378,7 +378,7 @@ class MetaFieldGroup
                 return '0' . $issue;
             }
             return $issue;
-        }, range(1, 18));
+        }, range(1, 19));
         return array_combine($issues, $issues);
     }
 
