@@ -75,7 +75,7 @@ class Translations extends BaseTaxonomyImporter
                                 }
                             });
                     });
-            });
+                });
         });
     }
 }
