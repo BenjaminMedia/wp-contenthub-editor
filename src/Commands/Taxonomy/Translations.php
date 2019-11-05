@@ -21,13 +21,15 @@ class Translations extends BaseTaxonomyImporter
         WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
-    private static function isUpdateNeeded($term, $taxonomy, $post_id) {
+    private static function isUpdateNeeded($term, $taxonomy, $post_id)
+    {
         return !has_term($term->term_id, $taxonomy->machine_name, $post_id) ||
                !isset(get_fields($post_id)[$taxonomy->machine_name]) ||
                get_fields($post_id)[$taxonomy->machine_name]->term_id != $term->term_id;
     }
 
-    public function sync() {
+    public function sync()
+    {
         // Get taxonomies (editorial_type / difficulty)
         WpTaxonomy::get_custom_taxonomies()->each(function ($taxonomy) {
 
@@ -56,22 +58,22 @@ class Translations extends BaseTaxonomyImporter
                     collect(pll_get_post_translations($post->ID))->forget('da')
                         ->each(function ($post_id, $lang) use ($taxonomy, $translatedTerms) {
 
-                        $term = get_term($translatedTerms[$lang]);
-
-                        if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
-                            WP_CLI::line('Adding term - ' . $lang);
-                            WP_CLI::line('term: ' . $term->term_id . ' - ' . $term->name);
-                            WP_CLI::line('post: ' . $post_id . ' - ' . get_the_title($post_id));
-                            WP_CLI::line('');
-
-                            wp_set_post_terms($post_id, $term->name, $taxonomy->machine_name, true);
-                            update_field($taxonomy->machine_name, $term->term_id, $post_id);
+                            $term = get_term($translatedTerms[$lang]);
 
                             if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
-                                WP_CLI::error('ERROR adding the term to the post');
+                                WP_CLI::line('Adding term - ' . $lang);
+                                WP_CLI::line('term: ' . $term->term_id . ' - ' . $term->name);
+                                WP_CLI::line('post: ' . $post_id . ' - ' . get_the_title($post_id));
+                                WP_CLI::line('');
+
+                                wp_set_post_terms($post_id, $term->name, $taxonomy->machine_name, true);
+                                update_field($taxonomy->machine_name, $term->term_id, $post_id);
+
+                                if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
+                                    WP_CLI::error('ERROR adding the term to the post');
+                                }
                             }
-                        }
-                    });
+                        });
                 });
             });
         });
