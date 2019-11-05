@@ -69,7 +69,6 @@ class Translations extends BaseTaxonomyImporter
 
                             if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
                                 WP_CLI::error('ERROR adding the term to the post');
-                                exit;
                             }
                         }
                     });
