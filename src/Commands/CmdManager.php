@@ -5,6 +5,7 @@ namespace Bonnier\WP\ContentHub\Editor\Commands;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Categories;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Tags;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Vocabularies;
+use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Translations;
 
 if (defined('WP_CLI') && WP_CLI) {
     // fix errors when running wp cli
@@ -34,6 +35,7 @@ class CmdManager
             Tags::register();
             Categories::register();
             Vocabularies::register();
+            Translations::register();
         }
     }
 }
