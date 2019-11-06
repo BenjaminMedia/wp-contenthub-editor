@@ -36,6 +36,10 @@ class Translations extends BaseTaxonomyImporter
             // Get danish terms in the current taxonomy (anmeldelse ...)
             collect(get_terms(['taxonomy' => $taxonomy->machine_name, 'lang' => 'da', 'hide_empty' => false]))
                 ->each(function ($term) use ($taxonomy) {
+                    WP_CLI::line('Term id: ' . $term->term_id);
+                    WP_CLI::line('Term name: ' . $term->name);
+                    WP_CLI::line('');
+
                     $translatedTerms = pll_get_term_translations($term->term_id);
 
                     // Get composites with the current term
@@ -56,6 +60,10 @@ class Translations extends BaseTaxonomyImporter
                         // Get translated composites
                         collect(pll_get_post_translations($post->ID))->forget('da')
                             ->each(function ($post_id, $lang) use ($taxonomy, $translatedTerms) {
+                                if (!isset($translatedTerms[$lang])) {
+                                    WP_CLI::error('Term not translated into: ' . $lang);
+                                }
+
                                 $term = get_term($translatedTerms[$lang]);
 
                                 if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
