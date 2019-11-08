@@ -16,72 +16,70 @@ class Translations extends BaseTaxonomyImporter
 {
     const CMD_NAMESPACE = 'translations';
 
+    protected $taxonomiesToSync = [
+        'post_tag' => 'tags'
+    ];
+
     public static function register()
     {
-        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE  . ' ' . static::CMD_NAMESPACE, __CLASS__);
+        WP_CLI::add_command(CmdManager::CORE_CMD_NAMESPACE . ' ' . static::CMD_NAMESPACE, __CLASS__);
     }
 
-    private static function isUpdateNeeded($term, $taxonomy, $post_id)
+    private function getTaxonomiesToSync()
     {
-        return !has_term($term->term_id, $taxonomy->machine_name, $post_id) ||
-               !isset(get_fields($post_id)[$taxonomy->machine_name]) ||
-               get_fields($post_id)[$taxonomy->machine_name]->term_id != $term->term_id;
+        $taxonomies = $this->taxonomiesToSync;
+
+        WpTaxonomy::get_custom_taxonomies()->each(function ($taxonomy) use (&$taxonomies) {
+            $taxonomies[$taxonomy->machine_name] = $taxonomy->machine_name;
+        });
+        return collect($taxonomies);
     }
 
     public function sync()
     {
-        // Get taxonomies (editorial_type / difficulty)
-        WpTaxonomy::get_custom_taxonomies()->each(function ($taxonomy) {
+        $sourceLang = 'da';
+        $taxonomiesToSync = $this->getTaxonomiesToSync();
 
-            // Get danish terms in the current taxonomy (anmeldelse ...)
-            collect(get_terms(['taxonomy' => $taxonomy->machine_name, 'lang' => 'da', 'hide_empty' => false]))
-                ->each(function ($term) use ($taxonomy) {
-                    WP_CLI::line('Term id: ' . $term->term_id);
-                    WP_CLI::line('Term name: ' . $term->name);
-                    WP_CLI::line('');
+        // Get all danish articles
+        collect(get_posts(
+            [
+                'post_type' => 'contenthub_composite',
+                'numberposts' => -1, // Get all posts
+                'lang' => $sourceLang,
+            ]
+        ))->each(function ($sourcePost) use ($sourceLang, $taxonomiesToSync) {
 
-                    $translatedTerms = pll_get_term_translations($term->term_id);
+            // Get translated articles (pass on source_article_id)
+            collect(pll_get_post_translations($sourcePost->ID))->forget($sourceLang)->each(function ($translatedPostId, $translatedLang) use ($sourcePost, $taxonomiesToSync) {
 
-                    // Get composites with the current term
-                    collect(get_posts(
-                        [
-                            'post_type' => 'contenthub_composite',
-                            'numberposts' => -1, // Get all posts
-                            'tax_query' => [
-                                [
-                                    'taxonomy' => $taxonomy->machine_name,
-                                    'field' => 'term_id',
-                                    'terms' => $term->term_id
-                                ]
-                            ]
-                        ]
-                    ))->each(function ($post) use ($taxonomy, $translatedTerms) {
+                WP_CLI::line('sourcePost->ID: ' . $sourcePost->ID);
+                WP_CLI::line('translatedPost->ID: ' . $translatedPostId);
 
-                        // Get translated composites
-                        collect(pll_get_post_translations($post->ID))->forget('da')
-                            ->each(function ($post_id, $lang) use ($taxonomy, $translatedTerms) {
-                                if (!isset($translatedTerms[$lang])) {
-                                    WP_CLI::error('Term not translated into: ' . $lang);
-                                }
-
-                                $term = get_term($translatedTerms[$lang]);
-
-                                if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
-                                    WP_CLI::line('Adding term - ' . $lang);
-                                    WP_CLI::line('term: ' . $term->term_id . ' - ' . $term->name);
-                                    WP_CLI::line('post: ' . $post_id . ' - ' . get_the_title($post_id));
-                                    WP_CLI::line('');
-
-                                    wp_set_post_terms($post_id, $term->name, $taxonomy->machine_name, true);
-                                    update_field($taxonomy->machine_name, $term->term_id, $post_id);
-
-                                    if (self::isUpdateNeeded($term, $taxonomy, $post_id)) {
-                                        WP_CLI::error('ERROR adding the term to the post');
-                                    }
-                                }
-                            });
-                    });
+                // Sync tags and custom taxonomies
+                $taxonomiesToSync->each(function($acfTaxo, $wpTaxo) use ($sourcePost, $translatedPostId, $translatedLang) {
+                    print "wpTaxo: " . $wpTaxo . PHP_EOL;
+                    self::syncTagsFromPostToPost($wpTaxo, $acfTaxo, $sourcePost->ID, $translatedPostId, $translatedLang);
                 });
+
+                WP_CLI::line('');
+            });
         });
+    }
+
+    private function syncTagsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePostId, $translatedPostId, $translatedLang)
+    {
+        $sourcePostHasTagIdsTranslated = collect(get_the_terms($sourcePostId, $taxonomyWP))->map(function ($sourceTag) use ($translatedPostId, $translatedLang) {
+            if (!$sourceTag) {
+                return null;
+            }
+            $translatedTerms = pll_get_term_translations($sourceTag->term_id);
+            if (!isset($translatedTerms[$translatedLang])) {
+                WP_CLI::error('No term-translation found');
+            }
+            return $translatedTerms[$translatedLang];
+        });
+
+        // Update ACF tags
+        update_field($taxonomyACF, $sourcePostHasTagIdsTranslated->all(), $translatedPostId);
     }
 }
