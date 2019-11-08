@@ -56,9 +56,8 @@ class Translations extends BaseTaxonomyImporter
                 WP_CLI::line('translatedPost->ID: ' . $translatedPostId);
 
                 // Sync tags and custom taxonomies
-                $taxonomiesToSync->each(function($acfTaxo, $wpTaxo) use ($sourcePost, $translatedPostId, $translatedLang) {
-                    print "wpTaxo: " . $wpTaxo . PHP_EOL;
-                    self::syncTagsFromPostToPost($wpTaxo, $acfTaxo, $sourcePost->ID, $translatedPostId, $translatedLang);
+                $taxonomiesToSync->each(function ($taxonomyACF, $taxonomyWP) use ($sourcePost, $translatedPostId, $translatedLang) {
+                    self::syncTagsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePost->ID, $translatedPostId, $translatedLang);
                 });
 
                 WP_CLI::line('');
