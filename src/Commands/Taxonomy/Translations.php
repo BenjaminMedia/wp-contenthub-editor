@@ -51,7 +51,6 @@ class Translations extends BaseTaxonomyImporter
 
             // Get translated articles (pass on source_article_id)
             collect(pll_get_post_translations($sourcePost->ID))->forget($sourceLang)->each(function ($translatedPostId, $translatedLang) use ($sourcePost, $taxonomiesToSync) {
-
                 WP_CLI::line('sourcePost->ID: ' . $sourcePost->ID);
                 WP_CLI::line('translatedPost->ID: ' . $translatedPostId);
 
