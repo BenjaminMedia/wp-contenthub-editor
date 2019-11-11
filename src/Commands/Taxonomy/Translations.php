@@ -56,7 +56,7 @@ class Translations extends BaseTaxonomyImporter
 
                 // Sync tags and custom taxonomies
                 $taxonomiesToSync->each(function ($taxonomyACF, $taxonomyWP) use ($sourcePost, $translatedPostId, $translatedLang) {
-                    self::syncTagsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePost->ID, $translatedPostId, $translatedLang);
+                    self::syncTermsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePost->ID, $translatedPostId, $translatedLang);
                 });
 
                 WP_CLI::line('');
@@ -64,7 +64,7 @@ class Translations extends BaseTaxonomyImporter
         });
     }
 
-    private function syncTagsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePostId, $translatedPostId, $translatedLang)
+    private function syncTermsFromPostToPost($taxonomyWP, $taxonomyACF, $sourcePostId, $translatedPostId, $translatedLang)
     {
         $sourcePostHasTagIdsTranslated = collect(get_the_terms($sourcePostId, $taxonomyWP))->map(function ($sourceTag) use ($translatedPostId, $translatedLang) {
             if (!$sourceTag) {
@@ -77,7 +77,7 @@ class Translations extends BaseTaxonomyImporter
             return $translatedTerms[$translatedLang];
         });
 
-        // Update ACF tags
+        // Update ACF terms
         update_field($taxonomyACF, $sourcePostHasTagIdsTranslated->all(), $translatedPostId);
     }
 }
