@@ -102,7 +102,7 @@ class Plugin
         new MarkdownEditor;
         // Register custom post type
         PermalinkHelper::instance();
-        WpTaxonomy::register($this);
+        WpTaxonomy::register();
         WpComposite::register();
         WpAttachment::register();
         CmdManager::register();
