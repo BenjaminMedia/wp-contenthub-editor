@@ -1,0 +1,16 @@
+body.taxonomy-post_tag form[name=edittag] table.form-table:first-of-type tr#term-translations,
+body.taxonomy-category form[name=edittag] table.form-table:first-of-type tr#term-translations,
+body.taxonomy-post_tag form[name=edittag] #delete-link,
+body.taxonomy-category form[name=edittag] #delete-link,
+body.post-type-contenthub_composite div#col-left
+{
+    display: none;
+}
+body.post-type-contenthub_composite div#col-right {
+    width: 100%;
+}
+
+/* Hide "Add new tag" on post */
+div.acf-field-taxonomy[data-name="tags"] div.acf-actions.-hover {
+    display: none;
+}

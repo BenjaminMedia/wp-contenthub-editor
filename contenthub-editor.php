@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ContentHub Editor
- * Version: 1.15.2
+ * Version: 1.16.0
  * Plugin URI: https://github.com/BenjaminMedia/contenthub-editor
  * Description: This plugin integrates Bonnier Contenthub and adds a custom post type Composite
  * Author: Bonnier - Alf Henderson
@@ -102,7 +102,7 @@ class Plugin
         new MarkdownEditor;
         // Register custom post type
         PermalinkHelper::instance();
-        WpTaxonomy::register();
+        WpTaxonomy::register($this);
         WpComposite::register();
         WpAttachment::register();
         CmdManager::register();
@@ -110,6 +110,8 @@ class Plugin
 
         $updateEndpoint = new UpdateEndpointController();
         $updateEndpoint->register_routes();
+
+        add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts']);
     }
 
     /**
@@ -129,6 +131,24 @@ class Plugin
         }
 
         return self::$instance;
+    }
+
+    public function loadAdminScripts()
+    {
+        wp_register_style(
+            'contenthub_editor_stylesheet',
+            sprintf('%s/css/admin.css', trim($this->plugin_url, '/')),
+            false,
+            filemtime(sprintf('/%s/css/admin.css', trim($this->plugin_dir, '/')))
+        );
+        wp_enqueue_style('contenthub_editor_stylesheet');
+
+        wp_enqueue_script(
+            'acf-taxonomy-fields',
+            $this->plugin_url . 'js/acf/fields/taxonomy-fields.js',
+            [],
+            filemtime($this->plugin_dir . 'js/acf/fields/taxonomy-fields.js')
+        );
     }
 }
 
