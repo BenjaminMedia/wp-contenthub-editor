@@ -79,9 +79,10 @@ class ContenthubEditor
         new MarkdownEditor;
         new ImageHotSpotCoordinates();
         new CompositeHelper;
+        new WpTaxonomy;
 
         // Register custom post type
-        WpTaxonomy::register();
+        WpTaxonomy::register($this);
         WpPage::register();
         WpComposite::register();
         WpAttachment::register();

@@ -3,6 +3,7 @@
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Illuminate\Support\Collection;
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
 
 /**
  * Class WpTaxonomy
@@ -13,7 +14,7 @@ class WpTaxonomy
 {
     const CUSTOM_TAXONOMIES_OPTION = 'content_hub_custom_taxonomies';
 
-    public static function register()
+    public static function register($plugin)
     {
         add_action('init', function () {
             static::get_custom_taxonomies()->each(function ($customTaxonomy) {
@@ -24,6 +25,7 @@ class WpTaxonomy
                 ]);
             });
         });
+        static::admin_enqueue_scripts($plugin);
     }
 
     public static function add($externalTaxonomy)
@@ -46,5 +48,15 @@ class WpTaxonomy
     public static function set_custom_taxonomies(Collection $taxonomies)
     {
         update_option(static::CUSTOM_TAXONOMIES_OPTION, $taxonomies->toArray(), true);
+    }
+
+    public static function admin_enqueue_scripts($plugin)
+    {
+        wp_enqueue_script(
+            'acf-taxonomy-fields',
+            $plugin->pluginUrl . 'js/acf/fields/taxonomy-fields.js',
+            [],
+            filemtime($plugin->pluginDir . 'js/acf/fields/taxonomy-fields.js')
+        );
     }
 }
