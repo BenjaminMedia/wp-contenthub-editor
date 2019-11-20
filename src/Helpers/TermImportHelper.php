@@ -66,7 +66,7 @@ class TermImportHelper
 
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
             // Term exists so we update it
-            if (WpTerm::update(
+            return WpTerm::update(
                 $existingTermId,
                 $name,
                 $slug,
@@ -76,10 +76,7 @@ class TermImportHelper
                 $parentTermId,
                 $description,
                 $meta
-            )) {
-                return true;
-            }
-            return false;
+            );
         }
         // Create new term
         return WpTerm::create(
