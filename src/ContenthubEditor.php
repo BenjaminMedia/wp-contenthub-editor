@@ -81,7 +81,7 @@ class ContenthubEditor
         new CompositeHelper;
 
         // Register custom post type
-        WpTaxonomy::register($this);
+        WpTaxonomy::register();
         WpPage::register();
         WpComposite::register();
         WpAttachment::register();
@@ -118,5 +118,6 @@ class ContenthubEditor
             filemtime(sprintf('/%s/css/admin.css', trim($this->pluginDir, '/')))
         );
         wp_enqueue_style('contenthub_editor_stylesheet');
+        WpTaxonomy::admin_enqueue_scripts();
     }
 }

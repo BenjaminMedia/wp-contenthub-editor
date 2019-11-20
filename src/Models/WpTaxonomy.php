@@ -14,7 +14,7 @@ class WpTaxonomy
 {
     const CUSTOM_TAXONOMIES_OPTION = 'content_hub_custom_taxonomies';
 
-    public static function register($plugin)
+    public static function register()
     {
         add_action('init', function () {
             static::get_custom_taxonomies()->each(function ($customTaxonomy) {
@@ -25,7 +25,6 @@ class WpTaxonomy
                 ]);
             });
         });
-        static::admin_enqueue_scripts($plugin);
     }
 
     public static function add($externalTaxonomy)
@@ -50,13 +49,13 @@ class WpTaxonomy
         update_option(static::CUSTOM_TAXONOMIES_OPTION, $taxonomies->toArray(), true);
     }
 
-    public static function admin_enqueue_scripts($plugin)
+    public static function admin_enqueue_scripts()
     {
         wp_enqueue_script(
             'acf-taxonomy-fields',
-            $plugin->pluginUrl . 'js/acf/fields/taxonomy-fields.js',
+            ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/taxonomy-fields.js',
             [],
-            filemtime($plugin->pluginDir . 'js/acf/fields/taxonomy-fields.js')
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/taxonomy-fields.js')
         );
     }
 }
