@@ -56,7 +56,7 @@ class TermImportHelper
                 }
             }
             // Term exists so we update it
-            if (WpTerm::update(
+            return WpTerm::update(
                 $existingTermId,
                 $name,
                 $languageCode,
@@ -66,10 +66,7 @@ class TermImportHelper
                 $description,
                 $internal,
                 $whitealbumId
-            )) {
-                return true;
-            }
-            return false;
+            );
         }
         // Create new term
         return WpTerm::create(
