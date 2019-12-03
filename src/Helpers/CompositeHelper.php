@@ -61,11 +61,6 @@ class CompositeHelper
 
     public function setStoryParent($postId)
     {
-        //do all this magic code because we don\'t want the wp_update_post to run infinitely.
-        if (!$this->validStoryComposite($postId)) {
-            return;
-        }
-
         global $wpdb;
 
         // First remove all relations, so that if we remove a composite from a story,
@@ -78,11 +73,18 @@ class CompositeHelper
             ]
         );
 
+        // do all this magic code because we don\'t want the wp_update_post to run infinitely.
+        if (!$this->validStoryComposite($postId)) {
+            return;
+        }
+
         // Then run through all associated_composites and add a postmeta field, defining the story parent
         collect(get_field('composite_content', $postId))->each(function ($content) use ($postId, $wpdb) {
             if ($content['acf_fc_layout'] === 'associated_composites') {
                 collect(array_get($content, 'composites', []))->each(function (\WP_Post $composite) use ($postId) {
-                    add_post_meta($composite->ID, 'story_parent', $postId);
+                    if (get_field('kind', $postId) === 'Story') {
+                        add_post_meta($composite->ID, 'story_parent', $postId);
+                    }
                 });
             }
         });
