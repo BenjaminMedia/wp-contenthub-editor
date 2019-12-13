@@ -217,8 +217,8 @@ class WpComposite
                     array_push($fromTerms, $tag);
                 }
             }
-            $newLanguage = $_GET['new_lang'];
 
+            $newLanguage = $_GET['new_lang'];
             foreach ($fromTerms as $term) {
                 if (!LanguageProvider::isTermTranslated($term->term_id, $newLanguage)) {
                     if ($term->taxonomy === 'category') {
