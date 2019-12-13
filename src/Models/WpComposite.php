@@ -94,7 +94,7 @@ class WpComposite
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
         add_action('acf/save_post', [EstimatedReadingTime::class, 'addEstimatedReadingTime'], 20);
-        add_filter( 'pll_copy_post_metas', [__CLASS__, 'checkIfCategoryIsTranslated'], 10, 3);
+        add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfCategoryIsTranslated'], 10, 3);
     }
 
     /**
@@ -183,7 +183,6 @@ class WpComposite
         ) {
             // Needed by the redirect plugin, so categories updated through wp_set_post_categories() are synced to acf
             update_field('category', $termID, $post->ID);
-
         }
     }
 
@@ -211,7 +210,7 @@ class WpComposite
 
     public static function checkIfCategoryIsTranslated($metas, $sync, $fromPostId)
     {
-        if(isset($_GET['new_lang'])) {
+        if (isset($_GET['new_lang'])) {
             $fromCategory = get_field('category', $fromPostId);
             $categoryTranslations = pll_get_term_translations($fromCategory->term_id);
             $newLanguage = $_GET['new_lang'];
