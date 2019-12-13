@@ -7,7 +7,9 @@ use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\CompositeHelper;
+use Bonnier\WP\ContentHub\Editor\Helpers\FocalPoint;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
+use Bonnier\WP\ContentHub\Editor\Http\Api\FocalpointEndpointController;
 use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
@@ -91,6 +93,10 @@ class ContenthubEditor
 
         $updateEndpoint = new UpdateEndpointController();
         $updateEndpoint->register_routes();
+        $focalPoint = FocalPoint::instance();
+        $focalPoint->setPluginPaths($this->pluginUrl, $this->pluginDir);
+        $focalPointEndpoint = new FocalpointEndpointController();
+        $focalPointEndpoint->register_routes();
     }
 
     /**

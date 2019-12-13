@@ -342,7 +342,7 @@ class CompositeFieldGroup
                                             'id' => '',
                                         ],
                                         'return_format' => 'array',
-                                        'preview_size' => 'thumbnail',
+                                        'preview_size' => 'large',
                                         'library' => 'all',
                                         'min_width' => '',
                                         'min_height' => '',
