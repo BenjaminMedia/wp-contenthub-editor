@@ -19,7 +19,6 @@ class FocalPoint
         add_filter('attachment_fields_to_edit', [$this, 'addFields'], 11, 2);
         add_filter('attachment_fields_to_save', [$this, 'saveFields'], 11, 2);
         add_filter('pll_copy_post_metas', [$this, 'copy_post_metas'], 10, 5);
-
     }
 
     public static function instance()
@@ -105,7 +104,8 @@ class FocalPoint
         wp_enqueue_script('focal_point_class');
     }
 
-    public function copy_post_metas($metas) {
+    public function copy_post_metas($metas)
+    {
         return array_merge($metas, array( '_focal_point'));
     }
 }
