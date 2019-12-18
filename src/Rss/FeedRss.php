@@ -122,11 +122,11 @@ class FeedRss
                 /**
                  * acf_fc_layout types in class @var CompositeFieldGroup
                  */
-                case "lead_paragraph" :
+                case "lead_paragraph":
                     $contentHtml .= Parsedown::instance()->text($element->get('title', ''));
                     $contentHtml .= Parsedown::instance()->text($element->get('description', ''));
                     break;
-                case "text_item" :
+                case "text_item":
                     $contentHtml .= Parsedown::instance()->text($element->get('body', ''));
                     break;
                 case "image":
@@ -206,5 +206,4 @@ class FeedRss
         }
         return '';
     }
-
 }
