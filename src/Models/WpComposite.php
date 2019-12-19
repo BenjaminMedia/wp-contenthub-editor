@@ -94,7 +94,7 @@ class WpComposite
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
         add_action('acf/save_post', [EstimatedReadingTime::class, 'addEstimatedReadingTime'], 20);
-        add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfCategoryIsTranslated'], 10, 3);
+        add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfTermIsTranslated'], 10, 3);
     }
 
     /**
@@ -208,15 +208,28 @@ class WpComposite
         }
     }
 
-    public static function checkIfCategoryIsTranslated($metas, $sync, $fromPostId)
+    public static function checkIfTermIsTranslated($metas, $sync, $fromPostId)
     {
         if (isset($_GET['new_lang'])) {
-            $fromCategory = get_field('category', $fromPostId);
-            $categoryTranslations = pll_get_term_translations($fromCategory->term_id);
-            $newLanguage = $_GET['new_lang'];
+            $fromTerms = array(get_field('category', $fromPostId));
+            $fromTags = get_field('tags', $fromPostId);
+            if (is_array($fromTags)) {
+                foreach ($fromTags as $tag) {
+                    array_push($fromTerms, $tag);
+                }
+            }
 
-            if (!isset($categoryTranslations[$newLanguage])) {
-                unset($metas[array_search('category', $metas)]);
+            $newLanguage = $_GET['new_lang'];
+            foreach ($fromTerms as $term) {
+                if (!LanguageProvider::isTermTranslated($term->term_id, $newLanguage)) {
+                    if ($term->taxonomy === 'category') {
+                        unset($metas[array_search('category', $metas)]);
+                    }
+
+                    if ($term->taxonomy === 'post_tag') {
+                        unset($metas[array_search('tags', $metas)]);
+                    }
+                };
             }
         }
 
