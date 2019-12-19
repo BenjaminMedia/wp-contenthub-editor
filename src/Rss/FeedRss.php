@@ -34,7 +34,7 @@ class FeedRss
     {
         remove_action('do_feed_rss2', 'do_feed_rss2', 10);
         add_action('do_feed_rss2', [self::getInstance(), 'generateOutput']);
-        add_action('languages_page_mlang_strings',function (){
+        add_action('languages_page_mlang_strings', function () {
             pll_register_string('RSS - Read More', 'Læs mere', 'contenthub-editor-rss');
         });
     }
