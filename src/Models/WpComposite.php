@@ -212,8 +212,9 @@ class WpComposite
     {
         if (isset($_GET['new_lang'])) {
             $fromTerms = array(get_field('category', $fromPostId));
-            if (is_array(get_field('tags', $fromPostId))) {
-                foreach (get_field('tags', $fromPostId) as $tag) {
+            $fromTags = get_field('tags', $fromPostId);
+            if (is_array($fromTags)) {
+                foreach ($fromTags as $tag) {
                     array_push($fromTerms, $tag);
                 }
             }
