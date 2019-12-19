@@ -1,11 +1,11 @@
 (function ($) {
 
-  var activeFocalPoint = null;
+  var activeHotspot = null;
 
   acf.add_action('remove', function (el) {
-    if($.contains(el, '.edit-hotspot-image') && activeFocalPoint instanceof FocalPoint) {
-      activeFocalPoint.destroy();
-      activeFocalPoint = null;
+    if($.contains(el, '.edit-hotspot-image') && activeHotspot instanceof FocalPoint) {
+      activeHotspot.destroy();
+      activeHotspot = null;
     }
   });
 
@@ -32,14 +32,16 @@
     var input = $(editBtn).parent().find('input[type="hidden"]');
 
     if(image.attr('src') === 'undefined') {
-      alert('You must select a image first')
+      alert('You must select an image first');
       return;
     }
 
-    if(activeFocalPoint instanceof FocalPoint) {
-      activeFocalPoint.destroy();
+    if(activeHotspot instanceof FocalPoint) {
+      activeHotspot.destroy();
+      activeHotspot = null;
     }
 
-    activeFocalPoint = new FocalPoint(image[0], input[0]);
+    activeHotspot = new FocalPoint(image[0], input[0]);
+    activeHotspot.displayCrosshair();
   }
 })(jQuery);

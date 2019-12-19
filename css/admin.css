@@ -21,3 +21,38 @@ body.post-type-contenthub_composite div#col-right {
 div.acf-field-taxonomy[data-name="tags"] div.acf-actions.-hover {
     display: none;
 }
+
+
+div.image-focalpoint-actions {
+  clear: both;
+  padding-top: 20px;
+}
+
+div.image-focalpoint-actions input {
+  width: 200px !important;
+}
+
+div.image-focalpoint-actions input,
+div.image-focalpoint-actions button,
+div.image-focalpoint-actions .dashicons {
+  margin-right: 10px !important;
+}
+
+div.image-focalpoint-actions .spinner {
+  float: none;
+  margin-top: -2px;
+}
+
+div.image-focalpoint-actions .dashicons {
+  margin-top: 4px;
+  border-radius: 5px;
+  color: #fff;
+}
+
+div.image-focalpoint-actions .dashicons-yes {
+  background-color: #64b450;
+}
+
+div.image-focalpoint-actions .dashicons-no {
+  background-color: #a00;
+}

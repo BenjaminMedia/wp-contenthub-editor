@@ -144,19 +144,9 @@ class ImageHotSpotCoordinates extends acf_field
     public function input_admin_enqueue_scripts()
     {
         wp_register_script(
-            'focal_point_script',
-            ContenthubEditor::instance()->pluginUrl . '/js/acf/fields/focal_point.js',
-            filemtime(ContenthubEditor::instance()->pluginDir . '/js/acf/fields/focal_point.js')
-        );
-        wp_localize_script('focal_point_script', 'assets', [
-            'crosshair' => ContenthubEditor::instance()->pluginUrl . 'img/crosshair.png',
-        ]);
-        wp_enqueue_script('focal_point_script');
-
-        wp_register_script(
             'acf-input-image-hotspot-coordinates',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/image-hotspot-coordinates.js',
-            ['acf-input', 'focal_point_script'],
+            ['acf-input', 'focal_point_class'],
             filemtime(ContenthubEditor::instance()->pluginDir . '/js/acf/fields/image-hotspot-coordinates.js')
         );
         wp_enqueue_script('acf-input-image-hotspot-coordinates');
