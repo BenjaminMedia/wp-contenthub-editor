@@ -39,5 +39,17 @@ class CollectionHelper extends Collection
                 return is_null($value);
             });
         });
+        /**
+         * Map nested array to collection
+         * @Return Collection
+         */
+        Collection::macro('recursive', function () {
+            return $this->map(function ($value) {
+                if (is_array($value)) {
+                    return collect($value)->recursive();
+                }
+                return $value;
+            });
+        });
     }
 }

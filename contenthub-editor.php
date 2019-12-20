@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: ContentHub Editor
- * Version: 1.16.1
+ * Version: 1.17.0
  * Plugin URI: https://github.com/BenjaminMedia/contenthub-editor
  * Description: This plugin integrates Bonnier Contenthub and adds a custom post type Composite
  * Author: Bonnier - Alf Henderson
@@ -19,6 +19,7 @@ use Bonnier\WP\ContentHub\Editor\Http\Api\UpdateEndpointController;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
+use Bonnier\WP\ContentHub\Editor\Rss\FeedRss;
 use Bonnier\WP\ContentHub\Editor\Settings\SettingsPage;
 
 // Do not access this file directly
@@ -107,6 +108,7 @@ class Plugin
         WpAttachment::register();
         CmdManager::register();
         PolylangConfig::register();
+        FeedRss::register();
 
         $updateEndpoint = new UpdateEndpointController();
         $updateEndpoint->register_routes();
