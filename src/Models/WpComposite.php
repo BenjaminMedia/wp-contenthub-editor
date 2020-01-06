@@ -221,6 +221,9 @@ class WpComposite
 
             $newLanguage = $_GET['new_lang'];
             foreach ($fromTerms as $term) {
+                if (is_null($term) || is_null($term->term_id)) {
+                    continue;
+                }
                 if (!LanguageProvider::isTermTranslated($term->term_id, $newLanguage)) {
                     if ($term->taxonomy === 'category') {
                         unset($metas[array_search('category', $metas)]);
