@@ -9,7 +9,13 @@ use Exception;
 class TermImportHelper
 {
     protected $taxonomy;
+    protected $currentLocale;
 
+    /**
+     * TermImportHelper constructor.
+     * @param $taxonomy
+     * @throws Exception
+     */
     public function __construct($taxonomy)
     {
         $this->taxonomy = $this->getWpTaxonomy($taxonomy);
@@ -30,54 +36,57 @@ class TermImportHelper
 
     public function deleteTerm(\WP_Term $term)
     {
-        wp_delete_term($term->term_id, $this->taxonomy);
+        $result = wp_delete_term($term->term_id, $this->taxonomy);
+        if (! is_wp_error($result)) {
+            return true;
+        }
         return false;
     }
 
     protected function importTerm($name, $languageCode, $externalTerm)
     {
         $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $whitealbumId = $externalTerm->whitealbum_id->{$languageCode} ?? null;
         $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
         $taxonomy = isset($externalTerm->vocabulary) ?
             WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) :
             $this->taxonomy;
-        // Needed by Polylang to allow same term name in different languages
-        $_POST['term_lang_choice'] = $languageCode;
-
+        $this->setLocaleFilter($languageCode);
         $description = $externalTerm->description->{$languageCode} ?? null;
-        $internal = $externalTerm->internal ?? false;
+        $slug = object_get($externalTerm, 'slug.'.$languageCode) ?: $name;
+
+        $meta = [
+            'meta_title' => $externalTerm->meta_title->{$languageCode} ?? null,
+            'meta_description' => $externalTerm->meta_description->{$languageCode} ?? null,
+            'body' => $externalTerm->body->{$languageCode} ?? null,
+            'image_url' => $externalTerm->image_url->{$languageCode} ?? null,
+            'internal' => $externalTerm->internal ?? false,
+            'whitealbum_id' => $externalTerm->whitealbum_id->{$languageCode} ?? null,
+        ];
 
         if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
-            $tag = null;
-            if ($this->taxonomy === 'post_tag') {
-                if (($posttag = get_tag($existingTermId)) && $posttag instanceof \WP_Term) {
-                    $tag = $posttag;
-                }
-            }
             // Term exists so we update it
             return WpTerm::update(
                 $existingTermId,
                 $name,
+                $slug,
                 $languageCode,
                 $contentHubId,
                 $taxonomy,
                 $parentTermId,
                 $description,
-                $internal,
-                $whitealbumId
+                $meta
             );
         }
         // Create new term
         return WpTerm::create(
             $name,
+            $slug,
             $languageCode,
             $contentHubId,
             $taxonomy,
             $parentTermId,
             $description,
-            $internal,
-            $whitealbumId
+            $meta
         );
     }
 
@@ -97,7 +106,7 @@ class TermImportHelper
     public function deleteTermAndTranslations($externalTerm)
     {
         collect($externalTerm->content_hub_ids)->each(function ($contentHubId) {
-            if ($wpTermId = WpTerm::id_from_contenthub_id($contentHubId) ?? null) {
+            if ($wpTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
                 $wpTerm = get_term($wpTermId);
                 if ($wpTerm instanceof \WP_Term) {
                     $this->deleteTerm($wpTerm);
@@ -106,6 +115,11 @@ class TermImportHelper
         });
     }
 
+    /**
+     * @param $taxonomy
+     * @return mixed
+     * @throws Exception
+     */
     protected function getWpTaxonomy($taxonomy)
     {
         $wpTaxonomy = collect([
@@ -122,5 +136,22 @@ class TermImportHelper
             throw new Exception(sprintf('Unsupported taxonomy: %s', $taxonomy));
         }
         return $wpTaxonomy;
+    }
+
+    private function setLocaleFilter($languageCode)
+    {
+        // Needed by Polylang to allow same term name in different languages
+        $_POST['term_lang_choice'] = $languageCode;
+        $this->currentLocale = collect(pll_languages_list(['fields' => 'locale']))
+            ->first(function ($locale) use ($languageCode) {
+                return str_contains($locale, $languageCode);
+            });
+        // Needed by wordpress in order to generate the correct slug
+        add_filter('locale', [$this, 'getLocaleForSanitizeTitle'], 100);
+    }
+
+    public function getLocaleForSanitizeTitle($locale)
+    {
+        return $this->currentLocale ?: $locale;
     }
 }

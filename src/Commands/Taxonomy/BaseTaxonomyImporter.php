@@ -18,6 +18,9 @@ class BaseTaxonomyImporter extends WP_CLI_Command
 {
     protected $taxonomy;
     protected $getTermCallback;
+    /**
+     * @var TermImportHelper
+     */
     protected $termImportHelper;
 
     protected function triggerSync($taxononmy, $getTermCallback)
@@ -32,9 +35,10 @@ class BaseTaxonomyImporter extends WP_CLI_Command
     {
         $this->taxonomy = $taxononmy;
         $this->getTermCallback = $getTermCallback;
+        $this->termImportHelper = new TermImportHelper($taxononmy);
         $this->mapSites(function ($site) {
             $this->mapTerms($site, function ($externalTag) {
-                $this->importTermAndLinkTranslations($externalTag);
+                $this->termImportHelper->importTermAndLinkTranslations($externalTag);
             });
         });
     }
@@ -62,44 +66,6 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         }
     }
 
-    protected function importTermAndLinkTranslations($externalTerm)
-    {
-        $termIdsByLocale = collect($externalTerm->name)->map(function ($name, $languageCode) use ($externalTerm) {
-            return [ $languageCode, $this->importTerm($name, $languageCode, $externalTerm) ];
-        })->toAssoc()->rejectNullValues()->toArray(); // Creates an associative array with language code as key and term id as value
-        pll_save_term_translations($termIdsByLocale);
-        return $termIdsByLocale;
-    }
-
-    protected function importTerm($name, $languageCode, $externalTerm)
-    {
-        $contentHubId = $externalTerm->content_hub_ids->{$languageCode};
-        $parentTermId = $this->getParentTermId($languageCode, $externalTerm->parent ?? null);
-        $taxonomy = $externalTerm->vocabulary ? WpTaxonomy::get_taxonomy($externalTerm->vocabulary->content_hub_id) : $this->taxonomy;
-        $_POST['term_lang_choice'] = $languageCode; // Needed by Polylang to allow same term name in different languages
-
-        $description = $externalTerm->description->{$languageCode};
-        $internal = $externalTerm->internal ?? false;
-
-
-        if ($existingTermId = WpTerm::id_from_contenthub_id($contentHubId)) {
-            // Term exists so we update it
-            return WpTerm::update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
-        }
-        // Create new term
-        WpTerm::create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId, $description, $internal);
-    }
-
-    protected function getParentTermId($languageCode, $externalCategory)
-    {
-        if (!isset($externalCategory->name->{$languageCode})) {
-            return null;
-        } // Make sure we only create the parent term if a translation exists for the language of the child term
-        if ($existingTermId = WpTerm::id_from_contenthub_id($externalCategory->content_hub_ids->{$languageCode})) {
-            return $existingTermId;
-        } // Term already exists so no need to create it again
-        $this->importTermAndLinkTranslations($externalCategory)[$languageCode] ?? null;
-    }
 
     public function clean_terms($taxononmy, $removeEmpty = false)
     {

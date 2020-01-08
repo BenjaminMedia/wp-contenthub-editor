@@ -2,7 +2,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers;
 
-use Bonnier\WP\ContentHub\Editor\Helpers\SlugHelper;
 use WP_CLI;
 
 /**
@@ -12,43 +11,68 @@ use WP_CLI;
  */
 class WpTerm
 {
-    public static function create($name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal)
-    {
+    public static function create(
+        $name,
+        $slug,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $meta
+    ) {
         $createdTerm = wp_insert_term($name, $taxonomy, [
-            'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name),
+            'parent'      => $parentTermId,
+            'slug'        => $slug,
             'description' => $description
         ]);
 
         if (is_wp_error($createdTerm)) {
             static::log('warning', "Failed creating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
-                . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
+                                   . json_encode($createdTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
         pll_set_term_language($createdTerm['term_id'], $languageCode);
         update_term_meta($createdTerm['term_id'], 'content_hub_id', $contentHubId);
-        update_term_meta($createdTerm['term_id'], 'internal', $internal);
+
+        collect($meta)->each(function ($value, $key) use ($createdTerm) {
+            update_term_meta($createdTerm['term_id'], $key, $value);
+        });
+
         static::log('success', "Created $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $createdTerm['term_id'];
     }
 
-    public static function update($existingTermId, $name, $languageCode, $contentHubId, $taxonomy, $parentTermId = null, $description, $internal)
-    {
+    public static function update(
+        $existingTermId,
+        $name,
+        $slug,
+        $languageCode,
+        $contentHubId,
+        $taxonomy,
+        $parentTermId = null,
+        $description,
+        $meta
+    ) {
         $updatedTerm = wp_update_term($existingTermId, $taxonomy, [
-            'name' => $name,
-            'parent' => $parentTermId,
-            'slug' => SlugHelper::create_slug($name),
+            'name'        => $name,
+            'parent'      => $parentTermId,
+            'slug'        => $slug,
             'description' => $description
         ]);
 
         if (is_wp_error($updatedTerm)) {
             static::log('warning', "Failed updating $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId Errors: "
-                . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
+                                   . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
         pll_set_term_language($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
-        update_term_meta($existingTermId, 'internal', $internal);
+
+        collect($meta)->each(function ($value, $key) use ($existingTermId) {
+            update_term_meta($existingTermId, $key, $value);
+        });
+
         static::log('success', "Updated $taxonomy: $name Locale: $languageCode content_hub_id: $contentHubId");
         return $existingTermId;
     }
@@ -67,10 +91,23 @@ class WpTerm
     }
 
     /**
-     * @param $id integer wp_term->term_id
+     * @param $id
      *
      * @return null|string
      */
+    public static function id_from_whitealbum_id($id)
+    {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare("SELECT term_id FROM wp_termmeta WHERE meta_key=%s AND meta_value=%s", 'whitealbum_id', $id)
+        );
+    }
+
+    /*
+    * @param $id integer wp_term->term_id
+    *
+    * @return null|string
+    */
     public static function content_hub_id($id)
     {
         return get_term_meta($id, 'content_hub_id', true);
