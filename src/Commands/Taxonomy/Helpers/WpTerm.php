@@ -66,7 +66,7 @@ class WpTerm
                                    . json_encode($updatedTerm->errors, JSON_UNESCAPED_UNICODE));
             return null;
         }
-        pll_set_term_language($updatedTerm['term_id'], $languageCode);
+        pll_set_term_language($existingTermId, $languageCode);
         update_term_meta($existingTermId, 'content_hub_id', $contentHubId);
 
         collect($meta)->each(function ($value, $key) use ($existingTermId) {
