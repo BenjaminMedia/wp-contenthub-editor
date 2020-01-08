@@ -18,9 +18,9 @@ class BaseTaxonomyImporter extends WP_CLI_Command
 {
     protected $taxonomy;
     protected $getTermCallback;
-	/**
-	 * @var TermImportHelper
-	 */
+    /**
+     * @var TermImportHelper
+     */
     protected $termImportHelper;
 
     protected function triggerSync($taxononmy, $getTermCallback)
