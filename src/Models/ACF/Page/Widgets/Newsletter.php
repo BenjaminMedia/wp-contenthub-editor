@@ -33,8 +33,8 @@ class Newsletter implements WidgetContract
     {
         return [
             'key' => 'field_5e15a823c1913',
-            'label' => 'Manual Source Code',
-            'name' => 'manual_source_code',
+            'label' => 'Manual Source Code and Permission Text',
+            'name' => AcfName::FIELD_MANUAL_SOURCE_CODE,
             'type' => 'true_false',
             'instructions' => '',
             'required' => 0,
@@ -44,7 +44,7 @@ class Newsletter implements WidgetContract
                 'class' => '',
                 'id' => '',
             ),
-            'message' => 'Enable manual input of custom source.',
+            'message' => 'Enable manual input of source code and permission text.',
             'default_value' => 0,
             'ui' => 0,
             'ui_on_text' => '',
