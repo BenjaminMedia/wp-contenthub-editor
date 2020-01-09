@@ -7,9 +7,12 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 
 class Newsletter implements WidgetContract
 {
+    const  FIELD_CHECKBOX = 'field_5e15a823c1913';
+    const  FIELD_SOURCE_CODE = 'field_5e144f59a2ac8';
+
     public function __construct()
     {
-        add_filter('acf/validate_value/key=field_5e144f59a2ac8', [$this, 'validateSourceCodeLength'], 10, 4);
+        add_filter('acf/validate_value/key='.self::FIELD_SOURCE_CODE, [$this, 'validateSourceCodeLength'], 10, 4);
     }
 
     public function getLayout(): array
@@ -32,7 +35,7 @@ class Newsletter implements WidgetContract
     private function getCustomSourceCodeCheckbox()
     {
         return [
-            'key' => 'field_5e15a823c1913',
+            'key' => self::FIELD_CHECKBOX,
             'label' => 'Manual Source Code and Permission Text',
             'name' => AcfName::FIELD_MANUAL_SOURCE_CODE,
             'type' => 'true_false',
@@ -55,7 +58,7 @@ class Newsletter implements WidgetContract
     private function getSourceCodeField()
     {
         return [
-            'key' => 'field_5e144f59a2ac8',
+            'key' => self::FIELD_SOURCE_CODE,
             'label' => 'Source Code',
             'name' => AcfName::FIELD_SOURCE_CODE,
             'type' => 'number',
@@ -64,7 +67,7 @@ class Newsletter implements WidgetContract
             'conditional_logic' => array(
                 array(
                     array(
-                        'field' => 'field_5e15a823c1913',
+                        'field' => self::FIELD_CHECKBOX,
                         'operator' => '==',
                         'value' => '1',
                     ),
@@ -96,7 +99,7 @@ class Newsletter implements WidgetContract
             'conditional_logic' => array(
                 array(
                     array(
-                        'field' => 'field_5e15a823c1913',
+                        'field' => self::FIELD_CHECKBOX,
                         'operator' => '==',
                         'value' => '1',
                     ),
