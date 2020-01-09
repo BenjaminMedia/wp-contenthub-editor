@@ -31,6 +31,7 @@ class AcfName
     const FIELD_TEASER_LIST = 'teaser_list';
     const FIELD_TITLE = 'title';
     const FIELD_VIDEO = 'video';
+    const FIELD_MANUAL_SOURCE_CODE = 'manual_source_code';
     const FIELD_SOURCE_CODE = 'source_code';
     const FIELD_PERMISSION_TEXT = 'permission_text';
 

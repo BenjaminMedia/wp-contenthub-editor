@@ -20,11 +20,35 @@ class Newsletter implements WidgetContract
             'label' => 'Newsletter',
             'display' => 'block',
             'sub_fields' => [
+                $this->getCustomSourceCodeCheckbox(),
                 $this->getSourceCodeField(),
                 $this->getPermissionTextField(),
             ],
             'min' => '',
             'max' => '',
+        ];
+    }
+
+    private function getCustomSourceCodeCheckbox()
+    {
+        return [
+            'key' => 'field_5e15a823c1913',
+            'label' => 'Manual Source Code',
+            'name' => 'manual_source_code',
+            'type' => 'true_false',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'message' => 'Enable manual input of custom source.',
+            'default_value' => 0,
+            'ui' => 0,
+            'ui_on_text' => '',
+            'ui_off_text' => '',
         ];
     }
 
@@ -36,8 +60,16 @@ class Newsletter implements WidgetContract
             'name' => AcfName::FIELD_SOURCE_CODE,
             'type' => 'number',
             'instructions' => '',
-            'required' => 0,
-            'conditional_logic' => 0,
+            'required' => 1,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_5e15a823c1913',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
             'wrapper' => array(
                 'width' => '',
                 'class' => '',
@@ -64,8 +96,9 @@ class Newsletter implements WidgetContract
             'conditional_logic' => array(
                 array(
                     array(
-                        'field' => 'field_5e144f59a2ac8',
-                        'operator' => '!=empty',
+                        'field' => 'field_5e15a823c1913',
+                        'operator' => '==',
+                        'value' => '1',
                     ),
                 ),
             ),
