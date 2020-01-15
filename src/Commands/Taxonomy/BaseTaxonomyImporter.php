@@ -2,11 +2,10 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Commands\Taxonomy;
 
+use Bonnier\WP\ContentHub\Editor\Commands\BaseCmd;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\TermImportHelper;
-use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\ContentHub\Editor\Plugin;
-use WP_CLI_Command;
 use WP_CLI;
 
 /**
@@ -14,7 +13,7 @@ use WP_CLI;
  *
  * @package \Bonnier\WP\ContentHub\Editor\Commands\Taxonomy
  */
-class BaseTaxonomyImporter extends WP_CLI_Command
+class BaseTaxonomyImporter extends BaseCmd
 {
     protected $taxonomy;
     protected $getTermCallback;
@@ -36,18 +35,10 @@ class BaseTaxonomyImporter extends WP_CLI_Command
         $this->taxonomy = $taxononmy;
         $this->getTermCallback = $getTermCallback;
         $this->termImportHelper = new TermImportHelper($taxononmy);
-        $this->mapSites(function ($site) {
-            $this->mapTerms($site, function ($externalTag) {
-                $this->termImportHelper->importTermAndLinkTranslations($externalTag);
-            });
+        $this->mapTerms($this->get_site(), function ($externalTag) {
+            $this->termImportHelper->importTermAndLinkTranslations($externalTag);
         });
-    }
 
-    protected function mapSites($callable)
-    {
-        collect(Plugin::instance()->settings->get_languages())->pluck('locale')->map(function ($locale) use ($callable) {
-            return Plugin::instance()->settings->get_site($locale);
-        })->rejectNullValues()->each($callable);
     }
 
     protected function mapTerms($site, $callable)
