@@ -38,7 +38,6 @@ class BaseTaxonomyImporter extends BaseCmd
         $this->mapTerms($this->get_site(), function ($externalTag) {
             $this->termImportHelper->importTermAndLinkTranslations($externalTag);
         });
-
     }
 
     protected function mapTerms($site, $callable)
