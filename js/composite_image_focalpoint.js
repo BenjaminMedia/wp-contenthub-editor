@@ -171,7 +171,7 @@ class ImageFocalPoint {
   });
 
   function addFocalPoints() {
-    const imageContainers = document.querySelectorAll('[data-name="composite_content"] .values .acf-field-image .acf-image-uploader');
+    const imageContainers = document.querySelectorAll('[data-name="composite_content"] .values .acf-field-image .acf-image-uploader, [data-name="teaser_image"] .acf-input .acf-image-uploader');
     enableFocalPoints(imageContainers);
   }
 
