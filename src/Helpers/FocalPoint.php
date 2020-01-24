@@ -69,7 +69,7 @@ class FocalPoint
 
     public function registerScripts($hook)
     {
-        if ('post.php' !== $hook) {
+        if (! in_array($hook, ['post.php', 'post-new.php'])) {
             return;
         }
 
