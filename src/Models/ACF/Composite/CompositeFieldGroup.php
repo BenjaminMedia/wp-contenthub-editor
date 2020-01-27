@@ -19,6 +19,11 @@ class CompositeFieldGroup
 
     const KIND_TYPE_SHELL = 'Shell';
 
+    public function __construct()
+    {
+        add_filter('acf/validate_value/key='.self::FIELD_SOURCE_CODE, [$this, 'validateSourceCodeLength'], 10, 4);
+    }
+
     public static function register()
     {
         static::create_acf_field_group();
@@ -1861,6 +1866,88 @@ class CompositeFieldGroup
                                 'min' => '',
                                 'max' => '',
                             ],
+                            'layout_5e2eb60fe1ce9' => [
+                                'key' => 'layout_5e2eb60fe1ce9',
+                                'name' => 'newsletter',
+                                'label' => 'Newsletter',
+                                'display' => 'block',
+                                'sub_fields' => [
+                                    [
+                                        'key' => 'field_5e2eb61be1cea',
+                                        'label' => 'Title',
+                                        'name' => 'title',
+                                        'type' => 'text',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'default_value' => '',
+                                        'placeholder' => 'Title',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'maxlength' => '',
+                                    ],
+                                    [
+                                        'key' => 'field_5e2eb62ee1ceb',
+                                        'label' => 'Description',
+                                        'name' => 'description',
+                                        'type' => 'markdown-editor',
+                                        'instructions' => '',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'simple_mde_config' => 'simple',
+                                        'font_size' => 14,
+                                    ],
+                                    [
+                                        'key' => 'field_5e2ebd197a759',
+                                        'label' => 'Source Code',
+                                        'name' => 'source_code',
+                                        'type' => 'number',
+                                        'instructions' => 'If no source code is provided, the default for the brand will be used',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'default_value' => '',
+                                        'placeholder' => 'Source Code',
+                                        'prepend' => '',
+                                        'append' => '',
+                                        'min' => 100000,
+                                        'max' => 999999,
+                                        'step' => '',
+                                    ],
+                                    [
+                                        'key' => 'field_5e2ebd3b7a75a',
+                                        'label' => 'Permission Text',
+                                        'name' => 'permission_text',
+                                        'type' => 'markdown-editor',
+                                        'instructions' => 'If no permission text is provided, the default for the brand will be used',
+                                        'required' => 0,
+                                        'conditional_logic' => 0,
+                                        'wrapper' => [
+                                            'width' => '',
+                                            'class' => '',
+                                            'id' => '',
+                                        ],
+                                        'simple_mde_config' => 'simple',
+                                        'font_size' => 14,
+                                    ],
+                                ],
+                                'min' => '',
+                                'max' => '',
+                            ],
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',
@@ -1930,5 +2017,18 @@ class CompositeFieldGroup
             }
             return null;
         }, 10, 1);
+    }
+
+    public function validateSourceCodeLength($valid, $value)
+    {
+        if (!$valid) {
+            return $valid;
+        }
+
+        if (!empty($value) && strlen($value) !== 6) {
+            $valid = 'Please make sure your source code is in the right format';
+        }
+
+        return $valid;
     }
 }
