@@ -3,7 +3,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Database;
 
-
 use Bonnier\WP\ContentHub\Editor\Database\Migrations\CreateFeatureDatesTable;
 use Bonnier\WP\ContentHub\Editor\Database\Migrations\Migration;
 

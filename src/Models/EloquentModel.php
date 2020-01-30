@@ -3,7 +3,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-
 use Bonnier\WP\ContentHub\Editor\Database\DB;
 use Illuminate\Database\Eloquent\Model;
 
