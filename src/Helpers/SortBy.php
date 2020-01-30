@@ -3,10 +3,12 @@
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
+use Bonnier\WP\ContentHub\Editor\Models\FeatureDate;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\Cxense\Parsers\Document;
 use Bonnier\WP\Cxense\Services\WidgetDocumentQuery;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class SortBy
@@ -75,11 +77,18 @@ class SortBy
      */
     protected static function getCompositesByTaxonomy(): ?array
     {
+        $featuredPostIds = FeatureDate::where('timestamp', '<', Carbon::now())
+            ->orderBy('timestamp', 'desc')
+            ->get()
+            ->pluck('post_id')
+            ->toArray();
+
         $args = [
             'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
             'paged' => self::$page,
             'order' => 'DESC',
             'orderby' => 'post_date',
+            'post__not_in' => $featuredPostIds,
             'post_type' =>  WpComposite::POST_TYPE,
             'post_status' => 'publish',
             'suppress_filters' => true,
@@ -111,9 +120,17 @@ class SortBy
 
         $teaserQuery = new \WP_Query($args);
 
+        $featuredPosts = collect(get_posts([
+            'posts_per_page' => $args['posts_per_page'],
+            'post_type' => WpComposite::POST_TYPE,
+            'post__in' => $featuredPostIds,
+            'orderby' => 'post__in',
+            'tax_query' => $args['tax_query']
+        ]));
+
         if ($teaserQuery->have_posts()) {
             return [
-                'composites' => collect($teaserQuery->posts),
+                'composites' => $featuredPosts->merge(collect($teaserQuery->posts))->take($args['posts_per_page']),
                 'page' => self::$page,
                 'per_page' => intval($args['posts_per_page']),
                 'total' => intval($teaserQuery->found_posts),
