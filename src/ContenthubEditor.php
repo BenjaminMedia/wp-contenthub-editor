@@ -5,8 +5,10 @@ namespace Bonnier\WP\ContentHub\Editor;
 use Bonnier\WP\ContentHub\Editor\ACF\ImageHotSpotCoordinates;
 use Bonnier\WP\ContentHub\Editor\ACF\MarkdownEditor;
 use Bonnier\WP\ContentHub\Editor\Commands\CmdManager;
+use Bonnier\WP\ContentHub\Editor\Database\Migrate;
 use Bonnier\WP\ContentHub\Editor\Helpers\CollectionHelper;
 use Bonnier\WP\ContentHub\Editor\Helpers\CompositeHelper;
+use Bonnier\WP\ContentHub\Editor\Helpers\FeatureTimeField;
 use Bonnier\WP\ContentHub\Editor\Helpers\FocalPoint;
 use Bonnier\WP\ContentHub\Editor\Helpers\PolylangConfig;
 use Bonnier\WP\ContentHub\Editor\Http\Api\FocalpointEndpointController;
@@ -76,11 +78,14 @@ class ContenthubEditor
 
         add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts']);
 
+        Migrate::run();
+
         $this->settings = new SettingsPage();
         CollectionHelper::register(); // Extends Collection with extra methods
         new MarkdownEditor;
         new ImageHotSpotCoordinates();
         new CompositeHelper;
+        FeatureTimeField::register();
 
         // Register custom post type
         WpTaxonomy::register();
