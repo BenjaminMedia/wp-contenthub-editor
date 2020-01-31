@@ -21,6 +21,9 @@ class FeatureTimeField
         if ($post->post_type !== WpComposite::POST_TYPE || wp_is_post_revision($postID) || wp_is_post_autosave($postID)) {
             return;
         }
+        if (!array_key_exists('feature_aa', $_POST) || !array_key_exists('hidden_feature_aa', $_POST)) {
+            return;
+        }
         $featureDate = Carbon::create(
             $_POST['feature_aa'],
             $_POST['feature_mm'],
