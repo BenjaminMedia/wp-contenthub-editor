@@ -120,13 +120,18 @@ class SortBy
 
         $teaserQuery = new \WP_Query($args);
 
-        $featuredPosts = collect(get_posts([
-            'posts_per_page' => $args['posts_per_page'],
-            'post_type' => WpComposite::POST_TYPE,
-            'post__in' => $featuredPostIds,
-            'orderby' => 'post__in',
-            'tax_query' => $args['tax_query']
-        ]));
+        if (self::$page === 1) {
+            $featuredPosts = collect(get_posts([
+                'posts_per_page' => $args['posts_per_page'],
+                'post_type' => WpComposite::POST_TYPE,
+                'post__in' => $featuredPostIds,
+                'orderby' => 'post__in',
+                'tax_query' => $args['tax_query']
+            ]));
+        } else {
+            // If we are paginating, we'll ignore the featured posts.
+            $featuredPosts = collect();
+        }
 
         if ($teaserQuery->have_posts()) {
             return [
