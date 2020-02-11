@@ -77,10 +77,14 @@ class SortBy
      */
     protected static function getCompositesByTaxonomy(): ?array
     {
+        $currentLanguage = LanguageProvider::getCurrentLanguage();
         $featuredPostIds = FeatureDate::where('timestamp', '<', Carbon::now())
             ->orderBy('timestamp', 'desc')
             ->get()
             ->pluck('post_id')
+            ->reject(function (int $postID) use ($currentLanguage) {
+                return LanguageProvider::getPostLanguage($postID) !== $currentLanguage;
+            })
             ->toArray();
 
         $args = [
@@ -94,7 +98,7 @@ class SortBy
             'suppress_filters' => true,
             'update_post_term_cache' => false, // disable fetching of terms, and a write query to the database
             'cache_results' => false,
-            'lang' => LanguageProvider::getCurrentLanguage(),
+            'lang' => $currentLanguage,
         ];
 
         /** @var Collection $taxonomies */
