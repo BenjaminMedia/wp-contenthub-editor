@@ -665,13 +665,13 @@ class CompositeFieldGroup
                                         ),
                                         'choices' => array(
                                             'default' => 'Default (green)',
-                                            'brand-primary' => 'Brand Primary',
-                                            'brand-secondary' => 'Brand Secondary',
-                                            'brand-tertiary' => 'Brand Tertiary',
+                                            'primary' => 'Brand Primary',
+                                            'secondary' => 'Brand Secondary',
+                                            'tertiary' => 'Brand Tertiary',
                                             'white' => 'White',
                                         ),
                                         'default_value' => array(
-                                            0 => 'default: Default (green)',
+                                            0 => 'default',
                                         ),
                                         'allow_null' => 0,
                                         'multiple' => 0,
