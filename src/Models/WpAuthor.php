@@ -3,7 +3,6 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-
 use PHP_CodeSniffer\Tokenizers\PHP;
 use WP_User;
 

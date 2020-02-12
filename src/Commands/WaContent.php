@@ -533,7 +533,7 @@ class WaContent extends BaseCmd
 
     private function getAuthor($waContent) : \WP_User
     {
-        if(empty($waContent->author)) {
+        if (empty($waContent->author)) {
             return WpAuthor::getDefaultAuthor($waContent->translation->locale);
         }
         return WpAuthor::findOrCreate($waContent->author);

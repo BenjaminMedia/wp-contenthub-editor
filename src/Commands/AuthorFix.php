@@ -81,7 +81,7 @@ class AuthorFix extends WP_CLI_Command
 
     public function fixAll()
     {
-        collect(LanguageProvider::getLanguageList())->each(function ($language){
+        collect(LanguageProvider::getLanguageList())->each(function ($language) {
             $author = WpAuthor::getDefaultAuthor($language->slug);
             if (empty($author)) {
                 WP_CLI::error('Could not get default user');
