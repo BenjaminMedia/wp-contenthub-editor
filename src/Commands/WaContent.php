@@ -8,6 +8,7 @@ use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
 use Bonnier\WP\ContentHub\Editor\Models\Partials\EstimatedReadingTime;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
+use Bonnier\WP\ContentHub\Editor\Models\WpAuthor;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Repositories\WhiteAlbum\ContentRepository;
 use Bonnier\WP\Cxense\Models\Post as CxensePost;
@@ -204,7 +205,7 @@ class WaContent extends BaseCmd
             'post_type'     => WpComposite::POST_TYPE,
             'post_date'     => $waContent->widget_content->publish_at,
             'post_modified' => $waContent->widget_content->publish_at,
-            'post_author'   => $this->getAuthor($waContent),
+            'post_author'   => $this->getAuthor($waContent)->ID,
             'post_category' => [WpTerm::id_from_whitealbum_id($waContent->widget_content->category_id) ?? null],
             'meta_input'    => [
                 WpComposite::POST_META_WHITE_ALBUM_ID     => $waContent->widget_content->id,
@@ -530,34 +531,12 @@ class WaContent extends BaseCmd
         remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10);
     }
 
-    private function getAuthor($waContent)
+    private function getAuthor($waContent) : \WP_User
     {
-        global $wpdb;
-
-        $contentHubId = base64_encode(sprintf('wa-author-%s', md5(strtolower(trim($waContent->author)))));
-
-        $existingId = $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT user_id FROM wp_usermeta WHERE meta_key=%s AND meta_value=%s",
-                'contenthub_id',
-                $contentHubId
-            )
-        );
-
-        $userId = wp_insert_user([
-            'ID'           => $existingId ?: null,
-            'user_login'   => sanitize_user($waContent->author),
-            'display_name' => $waContent->author,
-            'user_pass'    => md5(rand(1, 32)),
-        ]);
-
-        if (is_wp_error($userId)) {
-            return null;
+        if(empty($waContent->author)) {
+            return WpAuthor::getDefaultAuthor($waContent->translation->locale);
         }
-
-        update_user_meta($userId, 'contenthub_id', $contentHubId);
-
-        return $userId;
+        return WpAuthor::findOrCreate($waContent->author);
     }
 
     private function fixFaultyImageFormats($content)
