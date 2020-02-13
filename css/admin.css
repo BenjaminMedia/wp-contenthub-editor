@@ -9,11 +9,14 @@ body.taxonomy-post_tag form[name=edittag] table.form-table:first-of-type tr#term
 body.taxonomy-category form[name=edittag] table.form-table:first-of-type tr#term-translations,
 body.taxonomy-post_tag form[name=edittag] #delete-link,
 body.taxonomy-category form[name=edittag] #delete-link,
-body.post-type-contenthub_composite div#col-left
+body.post-type-contenthub_composite div#col-left,
+body.post-type-post div#col-left
 {
     display: none;
 }
-body.post-type-contenthub_composite div#col-right {
+body.post-type-contenthub_composite div#col-right,
+body.post-type-post div#col-right
+{
     width: 100%;
 }
 
