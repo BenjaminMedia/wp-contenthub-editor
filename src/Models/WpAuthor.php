@@ -44,6 +44,7 @@ class WpAuthor
             'user_login'   => sanitize_user($login),
             'display_name' => $displayName,
             'user_pass'    => md5(rand(1, 999999)),
+            'role'         => 'author',
         ]);
         if (is_wp_error($userId)) {
             return null;
