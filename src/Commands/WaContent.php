@@ -15,6 +15,7 @@ use Bonnier\WP\Cxense\Models\Post as CxensePost;
 use Illuminate\Support\Collection;
 use WP_CLI;
 use WP_Post;
+use WP_User;
 
 /**
  * Class AdvancedCustomFields
@@ -531,12 +532,15 @@ class WaContent extends BaseCmd
         remove_action('transition_post_status', [CxensePost::class, 'post_status_changed'], 10);
     }
 
-    private function getAuthor($waContent) : \WP_User
+    private function getAuthor($waContent) : WP_User
     {
-        if (empty($waContent->author)) {
-            return WpAuthor::getDefaultAuthor($waContent->translation->locale);
+        if (!empty($waContent->author)) {
+            $author = WpAuthor::findOrCreate($waContent->author);
+            if ($author instanceof WP_User) {
+                return $author;
+            }
         }
-        return WpAuthor::findOrCreate($waContent->author);
+        return WpAuthor::getDefaultAuthor($waContent->translation->locale);
     }
 
     private function fixFaultyImageFormats($content)
