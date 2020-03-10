@@ -21,14 +21,14 @@ class WpAuthor
         return self::$defaultAuthors;
     }
 
-    public static function getDefaultAuthor($locale): WP_User
+    public static function getDefaultAuthor($locale): ?WP_User
     {
         $displayName = array_get(self::$defaultAuthors, $locale ?? 'da', 'Redaktionen');
         $authorName = $displayName . '_' . $locale;
         return self::findOrCreate($authorName, $displayName, $locale);
     }
 
-    public static function findOrCreate($authorName, $displayName = '') : WP_User
+    public static function findOrCreate($authorName, $displayName = '') : ?WP_User
     {
         $contentHubId = self::makeContentHubId($authorName);
         if ($existingId = self::getByContentHubId($contentHubId)) {
