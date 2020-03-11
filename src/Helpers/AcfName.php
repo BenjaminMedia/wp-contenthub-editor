@@ -22,6 +22,7 @@ class AcfName
     const FIELD_DISPLAY_HINT = 'display_hint';
     const FIELD_IMAGE = 'image';
     const FIELD_LABEL = 'label';
+    const FIELD_LINK_TYPE = 'link_type';
     const FIELD_LINK = 'link';
     const FIELD_LINK_LABEL = 'link_label';
     const FIELD_SORT_BY = 'sort_by';
@@ -34,6 +35,9 @@ class AcfName
     const FIELD_MANUAL_SOURCE_CODE = 'manual_source_code';
     const FIELD_SOURCE_CODE = 'source_code';
     const FIELD_PERMISSION_TEXT = 'permission_text';
+    const FIELD_QUOTE = 'quote';
+    const FIELD_AUTHOR = 'author';
+    const FIELD_COMPOSITE_CONTENT = 'composite_content';
 
     const WIDGET_BANNER_PLACEMENT = 'banner_placement';
     const WIDGET_FEATURED_CONTENT = 'featured_content';
@@ -42,6 +46,7 @@ class AcfName
     const WIDGET_TAXONOMY_TEASER_LIST = 'taxonomy_teaser_list';
     const WIDGET_TEASER_LIST = 'teaser_list';
     const WIDGET_COMMERCIAL_SPOT = 'commercial_spot';
+    const WIDGET_QUOTE_TEASER = 'quote_teaser';
 
     const GROUP_PAGE_WIDGETS = 'page_widgets';
 }

@@ -9,6 +9,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\BannerPlacement;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\CommercialSpot;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\FeaturedContent;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\Newsletter;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\QuoteTeaser;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\SeoText;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TaxonomyList;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Page\Widgets\TeaserList;
@@ -50,6 +51,7 @@ class WpPage
                             with(new Newsletter)->getLayout(),
                             with(new BannerPlacement)->getLayout(),
                             with(new CommercialSpot)->getLayout(),
+                            with(new QuoteTeaser)->getLayout(),
                         ],
                         'button_label' => 'Add Widget',
                         'min' => '',

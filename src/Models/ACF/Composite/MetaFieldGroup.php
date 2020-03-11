@@ -12,9 +12,10 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
  */
 class MetaFieldGroup
 {
-    const SITEMAP_FIELD = 'field_5bfe50afe902e';
+    public const SITEMAP_FIELD = 'field_5bfe50afe902e';
 
-    const COMMERCIAL_TYPES = [
+    private const COMMERCIAL_FIELD = 'field_58fde84d034e4';
+    private const COMMERCIAL_TYPES = [
         'Advertorial' => 'Advertorial',
         'AffiliatePartner' => 'AffiliatePartner',
         'CommercialContent' => 'CommercialContent',
@@ -53,7 +54,7 @@ class MetaFieldGroup
                             'placeholder' => '',
                         ],
                         [
-                            'key' => 'field_58fde84d034e4',
+                            'key' => static::COMMERCIAL_FIELD,
                             'label' => 'Commercial',
                             'name' => 'commercial',
                             'type' => 'true_false',
@@ -81,7 +82,7 @@ class MetaFieldGroup
                             'conditional_logic' => [
                                 [
                                     [
-                                        'field' => 'field_58fde84d034e4',
+                                        'field' => static::COMMERCIAL_FIELD,
                                         'operator' => '==',
                                         'value' => '1',
                                     ],
@@ -114,7 +115,7 @@ class MetaFieldGroup
                             'conditional_logic' => [
                                 [
                                     [
-                                        'field' => 'field_58fde84d034e4',
+                                        'field' => static::COMMERCIAL_FIELD,
                                         'operator' => '==',
                                         'value' => '1',
                                     ],
@@ -135,6 +136,57 @@ class MetaFieldGroup
                             'max_height' => '',
                             'max_size' => '',
                             'mime_types' => '',
+                        ],
+                        [
+                            'key' => 'field_5e68cf051f4ea',
+                            'label' => 'Commercial Label',
+                            'name' => 'commercial_label',
+                            'type' => 'text',
+                            'instructions' => '',
+                            'required' => 0,
+                            'conditional_logic' => [
+                               [
+                                    [
+                                        'field' => static::COMMERCIAL_FIELD,
+                                        'operator' => '==',
+                                        'value' => '1',
+                                    ],
+                                ],
+                            ],
+                            'wrapper' => [
+                                'width' => '',
+                                'class' => '',
+                                'id' => '',
+                            ],
+                            'default_value' => '',
+                            'placeholder' => '',
+                            'prepend' => '',
+                            'append' => '',
+                            'maxlength' => '',
+                        ],
+                        [
+                            'key' => 'field_5e68cf2b1f4eb',
+                            'label' => 'Commercial Link',
+                            'name' => 'commercial_link',
+                            'type' => 'url',
+                            'instructions' => '',
+                            'required' => 0,
+                            'conditional_logic' => [
+                                [
+                                    [
+                                        'field' => static::COMMERCIAL_FIELD,
+                                        'operator' => '==',
+                                        'value' => '1',
+                                    ],
+                                ],
+                            ],
+                            'wrapper' => [
+                                'width' => '',
+                                'class' => '',
+                                'id' => '',
+                            ],
+                            'default_value' => '',
+                            'placeholder' => '',
                         ],
                         [
                             'key' => 'field_58fde876034e6',
