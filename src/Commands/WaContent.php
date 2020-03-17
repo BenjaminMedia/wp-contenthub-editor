@@ -6,6 +6,7 @@ use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\Cache\Models\Post as BonnierCachePost;
 use Bonnier\WP\ContentHub\Editor\Commands\Taxonomy\Helpers\WpTerm;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
+use Bonnier\WP\ContentHub\Editor\Models\ACF\Composite\CompositeFieldGroup;
 use Bonnier\WP\ContentHub\Editor\Models\Partials\EstimatedReadingTime;
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\WP\ContentHub\Editor\Models\WpAuthor;
@@ -272,7 +273,9 @@ class WaContent extends BaseCmd
 
     private function setMeta($postId, $waContent)
     {
-        update_field('kind', 'Article', $postId); // Todo: set proper kind
+        $isShellArticle = isset($waContent->external_link) && !empty($waContent->external_link);
+
+        update_field('kind', $isShellArticle ? 'Shell' : 'Article', $postId);
         update_field('description', trim($waContent->widget_content->description), $postId);
 
         update_field('magazine_year', $waContent->magazine_year ?? null, $postId);
@@ -280,6 +283,10 @@ class WaContent extends BaseCmd
 
         update_field('canonical_url', $waContent->widget_content->canonical_link, $postId);
         update_field('internal_comment', $waContent->widget_content->social_media_text, $postId);
+
+        if ($isShellArticle) {
+            update_field(CompositeFieldGroup::SHELL_LINK_FIELD, $waContent->external_link, $postId);
+        }
 
         if ($waContent->widget_content->advertorial_label) {
             update_field('commercial', true, $postId);
