@@ -63,13 +63,14 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
         // Get all anchor tags as html strings
         preg_match_all('/<a[^>]*>(?:.|\n)*?<\/a>/i', $html, $matches);
 
-        collect($matches)->flatten()->each(function ($anchorHMTL) use (&$html) {
+        collect($matches)->flatten()->each(function ($anchorHtml) use (&$html) {
+            
             // convert encoding to special chars are read correctly
-            $anchorHMTL = mb_convert_encoding($anchorHMTL, 'HTML-ENTITIES', "UTF-8");
+            $utfEncodedHtml = mb_convert_encoding($anchorHtml, 'HTML-ENTITIES', "UTF-8");
             // Parse the anchor so we may use objects to access the attributes
 
             $domDocument = new DOMDocument();
-            $domDocument->loadHTML($anchorHMTL);
+            $domDocument->loadHTML($utfEncodedHtml);
             $anchors = $domDocument->getElementsByTagName('a');
             /* @var $anchor \DOMElement */
             if ($anchor = $anchors->item(0)) {
@@ -80,12 +81,13 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
                         return $attributes;
                     }, []);
 
+
                 $markdown = sprintf('[%s](%s%s)',
                     static::parseHtml($anchor->textContent, false), // Fix any html that might be inside
                     $anchor->getAttribute('href'),
                     empty($attributes) ? '' : sprintf(' %s', json_encode($attributes))
                 );
-                $html = str_replace(html_entity_decode($anchorHMTL), $markdown, $html);
+                $html = str_replace($anchorHtml, $markdown, $html);
             }
         });
         return $html;
