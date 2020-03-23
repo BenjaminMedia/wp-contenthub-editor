@@ -297,7 +297,7 @@ class WaContent extends BaseCmd
         }
     }
 
-    private function formatCompositeContents($waContent)
+    private function formatCompositeContents($waContent) : ?Collection
     {
         if (isset($waContent->body->widget_groups)) {
             return collect($waContent->body->widget_groups)
@@ -330,23 +330,18 @@ class WaContent extends BaseCmd
                 });
         }
         if (isset($waContent->gallery_images)) {
-            // Galleries are converted to a combination of text items and image widgets
-            return collect($waContent->gallery_images)
-                ->pluck('image')
-                ->map(function ($waImage) {
-                    $description = $waImage->description;
-                    $waImage->type = 'image';
-                    unset($waImage->description);
-                    return [
-                        $this->fixFaultyImageFormats($waImage),
-                        [
-                            'type' => 'text_item',
-                            'text' => $description
-                        ]
-                    ];
-                })
-                ->flatten(1)
-                ->itemsToObject();
+            return collect([
+                (object)[
+                    'type' => 'gallery',
+                    'display_hint' => 'default',
+                    'images' => collect($waContent->gallery_images)
+                        ->pluck('image')
+                        ->map(function ($waImage) {
+                            $waImage->type = 'image';
+                            return $this->fixFaultyImageFormats($waImage);
+                        })
+                ]
+            ]);
         }
         return null;
     }
