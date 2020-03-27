@@ -78,15 +78,15 @@ class SortBy
     protected static function getCompositesByTaxonomy(): ?array
     {
         $currentLanguage = LanguageProvider::getCurrentLanguage();
-        $featuredPostIds = FeatureDate::where('timestamp', '<', Carbon::now())
+        $featuredPostIdTimestamps = FeatureDate::where('timestamp', '<', Carbon::now())
             ->orderBy('timestamp', 'desc')
             ->get()
-            ->pluck('post_id')
-            ->reject(function (int $postID) use ($currentLanguage) {
-                return LanguageProvider::getPostLanguage($postID) !== $currentLanguage;
+            ->pluck('timestamp', 'post_id')
+            ->filter(function ($value, $postID) use ($currentLanguage) {
+                return LanguageProvider::getPostLanguage($postID) == $currentLanguage;
             })
             ->toArray();
-
+        $featuredPostIds =  array_keys($featuredPostIdTimestamps);
         $args = [
             'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
             'paged' => self::$page,
@@ -123,7 +123,6 @@ class SortBy
         })->values()->toArray();
 
         $teaserQuery = new \WP_Query($args);
-
         if (self::$page === 1) {
             $featuredPosts = collect(get_posts([
                 'posts_per_page' => $args['posts_per_page'],
@@ -137,9 +136,15 @@ class SortBy
             $featuredPosts = collect();
         }
 
+        $latestPosts = $featuredPosts->merge(collect($teaserQuery->posts))
+                               ->sortByDesc(function ($post) use ($featuredPostIdTimestamps) {
+                                   $featuredPost = $featuredPostIdTimestamps[$post->ID] ?? false;
+                                   return $featuredPost ? $featuredPost->getTimestamp() : strtotime($post->post_date);
+                               })->take($args['posts_per_page']);
+
         if ($teaserQuery->have_posts()) {
             return [
-                'composites' => $featuredPosts->merge(collect($teaserQuery->posts))->take($args['posts_per_page']),
+                'composites' => $latestPosts,
                 'page' => self::$page,
                 'per_page' => intval($args['posts_per_page']),
                 'total' => intval($teaserQuery->found_posts),
