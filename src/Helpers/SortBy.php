@@ -87,9 +87,16 @@ class SortBy
             })
             ->toArray();
 
+
+
+        $postsPerPage = self::$acfWidget[AcfName::FIELD_TEASER_AMOUNT] ?? 4;
+        $offset = self::$acfWidget[AcfName::FIELD_SKIP_TEASERS_AMOUNT] ?? 0;
+        // Calculate offset factoring in pagination;
+        $paginatedOffset = $offset + ( (self::$page -1) * $postsPerPage );
+
         $args = [
-            'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
-            'paged' => self::$page,
+            'posts_per_page' => $postsPerPage,
+            'offset' => $paginatedOffset,
             'order' => 'DESC',
             'orderby' => 'post_date',
             'post__not_in' => $featuredPostIds,
@@ -124,7 +131,7 @@ class SortBy
 
         $teaserQuery = new \WP_Query($args);
 
-        if (self::$page === 1) {
+        if (self::$page === 1 && $offset === 0) {
             $featuredPosts = collect(get_posts([
                 'posts_per_page' => $args['posts_per_page'],
                 'post_type' => WpComposite::POST_TYPE,

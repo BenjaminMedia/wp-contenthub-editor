@@ -43,6 +43,7 @@ abstract class BaseWidget implements WidgetContract
             $this->getSortByTab(),
             $this->getSortByOptions(),
             $this->getTeaserAmount(),
+            $this->getSkipTeasersAmount(),
             $this->getTeaserList(),
             $this->getCategoryField(),
             $this->getTagField(),
@@ -99,6 +100,40 @@ abstract class BaseWidget implements WidgetContract
             'default_value' => SortBy::POPULAR,
             'layout' => 'vertical',
             'return_format' => 'value',
+        ];
+    }
+
+    private function getSkipTeasersAmount()
+    {
+        return [
+            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_SKIP_TEASERS_AMOUNT),
+            'label' => 'Amount of Teasers skip',
+            'name' => AcfName::FIELD_SKIP_TEASERS_AMOUNT,
+            'type' => 'number',
+            'instructions' =>
+                'How many teasers should it it skip?',
+            'required' => 0,
+            'conditional_logic' => [
+                [
+                    [
+                        'field' => $this->sortByField,
+                        'operator' => '==',
+                        'value' => SortBy::CUSTOM,
+                    ],
+                ],
+            ],
+            'wrapper' => [
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ],
+            'default_value' => 0,
+            'placeholder' => '',
+            'prepend' => '',
+            'append' => '',
+            'min' => 0,
+            'max' => PHP_INT_MAX,
+            'step' => '',
         ];
     }
 

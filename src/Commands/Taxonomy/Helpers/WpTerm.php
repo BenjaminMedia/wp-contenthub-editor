@@ -104,6 +104,17 @@ class WpTerm
         );
     }
 
+
+    /**
+     * @param $id
+     *
+     * @return null|string
+     */
+    public static function whiteablum_id($termId)
+    {
+        return get_term_meta($termId, 'whitealbum_id', true);
+    }
+
     /*
     * @param $id integer wp_term->term_id
     *

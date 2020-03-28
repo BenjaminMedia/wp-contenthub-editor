@@ -5,30 +5,19 @@ namespace Bonnier\WP\ContentHub\Editor\Helpers;
 use DOMAttr;
 use DOMDocument;
 use Exception;
+use League\HTMLToMarkdown\HtmlConverter;
 
-class HtmlToMarkdown extends \GuzzleHttp\Client
+class HtmlToMarkdown
 {
-    const ENDPOINT = 'http://html-to-markdown.interactives.dk';
-
     protected static $instance = null;
-
-    /**
-     * Client constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct([
-            'base_uri' => static::ENDPOINT
-        ]);
-    }
 
     /**
      * @return self
      */
-    public static function getInstance()
+    public static function getInstance() : HtmlConverter
     {
         if (is_null(self::$instance)) {
-            self::$instance = new static();
+            self::$instance = new HtmlConverter();;
         }
         return self::$instance;
     }
@@ -46,13 +35,9 @@ class HtmlToMarkdown extends \GuzzleHttp\Client
             $html = static::fixAnchorTags($html);
         }
         try {
-            $request = static::getInstance()->post('/', [
-                'form_params' => [
-                    'html' => $html,
-                ]
-            ]);
+            $markdown = static::getInstance()->convert($html);
             // Strip tags to avoid unwanted HTML in markdown
-            return strip_tags($request->getBody()->getContents());
+            return strip_tags($markdown);
         } catch (Exception $exception) {
             return null;
         }
