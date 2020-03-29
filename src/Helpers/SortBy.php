@@ -91,7 +91,7 @@ class SortBy
         $postsPerPage = self::$acfWidget[AcfName::FIELD_TEASER_AMOUNT] ?? 4;
         $offset = self::$acfWidget[AcfName::FIELD_SKIP_TEASERS_AMOUNT] ?? 0;
         // Calculate offset factoring in pagination;
-        $paginatedOffset = $offset + ( (self::$page -1) * $postsPerPage );
+        $paginatedOffset = $offset + ((self::$page -1) * $postsPerPage);
 
         $args = [
             'posts_per_page' => $postsPerPage,

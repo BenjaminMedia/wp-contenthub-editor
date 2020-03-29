@@ -100,9 +100,9 @@ class WaPanel extends BaseCmd
     private function formatWidgetGroups($waContent): ?Collection
     {
         return collect($waContent->widget_groups)
-            ->map(function($widgetGroup) {
+            ->map(function ($widgetGroup) {
                 if (!empty($widgetGroup->title)) { // Prepend title as seo widget
-                   $widgetGroup->widgets = array_prepend($widgetGroup->widgets, (object)[
+                    $widgetGroup->widgets = array_prepend($widgetGroup->widgets, (object)[
                      'type' => 'Widgets::Text',
                      'properties' => (object)[
                          'title' => $widgetGroup->title,

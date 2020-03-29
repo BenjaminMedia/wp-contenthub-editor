@@ -17,7 +17,8 @@ class HtmlToMarkdown
     public static function getInstance() : HtmlConverter
     {
         if (is_null(self::$instance)) {
-            self::$instance = new HtmlConverter();;
+            self::$instance = new HtmlConverter();
+            ;
         }
         return self::$instance;
     }
