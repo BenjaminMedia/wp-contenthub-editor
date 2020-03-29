@@ -140,7 +140,7 @@ class SortBy
                 'orderby' => 'post__in',
                 'tax_query' => $args['tax_query']
             ]));
-            $posts = $featuredPosts->merge($posts)
+            $posts->merge($featuredPosts)
                 ->sortByDesc(function ($post) use ($featuredPostIdTimestamps) {
                     $featuredPost = $featuredPostIdTimestamps[$post->ID] ?? false;
                     return $featuredPost ? $featuredPost->getTimestamp() : strtotime($post->post_date);
