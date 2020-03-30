@@ -121,7 +121,7 @@ class WaPanel extends BaseCmd
                     'type' => collect([ // Map the type
                         'Widgets::Text' => 'seo_text',
                         'Widgets::Standard' => 'teaser_list',
-                        'Widgets::NewsletterSignup' => 'cnewsletter',
+                        'Widgets::NewsletterSignup' => 'newsletter',
                         'Widgets::FullWidthContent' => 'teaser_list',
                         'Widgets::RotatorWithThumbnails' => 'teaser_list',
                     ])->get($waWidget->type, $waWidget->type),
