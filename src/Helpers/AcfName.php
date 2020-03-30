@@ -29,6 +29,7 @@ class AcfName
     const FIELD_TAG = 'tag';
     const FIELD_TAXONOMY = 'taxonomy';
     const FIELD_TEASER_AMOUNT = 'teaser_amount';
+    const FIELD_SKIP_TEASERS_AMOUNT = 'skip_teasers_amount';
     const FIELD_TEASER_LIST = 'teaser_list';
     const FIELD_TITLE = 'title';
     const FIELD_VIDEO = 'video';

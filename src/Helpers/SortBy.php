@@ -86,10 +86,16 @@ class SortBy
                 return LanguageProvider::getPostLanguage($postID) == $currentLanguage;
             })
             ->toArray();
+
         $featuredPostIds =  array_keys($featuredPostIdTimestamps);
+        $postsPerPage = self::$acfWidget[AcfName::FIELD_TEASER_AMOUNT] ?? 4;
+        $offset = self::$acfWidget[AcfName::FIELD_SKIP_TEASERS_AMOUNT] ?? 0;
+        // Calculate offset factoring in pagination;
+        $paginatedOffset = $offset + ((self::$page -1) * $postsPerPage);
+
         $args = [
-            'posts_per_page' => self::$acfWidget['teaser_amount'] ?? 4,
-            'paged' => self::$page,
+            'posts_per_page' => $postsPerPage,
+            'offset' => $paginatedOffset,
             'order' => 'DESC',
             'orderby' => 'post_date',
             'post__not_in' => $featuredPostIds,
@@ -123,7 +129,10 @@ class SortBy
         })->values()->toArray();
 
         $teaserQuery = new \WP_Query($args);
-        if (self::$page === 1) {
+
+        $posts = collect($teaserQuery->posts);
+
+        if (self::$page === 1 && $offset === 0) {
             $featuredPosts = collect(get_posts([
                 'posts_per_page' => $args['posts_per_page'],
                 'post_type' => WpComposite::POST_TYPE,
@@ -131,20 +140,19 @@ class SortBy
                 'orderby' => 'post__in',
                 'tax_query' => $args['tax_query']
             ]));
+            $posts->merge($featuredPosts)
+                ->sortByDesc(function ($post) use ($featuredPostIdTimestamps) {
+                    $featuredPost = $featuredPostIdTimestamps[$post->ID] ?? false;
+                    return $featuredPost ? $featuredPost->getTimestamp() : strtotime($post->post_date);
+                })->take($args['posts_per_page']);
         } else {
             // If we are paginating, we'll ignore the featured posts.
             $featuredPosts = collect();
         }
 
-        $latestPosts = $featuredPosts->merge(collect($teaserQuery->posts))
-                               ->sortByDesc(function ($post) use ($featuredPostIdTimestamps) {
-                                   $featuredPost = $featuredPostIdTimestamps[$post->ID] ?? false;
-                                   return $featuredPost ? $featuredPost->getTimestamp() : strtotime($post->post_date);
-                               })->take($args['posts_per_page']);
-
         if ($teaserQuery->have_posts()) {
             return [
-                'composites' => $latestPosts,
+                'composites' => $posts,
                 'page' => self::$page,
                 'per_page' => intval($args['posts_per_page']),
                 'total' => intval($teaserQuery->found_posts),

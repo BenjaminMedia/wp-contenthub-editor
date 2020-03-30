@@ -306,7 +306,7 @@ class WaContent extends BaseCmd
                 ->map(function ($waWidget) {
                     return collect([
                         'type' => collect([ // Map the type
-                            'Widgets::Text'         => 'text_item',
+                            'Widgets::Text'         => 'seo_text',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
                             'Widgets::Info'         => 'infobox',
