@@ -124,10 +124,10 @@ class WaPanel extends BaseCmd
                         'Widgets::RotatorWithThumbnails' => 'teaser_list',
                     ])
                         ->get($waWidget->type, $waWidget->type),
-                    'display_format' => collect([ // Map the type
-                        'Widgets::Standard' => 'default',
-                        'Widgets::RotatorWithThumbnails' => 'presentation',
-                    ])
+                            'display_format' => collect([ // Map the type
+                            'Widgets::Standard' => 'default',
+                            'Widgets::RotatorWithThumbnails' => 'presentation',
+                        ])
                         ->get($waWidget->type, 'default'),
                 ])
                     ->merge($waWidget->properties)// merge properties
