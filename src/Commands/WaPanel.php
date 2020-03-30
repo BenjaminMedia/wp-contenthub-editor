@@ -47,6 +47,9 @@ class WaPanel extends BaseCmd
      * [--id=<id>]
      * : The id of a single panel to import.
      *
+     * [--locale=<locale>]
+     * : The locale to import panels from
+     *
      *
      * ## EXAMPLES
      * wp contenthub editor wa panel import
@@ -96,19 +99,18 @@ class WaPanel extends BaseCmd
     }
 
 
-
     private function formatWidgetGroups($waContent): ?Collection
     {
         return collect($waContent->widget_groups)
             ->map(function ($widgetGroup) {
                 if (!empty($widgetGroup->title)) { // Prepend title as seo widget
                     $widgetGroup->widgets = array_prepend($widgetGroup->widgets, (object)[
-                     'type' => 'Widgets::Text',
-                     'properties' => (object)[
-                         'title' => $widgetGroup->title,
-                         'text' => null
-                     ]
-                   ]);
+                        'type' => 'Widgets::Text',
+                        'properties' => (object)[
+                            'title' => $widgetGroup->title,
+                            'text' => null
+                        ]
+                    ]);
                 }
                 return $widgetGroup;
             })
@@ -122,13 +124,12 @@ class WaPanel extends BaseCmd
                         'Widgets::NewsletterSignup' => 'newsletter',
                         'Widgets::FullWidthContent' => 'teaser_list',
                         'Widgets::RotatorWithThumbnails' => 'teaser_list',
-                    ])
-                        ->get($waWidget->type, $waWidget->type),
-                            'display_format' => collect([ // Map the type
-                            'Widgets::Standard' => 'default',
-                            'Widgets::RotatorWithThumbnails' => 'presentation',
-                        ])
-                        ->get($waWidget->type, 'default'),
+                    ])->get($waWidget->type, $waWidget->type),
+
+                    'display_format' => collect([ // Map the type
+                        'Widgets::Standard' => 'default',
+                        'Widgets::RotatorWithThumbnails' => 'presentation',
+                    ])->get($waWidget->type, 'default'),
                 ])
                     ->merge($waWidget->properties)// merge properties
                     ->merge($waWidget->image ?? null);
@@ -145,16 +146,16 @@ class WaPanel extends BaseCmd
             ->map(function ($widget) use ($category, &$sortBySkipAmount) {
                 if ($widget->type === 'seo_text') {
                     return [
-                        'acf_fc_layout'  => $widget->type,
+                        'acf_fc_layout' => $widget->type,
                         'title' => $widget->title ?? null,
                         'description' => HtmlToMarkdown::parseHtml($widget->text),
                     ];
                 }
                 if ($widget->type === 'teaser_list' && $widget->category_id) {
                     $teaserListWidget = [
-                        'acf_fc_layout'  => $widget->type,
+                        'acf_fc_layout' => $widget->type,
                         'display_format' => $widget->display_format,
-                        'category' =>  WpTerm::id_from_whitealbum_id($widget->category_id),
+                        'category' => WpTerm::id_from_whitealbum_id($widget->category_id),
                         'sort_by' => 'custom',
                         AcfName::FIELD_TEASER_AMOUNT => $widget->number_of_contents,
                         AcfName::FIELD_SKIP_TEASERS_AMOUNT => $sortBySkipAmount[$widget->category_id] ?? 0,
@@ -168,18 +169,18 @@ class WaPanel extends BaseCmd
                 }
                 if ($widget->type === 'newsletter') {
                     return [
-                        'acf_fc_layout'  => $widget->type
+                        'acf_fc_layout' => $widget->type
                     ];
                 }
                 return null;
             })
             ->rejectNullValues()
             ->push([
-                'acf_fc_layout'  => 'teaser_list',
+                'acf_fc_layout' => 'teaser_list',
                 'display_format' => 'default',
                 'sort_by' => 'custom',
                 AcfName::FIELD_TEASER_AMOUNT => 12,
-                AcfName::FIELD_SKIP_TEASERS_AMOUNT => $sortBySkipAmount[WpTerm::whiteablum_id($category->term_id)],
+                AcfName::FIELD_SKIP_TEASERS_AMOUNT => $sortBySkipAmount[WpTerm::whiteablum_id($category->term_id)] ?? 0,
                 'pagination' => true,
                 'category' => $category->term_id
             ]);
