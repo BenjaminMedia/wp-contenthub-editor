@@ -167,6 +167,22 @@ class WaPanel extends BaseCmd
                     }
                     return $teaserListWidget;
                 }
+                if ($widget->type === 'teaser_list' && $widget->tags) {
+                    $teaserListWidget = [
+                        'acf_fc_layout' => $widget->type,
+                        'display_format' => $widget->display_format,
+                        'tag' => WpTerm::id_from_whitealbum_id($widget->tags),
+                        'sort_by' => 'custom',
+                        AcfName::FIELD_TEASER_AMOUNT => $widget->number_of_contents,
+                        AcfName::FIELD_SKIP_TEASERS_AMOUNT => $sortBySkipAmount[$widget->tags] ?? 0,
+                    ];
+                    if (!isset($sortBySkipAmount[$widget->tags])) {
+                        $sortBySkipAmount[$widget->tags] = $widget->number_of_contents;
+                    } else {
+                        $sortBySkipAmount[$widget->tags] += $widget->number_of_contents;
+                    }
+                    return $teaserListWidget;
+                }
                 if ($widget->type === 'newsletter') {
                     return [
                         'acf_fc_layout' => $widget->type
