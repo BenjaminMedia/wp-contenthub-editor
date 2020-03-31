@@ -18,7 +18,6 @@ class HtmlToMarkdown
     {
         if (is_null(self::$instance)) {
             self::$instance = new HtmlConverter();
-            ;
         }
         return self::$instance;
     }
