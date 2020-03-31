@@ -306,7 +306,7 @@ class WaContent extends BaseCmd
                 ->map(function ($waWidget) {
                     return collect([
                         'type' => collect([ // Map the type
-                            'Widgets::Text'         => 'seo_text',
+                            'Widgets::Text'         => 'text_item',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
                             'Widgets::Info'         => 'infobox',
@@ -542,7 +542,7 @@ class WaContent extends BaseCmd
                 return $author;
             }
         }
-        return WpAuthor::getDefaultAuthor($waContent->translation->locale);
+        return WpAuthor::getDefaultAuthor($waContent->widget_content->site->locale);
     }
 
     private function fixFaultyImageFormats($content)
