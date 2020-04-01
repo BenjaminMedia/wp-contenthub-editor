@@ -192,8 +192,9 @@ class WaContent extends BaseCmd
     {
         $existingId = WpComposite::id_from_white_album_id($waContent->widget_content->id);
 
-        if ($existingId && getenv('WP_ENV') === 'production') {
-            usleep(500000); // Delay for half a second when updating on prod to avoid ddos'ing WA
+        if ($existingId) {
+            // Prepare for looking up attachments before uploading images necessary for performance
+            WpAttachment::get_post_attachments($existingId);
         }
 
         // Tell Polylang the language of the post to allow multiple posts with the same slug in different languages
