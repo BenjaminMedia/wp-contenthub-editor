@@ -154,7 +154,8 @@ class WpAttachment
      *
      * @param $postId
      */
-    public static function get_post_attachments($postId) {
+    public static function get_post_attachments($postId)
+    {
         static::$postAttachmentsParent = $postId;
         static::$postAttachments = collect(get_children([
             'post_parent' => $postId,
@@ -164,7 +165,7 @@ class WpAttachment
             'order' => 'ASC',
             'orderby' => 'menu_order',
             'fields' => 'ids'
-        ]))->reduce(function (Collection $out, $attachmentId){
+        ]))->reduce(function (Collection $out, $attachmentId) {
             if ($contentHubId = get_post_meta($attachmentId, self::POST_META_CONTENTHUB_ID, true)) {
                 $out->put($contentHubId, $attachmentId);
             }
@@ -210,10 +211,10 @@ class WpAttachment
         }
 
         // No file extension, try to fix before upload
-        if(!str_contains($fileName, '.')) {
+        if (!str_contains($fileName, '.')) {
             $contentType = $fileResponse->getHeader('Content-Type');
-            if(!empty($contentType) && $extension = MimeTypeHelper::mimeToExtension($contentType[0])) {
-               $fileName .= '.' . $extension;
+            if (!empty($contentType) && $extension = MimeTypeHelper::mimeToExtension($contentType[0])) {
+                $fileName .= '.' . $extension;
             }
         }
 
@@ -342,7 +343,8 @@ class WpAttachment
         }, $defaultValue);
     }
 
-    private static function getClient(): Client {
+    private static function getClient(): Client
+    {
         if (is_null(static::$client)) {
             static::$client =  new Client();
         }

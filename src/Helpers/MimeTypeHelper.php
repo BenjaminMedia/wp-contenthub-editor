@@ -3,10 +3,9 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
-
 class MimeTypeHelper
 {
-    static $mime_map = [
+    public static $mime_map = [
             'video/3gpp2'                                                               => '3g2',
             'video/3gp'                                                                 => '3gp',
             'video/3gpp'                                                                => '3gp',
@@ -192,5 +191,4 @@ class MimeTypeHelper
         $mime = strtolower($mime);
         return isset(static::$mime_map[$mime]) ? static::$mime_map[$mime] : null;
     }
-
 }
