@@ -4,8 +4,11 @@ namespace Bonnier\WP\ContentHub\Editor\Models;
 
 use Bonnier\Willow\MuPlugins\Helpers\LanguageProvider;
 use Bonnier\WP\ContentHub\Editor\Helpers\HtmlToMarkdown;
+use Bonnier\WP\ContentHub\Editor\Helpers\MimeTypeHelper;
 use Bonnier\WP\ContentHub\Editor\Models\ACF\Attachment\AttachmentFieldGroup;
 use DeliciousBrains\WP_Offload_S3\Providers\AWS_Provider;
+use GuzzleHttp\Client;
+use Illuminate\Support\Collection;
 use function GuzzleHttp\Psr7\parse_query;
 
 /**
@@ -18,6 +21,10 @@ class WpAttachment
     const POST_META_CONTENTHUB_ID = 'contenthub_id';
     const POST_META_COPYRIGHT = 'attachment_copyright';
     const POST_META_COPYRIGHT_URL = 'attachment_copyright_url';
+
+    private static $postAttachmentsParent = null;
+    private static $postAttachments = null;
+    private static $client = null;
 
     public static function register()
     {
@@ -142,6 +149,30 @@ class WpAttachment
         return null;
     }
 
+    /**
+     * Finds the attachment contenthub ids by fetching them through the attached posts
+     *
+     * @param $postId
+     */
+    public static function get_post_attachments($postId)
+    {
+        static::$postAttachmentsParent = $postId;
+        static::$postAttachments = collect(get_children([
+            'post_parent' => $postId,
+            'post_status' => 'inherit',
+            'post_type' => 'attachment',
+            'post_mime_type' => 'image',
+            'order' => 'ASC',
+            'orderby' => 'menu_order',
+            'fields' => 'ids'
+        ]))->reduce(function (Collection $out, $attachmentId) {
+            if ($contentHubId = get_post_meta($attachmentId, self::POST_META_CONTENTHUB_ID, true)) {
+                $out->put($contentHubId, $attachmentId);
+            }
+            return $out;
+        }, collect([]));
+    }
+
     public static function upload_attachment($postId, $file)
     {
         if (is_null($file)) {
@@ -149,7 +180,12 @@ class WpAttachment
         }
 
         // If attachment already exists then update meta data and return the id
-        if ($existingId = static::id_from_contenthub_id($file->id)) {
+        if (!is_null(static::$postAttachments) && $postId == static::$postAttachmentsParent) {
+            $existingId = static::$postAttachments->get($file->id);
+        } else {
+            $existingId = static::id_from_contenthub_id($file->id);
+        }
+        if ($existingId) {
             static::updateAttachment($existingId, $file);
             return $existingId;
         }
@@ -160,23 +196,32 @@ class WpAttachment
         }
 
         $rawFileName = basename($file->url);
+
         // Sanitize the new file name so WordPress will upload it
         $fileName = static::sanitizeFileName($rawFileName, $file->url);
-
 
         // Make sure to sanitize the file name so urls with spaces and other special chars will work
         $file->url = str_replace($rawFileName, urlencode($rawFileName), $file->url);
 
         // Getting file stream
-        if (!$fileStream = @file_get_contents($file->url)) {
-            if (!$fileStream = @file_get_contents(urldecode($file->url))) { // try the url decoded
-                return null;
+        try {
+            $fileResponse = static::getClient()->get(urldecode($file->url));
+        } catch (\Exception $exception) {
+            return null;
+        }
+
+        // No file extension, try to fix before upload
+        if (!str_contains($fileName, '.')) {
+            $contentType = $fileResponse->getHeader('Content-Type');
+            if (!empty($contentType) && $extension = MimeTypeHelper::mimeToExtension($contentType[0])) {
+                $fileName .= '.' . $extension;
             }
         }
 
         // Uploading file
-        $uploadedFile = wp_upload_bits($fileName, null, $fileStream);
+        $uploadedFile = wp_upload_bits($fileName, null, $fileResponse->getBody()->getContents());
         if ($uploadedFile['error']) {
+            var_dump($uploadedFile);
             return null;
         }
 
@@ -296,5 +341,13 @@ class WpAttachment
             }
             return $out;
         }, $defaultValue);
+    }
+
+    private static function getClient(): Client
+    {
+        if (is_null(static::$client)) {
+            static::$client =  new Client();
+        }
+        return static::$client;
     }
 }
