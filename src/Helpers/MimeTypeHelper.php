@@ -75,12 +75,12 @@ class MimeTypeHelper
             'application/java-archive'                                                  => 'jar',
             'application/x-java-application'                                            => 'jar',
             'application/x-jar'                                                         => 'jar',
-            'image/jp2'                                                                 => 'jp2',
             'video/mj2'                                                                 => 'jp2',
             'image/jpx'                                                                 => 'jp2',
             'image/jpm'                                                                 => 'jp2',
             'image/jpeg'                                                                => 'jpeg',
-            'image/pjpeg'                                                               => 'jpeg',
+            'image/jp2'                                                                 => 'jp2',
+            'image/pjpeg'                                                               => 'pjpeg',
             'application/x-javascript'                                                  => 'js',
             'application/json'                                                          => 'json',
             'text/json'                                                                 => 'json',
@@ -158,6 +158,7 @@ class MimeTypeHelper
             'audio/wav'                                                                 => 'wav',
             'application/wbxml'                                                         => 'wbxml',
             'video/webm'                                                                => 'webm',
+            'image/webp'                                                                => 'webp',
             'audio/x-ms-wma'                                                            => 'wma',
             'application/wmlc'                                                          => 'wmlc',
             'video/x-ms-wmv'                                                            => 'wmv',
@@ -185,6 +186,11 @@ class MimeTypeHelper
             'multipart/x-zip'                                                           => 'zip',
             'text/x-scriptzsh'                                                          => 'zsh',
         ];
+
+    public static function extensionToMimeArray(): array
+    {
+        return array_flip(static::$mime_map);
+    }
 
     public static function mimeToExtension($mime): ?string
     {
