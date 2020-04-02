@@ -219,7 +219,7 @@ class WpAttachment
         }
 
         // Set extra mime types to allow for all image types like webp, pjpeg and jpeg2000
-        add_filter('mime_types', function($mimeTypes) {
+        add_filter('mime_types', function ($mimeTypes) {
             return array_merge($mimeTypes, MimeTypeHelper::extensionToMimeArray());
         }, 15, 2);
 

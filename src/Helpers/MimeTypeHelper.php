@@ -187,7 +187,8 @@ class MimeTypeHelper
             'text/x-scriptzsh'                                                          => 'zsh',
         ];
 
-    public static function extensionToMimeArray(): array {
+    public static function extensionToMimeArray(): array
+    {
         return array_flip(static::$mime_map);
     }
 
