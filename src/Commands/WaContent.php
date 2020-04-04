@@ -30,6 +30,7 @@ class WaContent extends BaseCmd
     private $repository = null;
     private $failedImportFile = null;
     private $isRefreshing = false;
+    private $site = null;
 
     public static function register()
     {
@@ -172,6 +173,8 @@ class WaContent extends BaseCmd
             $waContent->widget_content->title,
             $waContent->widget_content->id
         ));
+
+        $this->site = $waContent->widget_content->site;
 
         $postId = $this->createPost($waContent);
         $compositeContents = $this->formatCompositeContents($waContent);
@@ -563,7 +566,9 @@ class WaContent extends BaseCmd
         $vendor = collect([
             'youtube' => 'https://www.youtube.com/embed/',
             'vimeo'   => 'https://player.vimeo.com/video/',
-            'video23' => '//bonnier-publications-danmark.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
+            'video23' => 'https://' .
+                ($this->site->video23_account ?? 'bonnier-publications-danmark') .
+                '.23video.com/v.ihtml/player.html?source=share&photo%5fid=',
         ])->get($provider);
         return $vendor ? $vendor . $videoId : null;
     }
