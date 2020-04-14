@@ -313,6 +313,7 @@ class WaContent extends BaseCmd
                             'Widgets::Text'         => 'text_item',
                             'Widgets::Image'        => 'image',
                             'Widgets::InsertedCode' => 'inserted_code',
+                            'Widgets::Media'        => 'inserted_code',
                             'Widgets::Info'         => 'infobox',
                             'Widgets::Video'        => 'video',
                         ])
