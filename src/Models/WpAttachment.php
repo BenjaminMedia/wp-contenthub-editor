@@ -39,6 +39,26 @@ class WpAttachment
         });
     }
 
+    public static function mapAll($callback)
+    {
+        $args = [
+            'post_type' => 'attachment',
+            'posts_per_page' => 100,
+            'paged' => 1,
+            'order' => 'ASC',
+            'orderby' => 'ID'
+        ];
+
+        $posts = get_posts($args);
+
+        while ($posts) {
+            collect($posts)->each($callback);
+
+            $args['paged']++;
+            $posts = get_posts($args);
+        }
+    }
+
     public static function wp_update_attachment_metadata($data, $postId)
     {
         $postMeta = get_post_meta($postId);
@@ -270,7 +290,7 @@ class WpAttachment
         AttachmentFieldGroup::register();
     }
 
-    private static function updateAttachment($attachmentId, $file)
+    public static function updateAttachment($attachmentId, $file)
     {
         update_post_meta($attachmentId, '_wp_attachment_image_alt', static::getAlt($file));
         update_post_meta($attachmentId, static::POST_META_COPYRIGHT, $file->copyright ?? '');
@@ -321,7 +341,7 @@ class WpAttachment
 
     private static function getAlt($file)
     {
-        return static::getFirstMacthingAttribute($file, ['altText', 'alt_text', 'title', 'caption'], '');
+        return static::getFirstMatchingAttribute($file, ['altText', 'alt_text', 'title', 'caption'], '');
     }
 
     /**
@@ -331,21 +351,19 @@ class WpAttachment
      */
     private static function getCaption($file)
     {
-        $caption = static::getFirstMacthingAttribute($file, ['description', 'caption'], '');
+        $caption = static::getFirstMatchingAttribute($file, ['description', 'caption'], '');
         if (! empty($caption)) {
             $caption = HtmlToMarkdown::parseHtml($caption);
         }
         return $caption;
     }
 
-    private static function getFirstMacthingAttribute($file, array $attributes, $defaultValue = null)
+    private static function getFirstMatchingAttribute($file, array $attributes, $defaultValue = null)
     {
-        return collect($attributes)->reduce(function ($out, $atr) use ($file) {
-            if ($data = data_get($file, $atr) ?: null) {
-                $out = $data;
-            }
-            return $out;
-        }, $defaultValue);
+        $firstNonEmptyAttribute = collect($attributes)->first(function ($atr) use ($file) {
+            return !empty(data_get($file, $atr));
+        });
+        return $firstNonEmptyAttribute ? data_get($file, $firstNonEmptyAttribute) : $defaultValue;
     }
 
     private static function getClient(): Client
