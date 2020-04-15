@@ -41,7 +41,7 @@ class WaImages extends BaseCmd
     {
         $this->repository = new ImageRepository();
 
-        WpAttachment::mapAll(function (Wp_Post $attachment){
+        WpAttachment::mapAll(function (Wp_Post $attachment) {
             if ($waId = WpAttachment::contenthub_id($attachment->ID)) {
                 if ($waImage = $this->repository->findById($waId)) {
                     WP_CLI::line(sprintf('Updating image with post_id: %d and whitealbum_id: %d', $attachment->ID, $waId));
@@ -55,6 +55,4 @@ class WaImages extends BaseCmd
 
         WP_CLI::success('Done');
     }
-
-
 }
