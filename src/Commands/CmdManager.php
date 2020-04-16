@@ -34,6 +34,7 @@ class CmdManager
             Vocabularies::register();
             WaContent::register();
             WaPanel::register();
+            WaImages::register();
             WaRedirectResolver::register();
             AuthorFix::register();
             Attachments::register();
