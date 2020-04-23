@@ -60,7 +60,7 @@ class HtmlToMarkdown
             $fixedHtml = preg_replace('/(\d)\./', '$1\.', $utfEncodedHtml);
 
             // Replace with the fixed html
-            $html = str_replace($headerHtml, $fixedHtml ,$html);
+            $html = str_replace($headerHtml, $fixedHtml, $html);
         });
         return $html;
     }

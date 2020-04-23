@@ -99,7 +99,6 @@ class WaContent extends BaseCmd
                     $repository->findById($waId, ContentRepository::GALLERY_RESOURCE);
 
                 $this->importComposite($waContent);
-
             } else {
                 WP_CLI::line(sprintf('Skipping post: %s', $post->post_title));
             }
