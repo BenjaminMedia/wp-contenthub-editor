@@ -68,6 +68,45 @@ class WaContent extends BaseCmd
     }
 
     /**
+     * Fixes wrongly imported headings that was imported as ordered list
+     *
+     * ## EXAMPLES
+     * wp contenthub editor wa content fixHeadings
+     *
+     * @param $args
+     * @param $assocArgs
+     *
+     */
+    public function fixHeadings($args, $assocArgs)
+    {
+        WpComposite::map_all(function (WP_Post $post) {
+            // Get all widgets from composite
+            $brokenHeadings = collect(get_field('composite_content', $post->ID))
+                ->flatten() // flatten to look at all fields of any widget
+                ->reject(function ($value) {
+                    if (!empty($value) && is_string($value)) {
+                        // Match against known pattern
+                        preg_match_all('/\d\..+\n-+$/im', $value, $matches);
+                        return collect($matches)->flatten()->isEmpty();
+                    }
+                    return true;
+                });
+            if ($brokenHeadings->isNotEmpty() && $waId = WpComposite::white_album_id_form_post_id($post->ID)) {
+                WP_CLI::warning(sprintf('Will reimport post: %s, id: %d', $post->post_title, $post->ID));
+
+                $repository = new ContentRepository(LanguageProvider::getPostLanguage($post->ID));
+                $waContent = $repository->findById($waId, ContentRepository::ARTICLE_RESOURCE) ?:
+                    $repository->findById($waId, ContentRepository::GALLERY_RESOURCE);
+
+                $this->importComposite($waContent);
+            } else {
+                WP_CLI::line(sprintf('Skipping post: %s', $post->post_title));
+            }
+        });
+        WP_CLI::success('Done fixing headings!');
+    }
+
+    /**
      * Imports composites from WhiteAlbum
      *
      * ## OPTIONS

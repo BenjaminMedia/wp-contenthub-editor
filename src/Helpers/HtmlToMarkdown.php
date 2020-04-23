@@ -17,7 +17,9 @@ class HtmlToMarkdown
     public static function getInstance() : HtmlConverter
     {
         if (is_null(self::$instance)) {
-            self::$instance = new HtmlConverter();
+            self::$instance = new HtmlConverter([
+                'header_style' => 'atx'
+            ]);
         }
         return self::$instance;
     }
@@ -34,6 +36,7 @@ class HtmlToMarkdown
         if ($fixAnchors) {
             $html = static::fixAnchorTags($html);
         }
+        $html = static::fixOrderedListsInHeaders($html);
         try {
             $markdown = static::getInstance()->convert($html);
             // Strip tags to avoid unwanted HTML in markdown
@@ -41,6 +44,25 @@ class HtmlToMarkdown
         } catch (Exception $exception) {
             return null;
         }
+    }
+
+    private static function fixOrderedListsInHeaders($html)
+    {
+        // Get all headings with markdown lists in them
+        preg_match_all('/<h\d[^>]*>\d\. (?:.|\n)*?<\/h\d>/i', $html, $matches);
+
+        collect($matches)->flatten()->each(function ($headerHtml) use (&$html) {
+
+            // convert encoding to special chars are read correctly
+            $utfEncodedHtml = mb_convert_encoding($headerHtml, 'HTML-ENTITIES', "UTF-8");
+
+            // Escape the . after the digit to prevent markdown parsing as a ordered list
+            $fixedHtml = preg_replace('/(\d)\./', '$1\.', $utfEncodedHtml);
+
+            // Replace with the fixed html
+            $html = str_replace($headerHtml, $fixedHtml, $html);
+        });
+        return $html;
     }
 
     private static function fixAnchorTags($html)
