@@ -142,7 +142,7 @@
       'bottom': 0,
       'min-height': '360px',
       'background': 'rgba(0,0,0,0.7)',
-      'z-index': '159900'
+      'z-index': '160000'
     });
     var modal = jQuery(document.createElement('div'));
     modalContainer.append(modal);
