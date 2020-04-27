@@ -77,6 +77,9 @@
     }
     new SimpleMDE(Object.assign(mdeOptions, toolbar));
     jQuery(textArea).addClass('simple-mde-instantiated');
+    smde.codemirror.on('blur', function() {
+      jQuery(textArea).trigger('change');
+    })
   };
 
   acf.add_action('append', function (el) {
@@ -237,6 +240,7 @@
       }
       output += ')';
       cm.replaceSelection(output);
+      jQuery(cm.getTextArea()).trigger('change');
       modalContainer.remove();
     });
     jQuery(document).keyup(function(e) {
