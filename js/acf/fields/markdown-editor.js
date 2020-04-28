@@ -75,7 +75,7 @@
         ]
       };
     }
-    new SimpleMDE(Object.assign(mdeOptions, toolbar));
+    const smde = new SimpleMDE(Object.assign(mdeOptions, toolbar));
     jQuery(textArea).addClass('simple-mde-instantiated');
     smde.codemirror.on('blur', function() {
       jQuery(textArea).trigger('change');
