@@ -25,11 +25,36 @@
     if (jQuery(textArea).hasClass('simple-mde-instantiated')) {
       return;
     }
+    let countTimeout;
     var mdeOptions = {
       element: textArea,
       previewRender: previewContent,
       spellChecker: true,
       forceSync: true,
+      status: ["autosave", "lines", "words", {
+          className: "keystrokes",
+          defaultValue: function(el, codeMirror) {
+              this.charCount = characterCount(codeMirror.getValue());
+              el.innerHTML = "0 Characters";
+          },
+          onUpdate: function(el, codeMirror) {
+              window.clearTimeout(countTimeout)
+              countTimeout = window.setTimeout(() => {
+                  this.charCount = characterCount(codeMirror.getValue());
+                  el.innerHTML = this.charCount + " Characters";
+              }, 1000);
+          }
+      },
+      {
+          className: "keystrokes",
+          defaultValue: function(el, codeMirror) {
+              this.initialCharCount = characterCount(codeMirror.getValue());
+              el.innerHTML = "0 Initial Characters";
+          },
+          onUpdate: function(el, codeMirror) {
+              el.innerHTML = this.initialCharCount + " Initial Characters";
+          }
+      }], // Another optional usage, with a custom status bar item that counts keystrokes
     };
     if (typeof dictionary !== "undefined") {
       mdeOptions.dictionary = dictionary;
@@ -258,5 +283,15 @@
     jQuery.each(jQuery('input[name="simpleMDE-link-nofollow"]'), function() {
       jQuery(this).prop("checked", jQuery(this).val() === nofollow);
     });
+  }
+
+  function characterCount(string) {
+    if (string.length === undefined) {
+        return 0;
+    }
+    return string.replace(/\[.*]\(.*\)/g, '')
+      .replace( /^[#]+[ ]+(.*)$/gm, '$1')
+      .replace( /\*\*?(.*?)\*?\*/gm, '$1')
+      .length;
   }
 })();
