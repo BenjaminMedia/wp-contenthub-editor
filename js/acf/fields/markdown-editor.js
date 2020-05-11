@@ -35,7 +35,7 @@
         className: "keystrokes",
         defaultValue: function(el, codeMirror) {
           this.charCount = characterCount(codeMirror.getValue());
-          el.innerHTML = "Characters: <span class='keystrokes-counter'>0   </span>";
+          el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>0</span>";
           setTimeout(function() {
             sumUpAllFields();
           }, 3000);
@@ -44,11 +44,28 @@
           window.clearTimeout(countTimeout)
           countTimeout = window.setTimeout(() => {
             this.charCount = characterCount(codeMirror.getValue());
-            el.innerHTML = "Characters: <span class='keystrokes-counter'>" + this.charCount + "   </span>";
+            el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>" + this.charCount + "</span>";
             if (!firstRun) {
               sumUpAllFields();
             }
           }, 1000);
+        }
+      },
+      {
+        className: "keystrokes",
+        defaultValue: function(el, codeMirror) {
+            this.initialCharCount = characterCount(codeMirror.getValue());
+            el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>0</span>";
+            // document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "Initial Characters: " + this.initialCharCount;
+            setTimeout(function() {
+              // sumUpAllFields()
+            }, 5000);
+            
+        },
+        onUpdate: function(el, codeMirror) {
+            el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>" + this.initialCharCount + "</span>";
+            // document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "Initial Characters: " + this.initialCharCount + "   ";
+            // sumUpAllFieldsInitial();
         }
       }], // Another optional usage, with a custom status bar item that counts keystrokes
     };
@@ -120,11 +137,11 @@
         const value = item.innerHTML;
         total += parseInt(value);
       });
-      document.getElementById('wp-admin-bar-character-count').innerHTML = "Characters: " + total + "   ";
+      document.getElementById('wp-admin-bar-character-count').innerHTML = "<span style='margin: 0 10px;'>Characters: " + total + "</span>";
       
       if (firstRun) {
         // SETTING THE INITIAL CHARACTER COUNT ONCE ON PAGE LOAD
-        document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "Initial Characters: " + total + "   ";
+        document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "<span style='margin: 0 10px;'>Initial Characters: " + total + "</span>";
         firstRun = false;
       }
       isRunning = false;
