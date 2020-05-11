@@ -284,30 +284,27 @@ class MarkdownEditor extends acf_field
         return wp_slash($value);
     }
 
-    public function add_character_count_to_admin_bar($admin_bar)
-    {
-        $admin_bar->add_menu(array(
+    public function add_character_count_to_admin_bar($admin_bar) {
+        $admin_bar->add_menu( array(
             'id'    => 'initial-character-count',
             'parent' => null,
             'group'  => null,
             'title' => 'Initial Characters: ', //you can use img tag with image link. it will show the image icon Instead of the title.
-            // 'href'  => admin_url('admin.php?page=custom-page'),
             'meta' => [
-                'title' => __('Initial Characters', 'textdomain'), //This title will show on hover
+                'title' => __( 'Initial Characters', 'textdomain' ), //This title will show on hover
                 'class' => 'admin-menu-initial-character-count',
             ]
-        ));
+        ) );
         
-        $admin_bar->add_menu(array(
+        $admin_bar->add_menu( array(
             'id'    => 'character-count',
             'parent' => null,
             'group'  => null,
             'title' => 'Characters Count: ', //you can use img tag with image link. it will show the image icon Instead of the title.
-            // 'href'  => admin_url('admin.php?page=custom-page'),
             'meta' => [
-                'title' => __('Characters Count', 'textdomain'), //This title will show on hover
+                'title' => __( 'Characters Count', 'textdomain' ), //This title will show on hover
                 'class' => 'admin-menu-character-count',
             ]
-        ));
+        ) );
     }
 }

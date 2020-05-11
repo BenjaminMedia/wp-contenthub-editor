@@ -56,16 +56,10 @@
         defaultValue: function(el, codeMirror) {
             this.initialCharCount = characterCount(codeMirror.getValue());
             el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>0</span>";
-            // document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "Initial Characters: " + this.initialCharCount;
-            setTimeout(function() {
-              // sumUpAllFields()
-            }, 5000);
             
         },
         onUpdate: function(el, codeMirror) {
             el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>" + this.initialCharCount + "</span>";
-            // document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "Initial Characters: " + this.initialCharCount + "   ";
-            // sumUpAllFieldsInitial();
         }
       }], // Another optional usage, with a custom status bar item that counts keystrokes
     };
