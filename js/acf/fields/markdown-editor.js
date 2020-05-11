@@ -32,28 +32,35 @@
       spellChecker: true,
       forceSync: true,
       status: ["autosave", "lines", "words", {
-          className: "keystrokes",
-          defaultValue: function(el, codeMirror) {
-              this.charCount = characterCount(codeMirror.getValue());
-              el.innerHTML = "0 Characters";
-          },
-          onUpdate: function(el, codeMirror) {
-              window.clearTimeout(countTimeout)
-              countTimeout = window.setTimeout(() => {
-                  this.charCount = characterCount(codeMirror.getValue());
-                  el.innerHTML = this.charCount + " Characters";
-              }, 1000);
-          }
+        className: "keystrokes",
+        defaultValue: function(el, codeMirror) {
+          this.charCount = characterCount(codeMirror.getValue());
+          el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>0</span>";
+          setTimeout(function() {
+            sumUpAllFields();
+          }, 3000);
+        },
+        onUpdate: function(el, codeMirror) {
+          window.clearTimeout(countTimeout)
+          countTimeout = window.setTimeout(() => {
+            this.charCount = characterCount(codeMirror.getValue());
+            el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>" + this.charCount + "</span>";
+            if (!firstRun) {
+              sumUpAllFields();
+            }
+          }, 1000);
+        }
       },
       {
-          className: "keystrokes",
-          defaultValue: function(el, codeMirror) {
-              this.initialCharCount = characterCount(codeMirror.getValue());
-              el.innerHTML = "0 Initial Characters";
-          },
-          onUpdate: function(el, codeMirror) {
-              el.innerHTML = this.initialCharCount + " Initial Characters";
-          }
+        className: "keystrokes",
+        defaultValue: function(el, codeMirror) {
+            this.initialCharCount = characterCount(codeMirror.getValue());
+            el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>0</span>";
+            
+        },
+        onUpdate: function(el, codeMirror) {
+            el.innerHTML = "Initial Characters: <span class='initial-counter' style='min-width:0;margin-left:0'>" + this.initialCharCount + "</span>";
+        }
       }], // Another optional usage, with a custom status bar item that counts keystrokes
     };
     if (typeof dictionary !== "undefined") {
@@ -107,6 +114,34 @@
     })
   };
 
+  let isRunning = false;
+  let firstRun = true;
+  let windowReady = false;
+  function sumUpAllFields() {
+    if (!windowReady) {
+      return;
+    }
+    // PREVENTING FUNCTION TO RUN MORE THAN ONCE, AND NOT FOR EVERY FIELD INSTATIATED
+    if (!isRunning) {
+      isRunning = true;
+      // LIVE UPDATING THE CHARACTER COUNT
+      let total = 0;
+      const elements = document.querySelectorAll('.keystrokes-counter');
+      elements.forEach(function(item) {
+        const value = item.innerHTML;
+        total += parseInt(value);
+      });
+      document.getElementById('wp-admin-bar-character-count').innerHTML = "<span style='margin: 0 10px;'>Characters: " + total + "</span>";
+      
+      if (firstRun) {
+        // SETTING THE INITIAL CHARACTER COUNT ONCE ON PAGE LOAD
+        document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "<span style='margin: 0 10px;'>Initial Characters: " + total + "</span>";
+        firstRun = false;
+      }
+      isRunning = false;
+    }
+  }
+
   acf.add_action('append', function (el) {
     window.setTimeout(function(){ // Add slight delay to allow fields to render before initi
       initMarkdownFields(el);
@@ -128,6 +163,7 @@
         createSimpleMde(this, jQuery(this).data('simple-mde-config'));
       }
     })
+    windowReady = true;
   }
 
   acf.add_action('show_field', initMarkdownFields);

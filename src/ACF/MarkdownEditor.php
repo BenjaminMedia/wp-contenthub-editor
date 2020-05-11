@@ -69,6 +69,10 @@ class MarkdownEditor extends acf_field
         *  settings (array) Store plugin settings (url, path, version) as a reference for later use with assets
         */
 
+        /*
+        * ADDING OUR CHARACTER COUNT AND INITIAL COUNT TO THE ADMIN BAR
+        */
+        add_action('admin_bar_menu', [$this, 'add_character_count_to_admin_bar'], 110);
 
         // do not delete!
         parent::__construct();
@@ -278,5 +282,30 @@ class MarkdownEditor extends acf_field
         // acf saves calls stripslashes_deep() on save which removes all slashes from content
         // to allow slashes we call wp_slash() on value before it is saved to the database
         return wp_slash($value);
+    }
+
+    public function add_character_count_to_admin_bar($admin_bar)
+    {
+        $admin_bar->add_menu(array(
+            'id'    => 'initial-character-count',
+            'parent' => null,
+            'group'  => null,
+            'title' => 'Initial Characters: ', //you can use img tag with image link. it will show the image icon Instead of the title.
+            'meta' => [
+                'title' => __('Initial Characters', 'textdomain'), //This title will show on hover
+                'class' => 'admin-menu-initial-character-count',
+            ]
+        ));
+        
+        $admin_bar->add_menu(array(
+            'id'    => 'character-count',
+            'parent' => null,
+            'group'  => null,
+            'title' => 'Characters Count: ', //you can use img tag with image link. it will show the image icon Instead of the title.
+            'meta' => [
+                'title' => __('Characters Count', 'textdomain'), //This title will show on hover
+                'class' => 'admin-menu-character-count',
+            ]
+        ));
     }
 }
