@@ -8,6 +8,7 @@ use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Bonnier\WP\Cxense\Parsers\Document;
 use Bonnier\WP\Cxense\Services\WidgetDocumentQuery;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -88,8 +89,8 @@ class SortBy
             ->toArray();
 
         $featuredPostIds =  array_keys($featuredPostIdTimestamps);
-        $postsPerPage = self::$acfWidget[AcfName::FIELD_TEASER_AMOUNT] ?? 4;
-        $offset = self::$acfWidget[AcfName::FIELD_SKIP_TEASERS_AMOUNT] ?? 0;
+        $postsPerPage = Arr::get(self::$acfWidget, AcfName::FIELD_TEASER_AMOUNT) ?: 4;
+        $offset = Arr::get(self::$acfWidget, AcfName::FIELD_SKIP_TEASERS_AMOUNT) ?: 0;
         // Calculate offset factoring in pagination;
         $paginatedOffset = $offset + ((self::$page -1) * $postsPerPage);
 
