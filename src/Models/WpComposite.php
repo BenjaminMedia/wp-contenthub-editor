@@ -95,6 +95,7 @@ class WpComposite
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
         add_action('acf/save_post', [EstimatedReadingTime::class, 'addEstimatedReadingTime'], 20);
         add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfTermIsTranslated'], 10, 3);
+        add_filter('admin_enqueue_scripts', [__CLASS__, 'loadCharacterCounterScript']);
     }
 
     /**
@@ -237,6 +238,20 @@ class WpComposite
         }
 
         return $metas;
+    }
+
+    public static function loadCharacterCounterScript($admin_page) {
+        if ($admin_page === 'post.php' && get_post()->post_type === static::POST_TYPE) {
+            wp_register_script(
+                'text-field-character-counter',
+                ContenthubEditor::instance()->pluginUrl . 'js/text-field-character-counter.js',
+                ['acf-input'],
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/text-field-character-counter.js')
+            );
+            wp_enqueue_script(
+                'text-field-character-counter', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/text-field-character-counter.js')
+            );
+        }
     }
 
     private static function post_type_match_and_not_auto_draft($post)

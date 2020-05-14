@@ -35,16 +35,16 @@
         className: "keystrokes",
         defaultValue: function(el, codeMirror) {
           this.charCount = characterCount(codeMirror.getValue());
-          el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>0</span>";
+          el.innerHTML = "Characters: <span class='composite-character-counter' style='min-width:0;margin-left:0'>0</span>";
           setTimeout(function() {
             sumUpAllFields();
-          }, 3000);
+          }, 5000);
         },
         onUpdate: function(el, codeMirror) {
           window.clearTimeout(countTimeout)
           countTimeout = window.setTimeout(() => {
             this.charCount = characterCount(codeMirror.getValue());
-            el.innerHTML = "Characters: <span class='keystrokes-counter' style='min-width:0;margin-left:0'>" + this.charCount + "</span>";
+            el.innerHTML = "Characters: <span class='composite-character-counter' style='min-width:0;margin-left:0'>" + this.charCount + "</span>";
             if (!firstRun) {
               sumUpAllFields();
             }
@@ -126,7 +126,7 @@
       isRunning = true;
       // LIVE UPDATING THE CHARACTER COUNT
       let total = 0;
-      const elements = document.querySelectorAll('.keystrokes-counter');
+      const elements = document.querySelectorAll('.composite-character-counter');
       elements.forEach(function(item) {
         const value = item.innerHTML;
         total += parseInt(value);
