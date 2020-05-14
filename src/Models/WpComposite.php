@@ -240,7 +240,8 @@ class WpComposite
         return $metas;
     }
 
-    public static function loadCharacterCounterScript($admin_page) {
+    public static function loadCharacterCounterScript($admin_page)
+    {
         if ($admin_page === 'post.php' && get_post()->post_type === static::POST_TYPE) {
             wp_register_script(
                 'text-field-character-counter',
