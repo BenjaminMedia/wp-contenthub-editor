@@ -39,9 +39,8 @@
     widgets.each(function(index, widget) {
       const type = jQuery(widget).data('layout');
       if (!excludedWidgetType(type)) {
-        const textInputs = jQuery(widget).find(getSelectors()).css('background-color', 'orange');
+        const textInputs = jQuery(widget).find(getSelectors());
         textInputs.each(function(index, el) {
-          console.log(el)
           addCountersAndEventListeners(el);
         });
       }
@@ -81,8 +80,8 @@
 
   acf.addAction('append', function($el) {
     if (!excludedWidgetType($el.data('layout'))) {
-      const textInputs = $el.find(getSelectorsWhenAddingContent()).css('background-color', 'orange').toArray();
-      textInputs.forEach(function(el) {
+      const textInputs = $el.find(getSelectorsWhenAddingContent());
+      textInputs.each(function(index, el) {
         addCountersAndEventListeners(el);
       })
     }
