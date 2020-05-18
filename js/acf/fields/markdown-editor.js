@@ -163,7 +163,7 @@
   }
 
   acf.add_action('append', function (el) {
-    window.setTimeout(function(){ // Add slight delay to allow fields to render before initi
+    window.setTimeout(function(){ // Add slight delay to allow fields to render before init
       initMarkdownFields(el);
     }, 100)
   });
