@@ -30,7 +30,7 @@
     widgets.each(function(index, widget) {
       const type = jQuery(widget).data('layout');
       if (includedWidgetType(type)) {
-        const textInputs = jQuery(widget).find(getSelectors()).css('background-color', 'orange');
+        const textInputs = jQuery(widget).find(getSelectors());
         textInputs.each(function(index, el) {
           addCountersAndEventListeners(el);
         });
@@ -73,7 +73,7 @@
     const type = $el.data('layout');
     const itemClass = $el.attr('class');
     if (includedWidgetType(type) || itemClass === 'acf-row') {
-      const textInputs = $el.find(getSelectors()).css('background-color', 'orange');
+      const textInputs = $el.find(getSelectors());
       textInputs.each(function(index, el) {
         addCountersAndEventListeners(el);
       })

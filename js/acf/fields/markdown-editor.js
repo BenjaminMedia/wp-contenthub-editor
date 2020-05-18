@@ -116,7 +116,7 @@
     if (widgetType === 'text_item') {
       const elements = jQuery(textArea).closest('.layout').find('.keystrokes');
       elements.each(function(index, element) {
-        jQuery(element).css('background-color', 'red').addClass('composite-body-text-counter');
+        jQuery(element).addClass('composite-body-text-counter');
       });
     }
   };
