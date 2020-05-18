@@ -12,17 +12,6 @@
     return selectors.join();
   }
 
-  function getSelectorsWhenAddingContent() {
-    const selectors = [
-      '.acf-input input[type="text"]:not([disabled])', // FILTERING OUT FIELDS LIKE FOCALPOINT ETC.
-      '.acf-input textarea:not(.acf-field-simple-mde)', // FILTERING OUT THE HIDDEN TEXTAREAS CONNECTED TO THE MARKDOWN FIELDS
-      // '.acf-row .acf-input input[type="text"]:not([disabled])', // TEXT INPUTS IN ITEMS ADDED TO IE GALLERIES, PARAGRAPH LIST AND HOTSPOT
-      // '.acf-row .acf-input textarea:not(.acf-field-simple-mde)' // TEXTAREAS IN ITEMS ADDED TO IE GALLERIES, PARAGRAPH LIST AND HOTSPOT
-    ];
-
-    return selectors.join();
-  }
-
   function addCountersAndEventListeners(el) {
     const initialCharacterCount = el.value ? characterCount(el.value) : 0;
     // PREVENT COUNTER TO BE ADDED DOUBLE TO TEXTAREAS FOR SOME WEIRD REASON
