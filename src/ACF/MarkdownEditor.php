@@ -296,7 +296,6 @@ class MarkdownEditor extends acf_field
                 'class' => 'admin-menu-initial-character-count',
             ]
         ));
-        
         $admin_bar->add_menu(array(
             'id'    => 'character-count',
             'parent' => null,

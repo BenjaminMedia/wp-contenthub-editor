@@ -59,3 +59,10 @@ div.image-focalpoint-actions .dashicons-yes {
 div.image-focalpoint-actions .dashicons-no {
   background-color: #a00;
 }
+
+#categorydiv.postbox,
+#tagsdiv-post_tag.postbox,
+#slugdiv.postbox,
+#authordiv.postbox {
+    display:none !important;
+}
