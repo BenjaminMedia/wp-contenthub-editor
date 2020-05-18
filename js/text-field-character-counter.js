@@ -14,8 +14,10 @@
 
   function getSelectorsWhenAddingContent() {
     const selectors = [
-      '.acf-input input[type="text"]:not([disabled])',
-      '.acf-input textarea:not(.acf-field-simple-mde)'
+      '.acf-input input[type="text"]:not([disabled])', // FILTERING OUT FIELDS LIKE FOCALPOINT ETC.
+      '.acf-input textarea:not(.acf-field-simple-mde)', // FILTERING OUT THE HIDDEN TEXTAREAS CONNECTED TO THE MARKDOWN FIELDS
+      // '.acf-row .acf-input input[type="text"]:not([disabled])', // TEXT INPUTS IN ITEMS ADDED TO IE GALLERIES, PARAGRAPH LIST AND HOTSPOT
+      // '.acf-row .acf-input textarea:not(.acf-field-simple-mde)' // TEXTAREAS IN ITEMS ADDED TO IE GALLERIES, PARAGRAPH LIST AND HOTSPOT
     ];
 
     return selectors.join();
@@ -38,8 +40,8 @@
     const widgets = jQuery('.acf-field-flexible-content .layout:not(.acf-clone)');
     widgets.each(function(index, widget) {
       const type = jQuery(widget).data('layout');
-      if (!excludedWidgetType(type)) {
-        const textInputs = jQuery(widget).find(getSelectors());
+      if (includedWidgetType(type)) {
+        const textInputs = jQuery(widget).find(getSelectors()).css('background-color', 'orange');
         textInputs.each(function(index, el) {
           addCountersAndEventListeners(el);
         });
@@ -79,8 +81,10 @@
   }
 
   acf.addAction('append', function($el) {
-    if (!excludedWidgetType($el.data('layout'))) {
-      const textInputs = $el.find(getSelectorsWhenAddingContent());
+    const type = $el.data('layout');
+    const itemClass = $el.attr('class');
+    if (includedWidgetType(type) || itemClass === 'acf-row') {
+      const textInputs = $el.find(getSelectors()).css('background-color', 'orange');
       textInputs.each(function(index, el) {
         addCountersAndEventListeners(el);
       })
@@ -97,19 +101,18 @@
       .length;
   }
 
-  function excludedWidgetType(type) {
-    excludedWidgetTypes = [
-      'audio',
-      'file',
-      'video',
-      'link',
-      'inserted_code',
-      'sub_content',
-      'inventory',
-      'newsletter',
-      'chapters_summary'
+  function includedWidgetType(type) {
+    includedWidgetTypes = [
+      'text',
+      'image',
+      'gallery',
+      'infobox',
+      'lead_paragraph',
+      'paragraph_list',
+      'hotspot_image',
+      'quote',
     ];
 
-    return excludedWidgetTypes.includes(type);
+    return includedWidgetTypes.includes(type);
   }
 })();

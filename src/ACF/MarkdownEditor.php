@@ -307,5 +307,25 @@ class MarkdownEditor extends acf_field
                 'class' => 'admin-menu-character-count',
             ]
         ));
+        $admin_bar->add_menu(array(
+            'id'    => 'initial-body-text-count',
+            'parent' => null,
+            'group'  => null,
+            'title' => 'Initial Body Text Count: ', //you can use img tag with image link. it will show the image icon Instead of the title.
+            'meta' => [
+                'title' => __('Initial Body Text Count', 'textdomain'), //This title will show on hover
+                'class' => 'admin-menu-initial-body-text-count',
+            ]
+        ));
+        $admin_bar->add_menu(array(
+            'id'    => 'body-text-count',
+            'parent' => null,
+            'group'  => null,
+            'title' => 'Body Text Count: ', //you can use img tag with image link. it will show the image icon Instead of the title.
+            'meta' => [
+                'title' => __('Body Text Count', 'textdomain'), //This title will show on hover
+                'class' => 'admin-menu-body-text-count',
+            ]
+        ));
     }
 }

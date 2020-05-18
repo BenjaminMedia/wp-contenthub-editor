@@ -112,6 +112,13 @@
     smde.codemirror.on('blur', function() {
       jQuery(textArea).trigger('change');
     })
+    const widgetType = jQuery(textArea).closest('.layout').data('layout');
+    if (widgetType === 'text_item') {
+      const elements = jQuery(textArea).closest('.layout').find('.keystrokes');
+      elements.each(function(index, element) {
+        jQuery(element).css('background-color', 'red').addClass('composite-body-text-counter');
+      });
+    }
   };
 
   let isRunning = false;
@@ -131,11 +138,24 @@
         const value = item.innerHTML;
         total += parseInt(value);
       });
-      document.getElementById('wp-admin-bar-character-count').innerHTML = "<span style='margin: 0 10px;'>Characters: " + total + "</span>";
+      document.getElementById('wp-admin-bar-character-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Characters: " + total + "</span>";
+
+      // LIVE UPDATING THE BODY TEXT CHARACTER COUNT
+      let bodyTextTotal = 0;
+      const bodyTextElements = document.querySelectorAll('.composite-body-text-counter .composite-character-counter');
+      bodyTextElements.forEach(function(item) {
+        const value = item.innerHTML;
+        bodyTextTotal += parseInt(value);
+      });
+      document.getElementById('wp-admin-bar-body-text-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Body Text Count: " + bodyTextTotal + "</span>";
       
       if (firstRun) {
         // SETTING THE INITIAL CHARACTER COUNT ONCE ON PAGE LOAD
-        document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "<span style='margin: 0 10px;'>Initial Characters: " + total + "</span>";
+        document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Initial Characters: " + total + "</span>";
+        firstRun = false;
+
+        // SETTING THE INITIAL BODY TEXT CHARACTER COUNT ONCE ON PAGE LOAD
+        document.getElementById('wp-admin-bar-initial-body-text-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Initial Body Text Count: " + bodyTextTotal + "</span>";
         firstRun = false;
       }
       isRunning = false;
