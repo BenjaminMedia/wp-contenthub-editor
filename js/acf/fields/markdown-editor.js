@@ -111,7 +111,7 @@
     jQuery(textArea).addClass('simple-mde-instantiated');
     smde.codemirror.on('blur', function() {
       jQuery(textArea).trigger('change');
-    })
+    });
     const widgetType = jQuery(textArea).closest('.layout').data('layout');
     if (widgetType === 'text_item') {
       const elements = jQuery(textArea).closest('.layout').find('.keystrokes');
@@ -121,13 +121,12 @@
     }
   };
 
+  window.createSimpleMde = createSimpleMde;
+
   let isRunning = false;
   let firstRun = true;
   let windowReady = false;
   function sumUpAllFields() {
-    if (!windowReady) {
-      return;
-    }
     // PREVENTING FUNCTION TO RUN MORE THAN ONCE, AND NOT FOR EVERY FIELD INSTATIATED
     if (!isRunning) {
       isRunning = true;
@@ -152,7 +151,6 @@
       if (firstRun) {
         // SETTING THE INITIAL CHARACTER COUNT ONCE ON PAGE LOAD
         document.getElementById('wp-admin-bar-initial-character-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Initial Characters: " + total + "</span>";
-        firstRun = false;
 
         // SETTING THE INITIAL BODY TEXT CHARACTER COUNT ONCE ON PAGE LOAD
         document.getElementById('wp-admin-bar-initial-body-text-count').innerHTML = "<span style='margin: 0 10px; font-weight: 700; text-decoration: underline;'>Initial Body Text Count: " + bodyTextTotal + "</span>";
@@ -161,32 +159,6 @@
       isRunning = false;
     }
   }
-
-  acf.add_action('append', function (el) {
-    window.setTimeout(function(){ // Add slight delay to allow fields to render before init
-      initMarkdownFields(el);
-    }, 100)
-  });
-
-  acf.add_action('ready', function(){
-    jQuery(".acf-actions > a[data-name='edit']").on('click', function (event) {
-      window.setTimeout(function(){ // Add slight delay to allow fields to render before init
-        initMarkdownFields(event.target);
-      }, 1200)
-    })
-  });
-
-  acf.add_action('ready', initMarkdownFields);
-  function initMarkdownFields(el) {
-    jQuery(el).find('.acf-field-simple-mde').each(function () {
-      if (jQuery(this).is(":visible")) { // Only render visible elements
-        createSimpleMde(this, jQuery(this).data('simple-mde-config'));
-      }
-    })
-    windowReady = true;
-  }
-
-  acf.add_action('show_field', initMarkdownFields);
 
   function createLinkModal(editor) {
     var cm = editor.codemirror;
