@@ -1,6 +1,4 @@
 (function () {
-  document.addEventListener("DOMContentLoaded", initCounters);
-
   function getSelectors() {
     const selectors = [
       '#title', // SELECTING THE ARTICLE TITLE FIELD
@@ -41,10 +39,10 @@
     addCountersAndEventListeners(jQuery('#acf-field_58abfebd21b82').get(0));
   }
 
-  let windowReady = false;
+  window.initCounters = initCounters;
   let isRunning = false;
   function sumUpAllNonMarkdownFields() {
-    if (isRunning || !windowReady) {
+    if (isRunning) {
       return;
     }
     isRunning = true;

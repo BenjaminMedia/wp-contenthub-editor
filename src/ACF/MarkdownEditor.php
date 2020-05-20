@@ -150,9 +150,9 @@ class MarkdownEditor extends acf_field
     {
         ?>
         <textarea rows="8"
-                  class="acf-field-simple-mde"
-                  data-simple-mde-config='<?php echo $field['simple_mde_config'] ?>'
-                  name="<?php echo esc_attr($field['name']) ?>"
+            class="acf-field-simple-mde"
+            data-simple-mde-config='<?php echo $field['simple_mde_config'] ?>'
+            name="<?php echo esc_attr($field['name']) ?>"
         ><?php echo $field['value'] ?></textarea>
         <?php
     }
@@ -189,8 +189,15 @@ class MarkdownEditor extends acf_field
         wp_enqueue_script(
             'acf-input-markdown-editor',
             ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-editor.js',
-            ['acf-input', 'marked-js'],
+            ['marked-js'],
             filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/markdown-editor.js')
+        );
+
+        wp_enqueue_script(
+            'acf-markdown-editor-init',
+            ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/markdown-acf-init.js',
+            ['acf-input', 'acf-input-markdown-editor'],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/markdown-acf-init.js')
         );
 
         //ContentHub composite fields validation
@@ -255,6 +262,19 @@ class MarkdownEditor extends acf_field
         wp_enqueue_style(
             'acf-input-markdown-editor', '', [],
             filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
+        );
+
+        wp_register_script(
+            'text-field-character-counter',
+            ContenthubEditor::instance()->pluginUrl . 'js/text-field-character-counter.js',
+            ['acf-input', 'acf-input-markdown-editor', 'acf-input-markdown-editor'],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/text-field-character-counter.js')
+        );
+        wp_enqueue_script(
+            'text-field-character-counter',
+            '',
+            ['acf-input', 'acf-input-markdown-editor', 'acf-input-markdown-editor'],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/text-field-character-counter.js')
         );
     }
 

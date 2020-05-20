@@ -2,6 +2,8 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Bonnier\WP\ContentHub\Editor\ContenthubEditor;
+
 class WpUserProfile
 {
     public static function register()
@@ -10,6 +12,8 @@ class WpUserProfile
         if (is_admin()) {
             self::modifyAvatarFilter();
         }
+        
+        add_action('admin_enqueue_scripts', [__CLASS__, 'loadAuthorDescriptionAsMarkdownScript']);
     }
 
     public static function getAvatarFromUser($userId): ?\WP_Post
@@ -161,5 +165,20 @@ class WpUserProfile
 
             return $url;
         }, 10, 3);
+    }
+
+    public static function loadAuthorDescriptionAsMarkdownScript($admin_page)
+    {
+        if ($admin_page === 'user-edit.php') {
+            wp_register_script(
+                'author-description-as-markdown',
+                ContenthubEditor::instance()->pluginUrl . 'js/author-description-as-markdown.js',
+                ['acf-input'],
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/author-description-as-markdown.js')
+            );
+            wp_enqueue_script(
+                'author-description-as-markdown', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/author-description-as-markdown.js')
+            );
+        };
     }
 }
