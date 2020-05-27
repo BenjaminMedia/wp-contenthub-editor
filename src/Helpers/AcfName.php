@@ -39,6 +39,7 @@ class AcfName
     const FIELD_QUOTE = 'quote';
     const FIELD_AUTHOR = 'author';
     const FIELD_COMPOSITE_CONTENT = 'composite_content';
+    const FIELD_USER = 'user';
 
     const WIDGET_BANNER_PLACEMENT = 'banner_placement';
     const WIDGET_FEATURED_CONTENT = 'featured_content';

@@ -21,6 +21,7 @@ class SortBy
     const SHUFFLE = 'shuffle';
     const CXENSE_TREND = 'trend';
     const CXENSE_RECENT = 'recent';
+    const AUTHOR = 'author';
 
     private static $acfWidget;
     private static $page;
@@ -44,6 +45,7 @@ class SortBy
             self::POPULAR => 'getPopularComposites',
             self::RECENTLY_VIEWED => 'getRecentlyViewedComposites',
             self::SHUFFLE => 'getShuffleComposites',
+            self::AUTHOR => 'getCompositesByAuthor',
         ])->get(self::$acfWidget[AcfName::FIELD_SORT_BY] ?? null);
 
         return $method ? self::$method() : null;
@@ -267,5 +269,32 @@ class SortBy
             'total' => $count,
             'pages' => 1,
         ];
+    }
+
+    /**
+     * Get a collection of composites by author.
+     *
+     * @return array|null A collection of composites
+     */
+    protected static function getCompositesByAuthor(): ?array
+    {
+        $authorId = self::$acfWidget['user']['ID'];
+        $posts = collect(get_posts([
+            'posts_per_page' => 4,
+            'post_type' => WpComposite::POST_TYPE,
+            'orderby' => 'post_date',
+            'order' => 'DESC',
+            'author' =>  $authorId,
+        ]));
+        
+        return [
+            'composites' => $posts,
+            'page' => 1,
+            'per_page' => 4,
+            'total' => count($posts),
+            'pages' => 1,
+        ];
+
+        return null;
     }
 }
