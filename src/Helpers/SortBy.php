@@ -279,8 +279,9 @@ class SortBy
     protected static function getCompositesByAuthor(): ?array
     {
         $authorId = self::$acfWidget['user']['ID'];
+        $count = self::$acfWidget['teaser_amount'];
         $posts = collect(get_posts([
-            'posts_per_page' => 4,
+            'posts_per_page' => $count,
             'post_type' => WpComposite::POST_TYPE,
             'orderby' => 'post_date',
             'order' => 'DESC',
@@ -290,7 +291,7 @@ class SortBy
         return [
             'composites' => $posts,
             'page' => 1,
-            'per_page' => 4,
+            'per_page' => $count,
             'total' => count($posts),
             'pages' => 1,
         ];
