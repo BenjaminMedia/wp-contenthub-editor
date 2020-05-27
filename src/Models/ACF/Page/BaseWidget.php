@@ -47,6 +47,7 @@ abstract class BaseWidget implements WidgetContract
             $this->getTeaserList(),
             $this->getCategoryField(),
             $this->getTagField(),
+            $this->getUserField(),
         ])->rejectNullValues();
 
         return $fields->merge($this->getCustomTaxonomyFields())->toArray();
@@ -93,6 +94,7 @@ abstract class BaseWidget implements WidgetContract
                 SortBy::CUSTOM => 'Taxonomy (WordPress)',
                 SortBy::MANUAL => 'Manual (WordPress)',
                 SortBy::SHUFFLE => 'Shuffle',
+                SortBy::AUTHOR => 'Author',
             ],
             'allow_null' => 0,
             'other_choice' => 0,
@@ -111,7 +113,7 @@ abstract class BaseWidget implements WidgetContract
             'name' => AcfName::FIELD_SKIP_TEASERS_AMOUNT,
             'type' => 'number',
             'instructions' =>
-                'How many teasers should it it skip?',
+            'How many teasers should it it skip?',
             'required' => 0,
             'conditional_logic' => [
                 [
@@ -146,7 +148,7 @@ abstract class BaseWidget implements WidgetContract
                 'name' => AcfName::FIELD_TEASER_AMOUNT,
                 'type' => 'number',
                 'instructions' =>
-                    'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.',
+                'How many teasers should it contain?<br><b>Note:</b> Cxense max Teasers is configured to 10.',
                 'required' => 1,
                 'conditional_logic' => [
                     [
@@ -304,7 +306,7 @@ abstract class BaseWidget implements WidgetContract
     {
         return WpTaxonomy::get_custom_taxonomies()->map(function ($customTaxonomy) {
             return [
-                'key' => 'field_'.md5($this->widgetName . $customTaxonomy->machine_name),
+                'key' => 'field_' . md5($this->widgetName . $customTaxonomy->machine_name),
                 'label' => $customTaxonomy->name,
                 'name' => $customTaxonomy->machine_name,
                 'type' => 'taxonomy',
@@ -334,6 +336,38 @@ abstract class BaseWidget implements WidgetContract
                 'multiple' => 0,
             ];
         });
+    }
+
+    private function getUserField()
+    {
+        return [
+            'key' => 'field_' . hash('md5', $this->widgetName . AcfName::FIELD_USER),
+            'label' => 'Author',
+            'name' => AcfName::FIELD_USER,
+            'type' => 'user',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => array(
+                [
+                    [
+                        'field' => $this->sortByField,
+                        'operator' => '==',
+                        'value' => SortBy::AUTHOR,
+                    ],
+                ],
+            ),
+            'wrapper' => array(
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'role' => array(
+                0 => 'editor',
+            ),
+            'allow_null' => 1,
+            'multiple' => 0,
+            'return_format' => 'array',
+        ];
     }
 
     private function getMinTeasers()
