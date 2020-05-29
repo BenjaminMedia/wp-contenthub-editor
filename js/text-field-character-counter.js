@@ -6,7 +6,7 @@
       '.acf-input input[type="text"]:not([disabled])', // FILTERING OUT FIELDS LIKE FOCALPOINT ETC.
       '.acf-input textarea:not(.acf-field-simple-mde)' // FILTERING OUT THE HIDDEN TEXTAREAS CONNECTED TO THE MARKDOWN FIELDS
     ];
-    
+
     return selectors.join();
   }
 
@@ -23,13 +23,18 @@
   }
 
   function initCounters() {
+    const classes = document.body.classList;
+    if (!whitelistedContentTypes(classes)) {
+      return;
+    }
+
     windowReady = true;
     const widgets = jQuery('.acf-field-flexible-content .layout:not(.acf-clone)');
-    widgets.each(function(index, widget) {
+    widgets.each(function (index, widget) {
       const type = jQuery(widget).data('layout');
       if (includedWidgetType(type)) {
         const textInputs = jQuery(widget).find(getSelectors());
-        textInputs.each(function(index, el) {
+        textInputs.each(function (index, el) {
           addCountersAndEventListeners(el);
         });
       }
@@ -48,14 +53,14 @@
     isRunning = true;
     const compositeCounters = jQuery('.composite-character-counter');
     let total = 0;
-    compositeCounters.each(function(index, item) {
+    compositeCounters.each(function (index, item) {
       const value = item.innerHTML;
       total += parseInt(value);
     })
     document.getElementById('wp-admin-bar-character-count').innerHTML = "<span style='margin: 0 10px;'>Characters: " + total + "</span>";
     isRunning = false;
   }
-  
+
   function countCharacters(e) {
     let countTimeout;
     let el = e.target;
@@ -67,12 +72,12 @@
     }, 2000);
   }
 
-  acf.addAction('append', function($el) {
+  acf.addAction('append', function ($el) {
     const type = $el.data('layout');
     const itemClass = $el.attr('class');
     if (includedWidgetType(type) || itemClass === 'acf-row') {
       const textInputs = $el.find(getSelectors());
-      textInputs.each(function(index, el) {
+      textInputs.each(function (index, el) {
         addCountersAndEventListeners(el);
       })
     }
@@ -80,16 +85,16 @@
 
   function characterCount(string) {
     if (string.length === undefined) {
-        return 0;
+      return 0;
     }
     return string.replace(/\[.*]\(.*\)/g, '')
-      .replace( /^[#]+[ ]+(.*)$/gm, '$1')
-      .replace( /\*\*?(.*?)\*?\*/gm, '$1')
+      .replace(/^[#]+[ ]+(.*)$/gm, '$1')
+      .replace(/\*\*?(.*?)\*?\*/gm, '$1')
       .length;
   }
 
   function includedWidgetType(type) {
-    includedWidgetTypes = [
+    const includedWidgetTypes = [
       'text',
       'image',
       'gallery',
@@ -102,4 +107,20 @@
 
     return includedWidgetTypes.includes(type);
   }
-})();
+
+  function whitelistedContentTypes(types) {
+    const whitelist = [
+      'post-type-contenthub_composite'
+    ];
+
+    let containsType = false;
+    types.forEach(function (type) {
+      if (whitelist.includes(type)) {
+        containsType = true;
+      }
+    });
+
+    return containsType;
+  }
+}
+)();
