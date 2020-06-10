@@ -88,12 +88,14 @@ class WpComposite
                 ]
             );
             static::register_acf_fields();
+            static::loadTeaserCharacterCounter();
         });
 
         add_action('save_post', [__CLASS__, 'on_save'], 10, 2);
         add_action('save_post', [__CLASS__, 'on_save_slug_change'], 5, 2);
         add_action('added_term_relationship', [__CLASS__, 'addedTermRelationship'], 10, 3);
         add_action('acf/save_post', [EstimatedReadingTime::class, 'addEstimatedReadingTime'], 20);
+        add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfTermIsTranslated'], 10, 3);
         add_filter('pll_copy_post_metas', [__CLASS__, 'checkIfTermIsTranslated'], 10, 3);
     }
 
@@ -242,5 +244,21 @@ class WpComposite
     private static function post_type_match_and_not_auto_draft($post)
     {
         return is_object($post) && $post->post_type === static::POST_TYPE && $post->post_status !== 'auto-draft';
+    }
+
+    public static function loadTeaserCharacterCounter()
+    {
+        wp_register_script(
+            'teaser-character-counter',
+            ContenthubEditor::instance()->pluginUrl . 'js/teaser-character-counter.js',
+            ['acf-input', 'acf-input-markdown-editor'],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/teaser-character-counter.js')
+        );
+        wp_enqueue_script(
+            'teaser-character-counter',
+            '',
+            ['acf-input', 'acf-input-markdown-editor'],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/teaser-character-counter.js')
+        );
     }
 }
