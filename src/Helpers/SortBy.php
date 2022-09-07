@@ -254,7 +254,7 @@ class SortBy
      */
     private static function convertCxenseResultToComposites($result, $count): ?array
     {
-        if (!array_get($result, 'matches')) {
+        if (!Arr::get($result, 'matches')) {
             $result['matches'] = [];
         }
         return [

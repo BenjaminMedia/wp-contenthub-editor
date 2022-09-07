@@ -9,6 +9,7 @@ use Bonnier\WP\ContentHub\Editor\Models\ACF\WidgetContract;
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 abstract class BaseWidget implements WidgetContract
 {
@@ -372,16 +373,16 @@ abstract class BaseWidget implements WidgetContract
 
     private function getMinTeasers()
     {
-        return array_get($this->config, 'minTeasers', 1);
+        return Arr::get($this->config, 'minTeasers', 1);
     }
 
     private function getMaxTeasers()
     {
-        return array_get($this->config, 'minTeasers', 12);
+        return Arr::get($this->config, 'minTeasers', 12);
     }
 
     private function getDefaultTeaserAmount()
     {
-        return array_get($this->config, 'teaserCountDefault', 4);
+        return Arr::get($this->config, 'teaserCountDefault', 4);
     }
 }

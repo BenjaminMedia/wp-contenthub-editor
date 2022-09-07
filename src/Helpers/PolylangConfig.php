@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
 use Bonnier\WP\ContentHub\Editor\Models\WpComposite;
 use Bonnier\WP\ContentHub\Editor\Models\WpTaxonomy;
+use Illuminate\Support\Arr;
 
 /**
  * Class PolylangConfig
@@ -34,7 +35,7 @@ class PolylangConfig
 
     public static function copyPostAuthor($post)
     {
-        if (($fromId = array_get($_GET, 'from_post')) &&
+        if (($fromId = Arr::get($_GET, 'from_post')) &&
             ($fromPost = get_post($fromId)) &&
             $fromPost instanceof \WP_Post
         ) {
