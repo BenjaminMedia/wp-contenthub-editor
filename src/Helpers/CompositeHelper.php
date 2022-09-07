@@ -4,6 +4,7 @@ namespace Bonnier\WP\ContentHub\Editor\Helpers;
 
 use Bonnier\WP\ContentHub\Editor\Models\WpAttachment;
 use Bonnier\VideoHelper;
+use Illuminate\Support\Arr;
 
 class CompositeHelper
 {
@@ -81,7 +82,7 @@ class CompositeHelper
         // Then run through all associated_composites and add a postmeta field, defining the story parent
         collect(get_field('composite_content', $postId))->each(function ($content) use ($postId, $wpdb) {
             if ($content['acf_fc_layout'] === 'associated_composites') {
-                collect(array_get($content, 'composites', []))->each(function (\WP_Post $composite) use ($postId) {
+                collect(Arr::get($content, 'composites', []))->each(function (\WP_Post $composite) use ($postId) {
                     if (get_field('kind', $postId) === 'Story') {
                         add_post_meta($composite->ID, 'story_parent', $postId);
                     }

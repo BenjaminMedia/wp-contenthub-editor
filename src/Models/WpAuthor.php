@@ -3,6 +3,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
+use Illuminate\Support\Arr;
 use PHP_CodeSniffer\Tokenizers\PHP;
 use WP_User;
 
@@ -23,7 +24,7 @@ class WpAuthor
 
     public static function getDefaultAuthor($locale): ?WP_User
     {
-        $displayName = array_get(self::$defaultAuthors, $locale ?? 'da', 'Redaktionen');
+        $displayName = Arr::get(self::$defaultAuthors, $locale ?? 'da', 'Redaktionen');
         $authorName = $displayName . '_' . $locale;
         return self::findOrCreate($authorName, $displayName, $locale);
     }
