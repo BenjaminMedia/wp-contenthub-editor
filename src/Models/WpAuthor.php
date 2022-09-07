@@ -3,7 +3,7 @@
 
 namespace Bonnier\WP\ContentHub\Editor\Models;
 
-use Illuminate\Support\Arr
+use Illuminate\Support\Arr;
 use PHP_CodeSniffer\Tokenizers\PHP;
 use WP_User;
 
