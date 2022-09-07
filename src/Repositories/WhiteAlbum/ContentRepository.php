@@ -36,13 +36,13 @@ class ContentRepository
         $endpoint = null;
         if ($locale) {
             $envKey = sprintf('WHITEALBUM_ENDPOINT_%s', strtoupper($locale));
-            if (! $endpoint = env($envKey)) { // env returns null by default, which would be a falsey value
+            if (! $endpoint = getenv($envKey)) { // env returns null by default, which would be a falsey value
                 throw new Exception(sprintf('%s has not been defined in your ENV file.', $envKey));
             }
         }
         $this->client = new \GuzzleHttp\Client(
             [
-                'base_uri' => $endpoint ?: env('WHITEALBUM_ENDPOINT'),
+                'base_uri' => $endpoint ?: getenv('WHITEALBUM_ENDPOINT'),
             ]
         );
     }
@@ -63,8 +63,8 @@ class ContentRepository
             $resource . $whitealbumId,
             [
                 'auth' => [
-                    env('WHITEALBUM_USER'),
-                    env('WHITEALBUM_PASSWORD'),
+                    getenv('WHITEALBUM_USER'),
+                    getenv('WHITEALBUM_PASSWORD'),
                 ]
             ]
         );

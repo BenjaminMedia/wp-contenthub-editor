@@ -40,8 +40,8 @@ class ImageRepository
             static::IMAGE_RESOURCE . $whitealbumId,
             [
                 'auth' => [
-                    env('WHITEALBUM_USER'),
-                    env('WHITEALBUM_PASSWORD'),
+                    getenv('WHITEALBUM_USER'),
+                    getenv('WHITEALBUM_PASSWORD'),
                 ]
             ]
         );
