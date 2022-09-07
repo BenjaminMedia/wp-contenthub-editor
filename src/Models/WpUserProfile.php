@@ -177,7 +177,10 @@ class WpUserProfile
                 filemtime(ContenthubEditor::instance()->pluginDir . 'js/author-description-as-markdown.js')
             );
             wp_enqueue_script(
-                'author-description-as-markdown', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/author-description-as-markdown.js')
+                'author-description-as-markdown',
+                '',
+                [],
+                filemtime(ContenthubEditor::instance()->pluginDir . 'js/author-description-as-markdown.js')
             );
         };
     }

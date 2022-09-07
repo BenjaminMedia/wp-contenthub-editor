@@ -67,9 +67,9 @@ class FeatureTimeField
                         $date = __('Not set');
                     }
         printf(
-                            'Featured on: %s',
-                        '<b>' . $date . '</b>'
-                    ); ?></span>
+            'Featured on: %s',
+            '<b>' . $date . '</b>'
+        ); ?></span>
             <a href="#" id="edit_feature_timestamp" class="edit-timestamp hide-if-no-js" role="button"><span aria-hidden="true"><?php _e('Edit'); ?></span> <span class="screen-reader-text"><?php _e('Edit date and time'); ?></span></a>
             <fieldset id="timestampdiv" class="hide-if-js">
                 <legend class="screen-reader-text">Date and time</legend>
