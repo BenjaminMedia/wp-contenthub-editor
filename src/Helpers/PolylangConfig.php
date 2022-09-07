@@ -20,7 +20,9 @@ class PolylangConfig
 
     public static function polylang_options($defaultOptions)
     {
-        return array_merge($defaultOptions, [
+        return array_merge(
+            $defaultOptions,
+            [
                 'post_types' => [
                     WpComposite::POST_TYPE, // Tell polylang to enable translation for our custom content type
                 ],

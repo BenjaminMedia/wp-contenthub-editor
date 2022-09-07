@@ -106,7 +106,8 @@ class MarkdownEditor extends acf_field
         */
 
         acf_render_field_setting(
-            $field, array(
+            $field,
+            array(
             'label' => __('Simple MDE Configuration', 'acf-markdown-editor'),
             'instructions' => __('Write', 'acf-markdown-editor'),
             'type' => 'radio',
@@ -183,7 +184,10 @@ class MarkdownEditor extends acf_field
             filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
         );
         wp_enqueue_script(
-            'acf-input-simple-mde', '', [], filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
+            'acf-input-simple-mde',
+            '',
+            [],
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/simplemde.min.js')
         );
 
         wp_enqueue_script(
@@ -260,7 +264,9 @@ class MarkdownEditor extends acf_field
             filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
         );
         wp_enqueue_style(
-            'acf-input-markdown-editor', '', [],
+            'acf-input-markdown-editor',
+            '',
+            [],
             filemtime(ContenthubEditor::instance()->pluginDir . 'css/simplemde.min.css')
         );
 

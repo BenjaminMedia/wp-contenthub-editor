@@ -837,7 +837,9 @@ class CustomRelationship extends \acf_field
     {
         wp_enqueue_script(
             'acf-custom-relationship',
-            ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/acf-custom-relationship.js', null, filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/acf-custom-relationship.js')
+            ContenthubEditor::instance()->pluginUrl . 'js/acf/fields/acf-custom-relationship.js',
+            null,
+            filemtime(ContenthubEditor::instance()->pluginDir . 'js/acf/fields/acf-custom-relationship.js')
         );
     }
 }
