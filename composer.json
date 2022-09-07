@@ -54,7 +54,8 @@
     "bonnier/php-video-helper": "1.0.*",
     "bonnier/willow-mu-plugins": "^2.0",
     "wpackagist-plugin/amazon-s3-and-cloudfront": "^1.4",
-    "league/html-to-markdown": "^4.9"
+    "league/html-to-markdown": "^4.9",
+    "bordoni/phpass": "^0.3.6"
   },
   "require-dev": {
     "phpunit/phpunit": "7.1.*",
