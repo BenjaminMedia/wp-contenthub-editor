@@ -89,7 +89,8 @@ class HtmlToMarkdown
                     }, []);
 
 
-                $markdown = sprintf('[%s](%s%s)',
+                $markdown = sprintf(
+                    '[%s](%s%s)',
                     static::parseHtml($anchor->textContent, false), // Fix any html that might be inside
                     $anchor->getAttribute('href'),
                     empty($attributes) ? '' : sprintf(' %s', json_encode($attributes))

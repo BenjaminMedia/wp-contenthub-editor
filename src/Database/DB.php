@@ -18,10 +18,10 @@ class DB
             $capsule = new Manager();
             $capsule->addConnection([
                 'driver' => 'mysql',
-                'host' => env('DB_HOST', 'localhost'),
-                'database' => env('DB_NAME'),
-                'username' => env('DB_USER'),
-                'password' => env('DB_PASSWORD'),
+                'host' => getenv('DB_HOST', 'localhost'),
+                'database' => getenv('DB_NAME'),
+                'username' => getenv('DB_USER'),
+                'password' => getenv('DB_PASSWORD'),
                 'charset' => $wpdb->charset,
                 'collation' => $wpdb->collate,
                 'prefix' => $wpdb->prefix

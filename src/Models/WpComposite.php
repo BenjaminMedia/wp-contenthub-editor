@@ -63,7 +63,8 @@ class WpComposite
         });
 
         add_action('init', function () {
-            register_post_type(static::POST_TYPE,
+            register_post_type(
+                static::POST_TYPE,
                 [
                     'labels' => [
                         'name' => __(static::POST_TYPE_NAME),
