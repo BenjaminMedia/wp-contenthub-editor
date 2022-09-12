@@ -45,11 +45,11 @@
     "source": "https://github.com/BenjaminMedia/wp-contenthub-editor"
   },
   "require": {
-    "php": ">=7.2",
+    "php": ">=7.4",
     "composer/installers": "~1.0",
-    "guzzlehttp/guzzle": "^6.3",
-    "illuminate/support": "^7.30",
-    "illuminate/database": "^7.30",
+    "guzzlehttp/guzzle": "^7.4",
+    "illuminate/support": "^8.83",
+    "illuminate/database": "^8.83",
     "junaidbhura/advanced-custom-fields-pro": "*",
     "bonnier/php-video-helper": "^1.0",
     "bonnier/willow-mu-plugins": "^2.0",
